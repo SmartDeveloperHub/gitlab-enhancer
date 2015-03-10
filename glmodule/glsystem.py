@@ -1,8 +1,8 @@
-__author__ = 'Alejandro F. Carrera'
+__author__ = 'alejandrofcarrera'
 
 import json
 
-# System Web Hooks (gitlab-ce)
+# System Web Hooks (glmodule-ce)
 # Project: create / destroy
 # Project member: add / remove
 # User: create / destroy
@@ -51,5 +51,5 @@ def user_remove_from_group(event):
 
 
 def hook_system(event):
-    if globals() in event['event_name']:
+    if event['event_name'] in globals():
         globals()[event['event_name']](event)
