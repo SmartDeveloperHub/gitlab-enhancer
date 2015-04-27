@@ -119,10 +119,10 @@ def get_project_branch_commits(gl, project_id, branch_name, user_id, offset):
         user = get_user(gl, user_id)
         if user is False:
             return user
+    if get_project_branch(gl, project_id, branch_name) is False:
+        return False
     while git_commits_len is not 0:
         git_commits = gl.git.getrepositorycommits(project_id, branch_name, page=pag, per_page=number_page)
-        if git_commits is False:
-            return git_commits
         git_commits_len = len(git_commits)
         if user is not None:
             git_ret = []
@@ -156,7 +156,7 @@ def get_project_commits(gl, project_id, user_id, offset):
         user = get_user(gl, user_id)
         if user is False:
             return user
-    git_branches = get_project_branches(gl, project_id)
+    git_branches = get_project_branches(gl, project_id, False)
     if git_branches is False:
         return False
     for i in git_branches:
@@ -310,7 +310,7 @@ def get_user_projects(gl, user_id, relation_type):
     :param relation_type: Relation between User-Project
     :return: Projects (List)
     """
-    return get_entity_projects(gl, user_id, relation_type)
+    return get_entity_projects(gl, user_id, relation_type, 'user')
 
 
 def get_groups(gl):
@@ -345,28 +345,27 @@ def get_group_projects(gl, group_id, relation_type):
     :param relation_type: Relation between User-Project
     :return: Projects (List)
     """
-    return get_entity_projects(gl, group_id, relation_type)
+    return get_entity_projects(gl, group_id, relation_type, 'group')
 
 
 # Functions to help another functions
 
 
-def get_entity_projects(gl, entity_id, relation_type):
-
-    # Entity (user or group) is not exist
-    if get_user(gl, entity_id) is False:
-        if get_group(gl, entity_id) is False:
-            return False
+def get_entity_projects(gl, entity_id, relation_type, user_type):
 
     # Get Entity's projects
     git_projects = get_projects(gl)
     git_user_projects = []
     for x in git_projects:
         if relation_type == 'owner':
-            if entity_id == get_project_owner(gl, x.get('id')).get('id'):
-                git_user_projects.append(x)
+            user_type_project = 'group'
+            if x.get('owner') is not None:
+                user_type_project = 'user'
+            if user_type == user_type_project:
+                if entity_id == get_project_owner(gl, x.get('id')).get('id'):
+                    git_user_projects.append(x)
         else:
-            users_list = get_project_contributors(gl, x.get('id'), x.get('default_branch'))
+            users_list = get_project_branch_contributors(gl, x.get('id'), x.get('default_branch'))
             for j in users_list:
                 if entity_id == j.get('id'):
                     git_user_projects.append(x)
@@ -386,7 +385,7 @@ def get_contributors_projects(gl, project_id, branch_name):
     if commits_list is False:
         return commits_list
     email_list = {}
-    ret_users = {}
+    ret_users = []
     for x in commits_list:
         if email_list.get(x.get('author_email')) is None:
             email_list[x.get('author_email')] = 1
@@ -394,5 +393,5 @@ def get_contributors_projects(gl, project_id, branch_name):
     for j in git_users:
         for x in email_list:
             if j.get('email') == x:
-                ret_users[x] = j
+                ret_users.append(j)
     return ret_users
