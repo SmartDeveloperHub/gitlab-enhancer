@@ -3,7 +3,8 @@ __author__ = 'alejandrofcarrera'
 
 from glmodule import glsystem, glhook, glapi
 from flask import make_response
-import gitlab, json
+import json
+import gitlab
 
 
 class GlDrainer(object):
@@ -96,5 +97,87 @@ class GlDrainer(object):
         return response
 
     def api_project_owner(self, project_id):
-        response = make_response(json.dumps(glapi.get_project_owner(project_id)))
+        response = make_response(json.dumps(glapi.get_project_owner(self, project_id)))
+        return response
+
+    def api_project_milestones(self, project_id):
+        response = make_response(json.dumps(glapi.get_project_milestones(self, project_id)))
+        return response
+
+    def api_project_milestone(self, project_id, milestone_id):
+        response = make_response(json.dumps(glapi.get_project_milestone(self, project_id, milestone_id)))
+        return response
+
+    def api_project_branches(self, project_id, default_flag):
+        response = make_response(json.dumps(glapi.get_project_branches(self, project_id, default_flag)))
+        return response
+
+    def api_project_branch(self, project_id, branch_name):
+        response = make_response(json.dumps(glapi.get_project_branch(self, project_id, branch_name)))
+        return response
+
+    def api_project_branch_contributors(self, project_id, branch_name):
+        response = make_response(json.dumps(glapi.get_project_branch_contributors(self, project_id, branch_name)))
+        return response
+
+    def api_project_branch_commits(self, project_id, branch_name, user_id, offset):
+        response = make_response(json.dumps(glapi.get_project_branch_commits(self, project_id,
+                                            branch_name, user_id, offset)))
+        return response
+
+    def api_project_commits(self, project_id, user_id, offset):
+        response = make_response(json.dumps(glapi.get_project_commits(self, project_id, user_id, offset)))
+        return response
+
+    def api_project_commit(self, project_id, commit_id):
+        response = make_response(json.dumps(glapi.get_project_commit(self, project_id, commit_id)))
+        return response
+
+    def api_project_commit_diff(self, project_id, commit_id):
+        response = make_response(json.dumps(glapi.get_project_commit_diff(self, project_id, commit_id)))
+        return response
+
+    def api_project_requests(self, project_id, request_state):
+        response = make_response(json.dumps(glapi.get_project_requests(self, project_id, request_state)))
+        return response
+
+    def api_project_request(self, project_id, request_id):
+        response = make_response(json.dumps(glapi.get_project_request(self, project_id, request_id)))
+        return response
+
+    def api_project_request_changes(self, project_id, request_id):
+        response = make_response(json.dumps(glapi.get_project_request_changes(self, project_id, request_id)))
+        return response
+
+    def api_project_file_tree(self, project_id, view, branch_name, path):
+        response = make_response(json.dumps(glapi.get_project_file_tree(self, project_id, view,
+                                            branch_name, path)))
+        return response
+
+    def api_project_contributors(self, project_id):
+        response = make_response(json.dumps(glapi.get_project_contributors(self, project_id)))
+        return response
+
+    def api_users(self, offset):
+        response = make_response(json.dumps(glapi.get_users(self, offset)))
+        return response
+
+    def api_user(self, user_id):
+        response = make_response(json.dumps(glapi.get_user(self, user_id)))
+        return response
+
+    def api_user_projects(self, user_id, relation_type):
+        response = make_response(json.dumps(glapi.get_user_projects(self, user_id, relation_type)))
+        return response
+
+    def api_groups(self):
+        response = make_response(json.dumps(glapi.get_groups(self)))
+        return response
+
+    def api_group(self, group_id):
+        response = make_response(json.dumps(glapi.get_group(self, group_id)))
+        return response
+
+    def api_group_projects(self, group_id, relation_type):
+        response = make_response(json.dumps(glapi.get_group_projects(self, group_id, relation_type)))
         return response

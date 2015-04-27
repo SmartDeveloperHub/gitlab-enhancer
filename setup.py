@@ -8,14 +8,14 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
-    name="Drainer",
-    version="0.0.1",
+    name="sdh-drainer",
+    version="0.0.3",
     author="Alejandro F. Carrera",
     author_email="alejandro.fernandez.carrera@centeropenmiddleware.com",
-    description="A project for Service Drainer",
+    description="A project for Drainer Service",
     license="BSD",
     keywords="inner-source drainer",
-    url="http://packages.python.org/an_example_pypi_project",
+    url="https://bitbucket.org/smartdeveloperhub/sdh-drainer",
     namespace_packages=['sdh-drainer'],
     packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
     include_package_data=True,
