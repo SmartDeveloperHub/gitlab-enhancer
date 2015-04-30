@@ -88,14 +88,16 @@ def get_project_branch(gl, project_id, branch_name):
     return gl.git.getbranch(project_id, branch_name)
 
 
-def get_project_branch_contributors(gl, project_id, branch_name):
+def get_project_branch_contributors(gl, project_id, branch_name, st_time, en_time):
     """ Get Branch's Contributors
     :param gl: GitLab Object Instance
     :param project_id: Project Identifier (int)
     :param branch_name: Branch Identifier (string)
+    :param st_time: Start (Time Window) filter (long)
+    :param en_time: End (Time Window) filter (long)
     :return: Contributors (List)
     """
-    return get_contributors_projects(gl, project_id, branch_name)
+    return get_contributors_projects(gl, project_id, branch_name, st_time, en_time)
 
 
 def get_project_branch_commits(gl, project_id, branch_name, user_id, offset):
@@ -267,13 +269,15 @@ def get_project_file_tree(gl, project_id, view, branch_name, path):
             return ret_tree
 
 
-def get_project_contributors(gl, project_id):
+def get_project_contributors(gl, project_id, st_time, en_time):
     """ Get Project's Contributors
     :param gl: GitLab Object Instance
     :param project_id: Project Identifier (int)
+    :param st_time: Start (Time Window) filter (long)
+    :param en_time: End (Time Window) filter (long)
     :return: Contributors (List)
     """
-    return get_contributors_projects(gl, project_id, None)
+    return get_contributors_projects(gl, project_id, None, st_time, en_time)
 
 
 def get_users(gl, offset):
@@ -375,7 +379,7 @@ def get_entity_projects(gl, entity_id, relation_type, user_type):
     return git_user_projects
 
 
-def get_contributors_projects(gl, project_id, branch_name):
+def get_contributors_projects(gl, project_id, branch_name, st_time, en_time):
 
     # Specific Branch
     if branch_name is not None:
@@ -389,8 +393,13 @@ def get_contributors_projects(gl, project_id, branch_name):
     email_list = {}
     ret_users = []
     for x in commits_list:
-        if email_list.get(x.get('author_email')) is None:
-            email_list[x.get('author_email')] = 1
+        if st_time is not None and en_time is not None:
+            if x.get('created_at') >= st_time and x.get('created_at') <= en_time:
+                if email_list.get(x.get('author_email')) is None:
+                    email_list[x.get('author_email')] = 1
+        else:
+            if email_list.get(x.get('author_email')) is None:
+                email_list[x.get('author_email')] = 1
     git_users = get_users(gl, None)
     for j in git_users:
         for x in email_list:

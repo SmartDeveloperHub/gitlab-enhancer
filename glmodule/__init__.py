@@ -107,8 +107,8 @@ class GlDrainer(object):
     def api_project_branch(self, project_id, branch_name):
         return glapi.get_project_branch(self, project_id, branch_name)
 
-    def api_project_branch_contributors(self, project_id, branch_name):
-        return glapi.get_project_branch_contributors(self, project_id, branch_name)
+    def api_project_branch_contributors(self, project_id, branch_name, st_time, en_time):
+        return glapi.get_project_branch_contributors(self, project_id, branch_name, st_time, en_time)
 
     def api_project_branch_commits(self, project_id, branch_name, user_id, offset):
         return glapi.get_project_branch_commits(self, project_id, branch_name, user_id, offset)
@@ -134,8 +134,8 @@ class GlDrainer(object):
     def api_project_file_tree(self, project_id, view, branch_name, path):
         return glapi.get_project_file_tree(self, project_id, view, branch_name, path)
 
-    def api_project_contributors(self, project_id):
-        return glapi.get_project_contributors(self, project_id)
+    def api_project_contributors(self, project_id, st_time, en_time):
+        return glapi.get_project_contributors(self, project_id, st_time, en_time)
 
     def api_users(self, offset):
         return glapi.get_users(self, offset)

@@ -88,12 +88,27 @@ def api_project_branches(pid):
 def api_project_branch(pid, bid):
     return make_response(json.dumps(drainer.api_project_branch(pid, bid)))
 
-# /api/projects/:pid/branches/:bid
+# /api/projects/:pid/branches/:bid[?long:start_time][?long:end_time]
+# # start_time = time (start) filter
+# # end_time = time (end) filter
 # Get contributors of specific branch about specific gitlab project
+# It is possible filter by range (time)
 @app.route('/api/projects/<int:pid>/branches/<string:bid>/contributors', methods=['GET'])
 @produces('application/json')
 def api_project_branch_contributors(pid, bid):
-    return make_response(json.dumps(drainer.api_project_branch_contributors(pid, bid)))
+    start_time = request.args.get('start_time', None)
+    if start_time is not None:
+        try:
+            start_time = long(start_time)
+        except ValueError:
+            return make_response("", 400)
+    end_time = request.args.get('end_time', None)
+    if end_time is not None:
+        try:
+            end_time = long(end_time)
+        except ValueError:
+            return make_response("", 400)
+    return make_response(json.dumps(drainer.api_project_branch_contributors(pid, bid, start_time, end_time)))
 
 # /api/projects/:pid/branches/:bid/commits[?int:offset][?int:uid][?long:start_time][?long:end_time]
 # # offset = start from number of commits
@@ -251,11 +266,26 @@ def api_project_file_tree(pid):
     return make_response(json.dumps(drainer.api_project_file_tree(pid, view, branch, path)))
 
 # /api/projects/:pid/contributors
+# # start_time = time (start) filter
+# # end_time = time (end) filter
 # Get contributors about specific gitlab project
+# It is possible filter by range (time)
 @app.route('/api/projects/<int:pid>/contributors', methods=['GET'])
 @produces('application/json')
 def api_project_contributors(pid):
-    return make_response(json.dumps(drainer.api_project_contributors(pid)))
+    start_time = request.args.get('start_time', None)
+    if start_time is not None:
+        try:
+            start_time = long(start_time)
+        except ValueError:
+            return make_response("", 400)
+    end_time = request.args.get('end_time', None)
+    if end_time is not None:
+        try:
+            end_time = long(end_time)
+        except ValueError:
+            return make_response("", 400)
+    return make_response(json.dumps(drainer.api_project_contributors(pid, start_time, end_time)))
 
 # /api/users[?int:offset]
 # # offset = start from number of users

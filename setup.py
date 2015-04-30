@@ -9,7 +9,7 @@ def read(fname):
 
 setup(
     name="sdh-drainer",
-    version="0.0.4",
+    version="0.0.5",
     author="Alejandro F. Carrera",
     author_email="alejandro.fernandez.carrera@centeropenmiddleware.com",
     description="A project for Drainer Service",
