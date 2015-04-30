@@ -1,6 +1,6 @@
 __author__ = 'alejandrofcarrera'
 
-import operator
+from dateutil import parser
 
 
 def get_projects(gl):
@@ -124,14 +124,15 @@ def get_project_branch_commits(gl, project_id, branch_name, user_id, offset):
     while git_commits_len is not 0:
         git_commits = gl.git.getrepositorycommits(project_id, branch_name, page=pag, per_page=number_page)
         git_commits_len = len(git_commits)
-        if user is not None:
-            git_ret = []
-            for x in git_commits:
+        git_ret = []
+        for x in git_commits:
+            x['created_at'] = long(parser.parse(x.get('created_at')).strftime("%s")) * 1000
+            if user is not None:
                 if x.get('author_email') == user.get('email'):
                     git_ret.append(x)
-            ret_commits += git_ret
-        else:
-            ret_commits += git_commits
+            else:
+                git_ret.append(x)
+        ret_commits += git_ret
         pag += 1
     return ret_commits
 
@@ -165,6 +166,7 @@ def get_project_commits(gl, project_id, user_id, offset):
             git_commits = gl.git.getrepositorycommits(project_id, i.get('name'), page=pag, per_page=number_page)
             git_commits_len = len(git_commits)
             for x in git_commits:
+                x['created_at'] = long(parser.parse(x.get('created_at')).strftime("%s")) * 1000
                 if ret_commits_hash.get(x.get('id')) is None:
                     if user is None:
                         ret_commits_hash[x.get('id')] = x
