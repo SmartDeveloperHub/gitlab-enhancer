@@ -79,7 +79,9 @@ def api_project_milestone(pid, mid):
 @app.route('/api/projects/<int:pid>/branches', methods=['GET'])
 @produces('application/json')
 def api_project_branches(pid):
-    default = request.args.get('default', False)
+    default = request.args.get('default', 'false')
+    if default != 'false' and default != 'true':
+        return make_response("400: default parameter must be true or false", 400)
     return make_response(json.dumps(drainer.api_project_branches(pid, default)))
 
 # /api/projects/:pid/branches/:bid
@@ -97,23 +99,11 @@ def api_project_branch(pid, bid):
 @app.route('/api/projects/<int:pid>/branches/<string:bid>/contributors', methods=['GET'])
 @produces('application/json')
 def api_project_branch_contributors(pid, bid):
-    start_time = request.args.get('start_time', None)
-    if start_time is not None:
-        try:
-            start_time = long(start_time)
-        except ValueError:
-            return make_response("", 400)
-    end_time = request.args.get('end_time', None)
-    if end_time is not None:
-        try:
-            end_time = long(end_time)
-        except ValueError:
-            return make_response("", 400)
-    if start_time is not None and end_time is None:
-        end_time = long(datetime.datetime.now().strftime("%s")) * 1000
-    else:
-        return make_response("", 400)
-    return make_response(json.dumps(drainer.api_project_branch_contributors(pid, bid, start_time, end_time)))
+    t_window = check_time_window(request.args)
+    if t_window['st_time'] == 'Error' or t_window['en_time'] == 'Error':
+        return make_response("400: start_time or end_time is bad format", 400)
+    return make_response(json.dumps(drainer.api_project_branch_contributors(pid, bid,
+                                    t_window['st_time'], t_window['en_time'])))
 
 # /api/projects/:pid/branches/:bid/commits[?int:offset][?int:uid][?long:start_time][?long:end_time]
 # # offset = start from number of commits
@@ -131,39 +121,23 @@ def api_project_branch_commits(pid, bid):
         try:
             offset = int(offset)
         except ValueError:
-            return make_response("", 400)
+            return make_response("400: offset parameter is not an integer", 400)
     user = request.args.get('uid', None)
     if user is not None:
         try:
             user = int(user)
         except ValueError:
-            return make_response("", 400)
-    start_time = request.args.get('start_time', None)
-    if start_time is not None:
-        try:
-            start_time = long(start_time)
-        except ValueError:
-            return make_response("", 400)
-    end_time = request.args.get('end_time', None)
-    if end_time is not None:
-        try:
-            end_time = long(end_time)
-        except ValueError:
-            return make_response("", 400)
-    if end_time is not None and start_time is None:
-        return make_response("", 400)
-    if start_time is not None:
-        if end_time is None:
-            end_time = long(datetime.datetime.now().strftime("%s")) * 1000
-        if end_time < start_time:
-            return make_response("", 400)
-        else:
-            comm_list = drainer.api_project_branch_commits(pid, bid, user, offset)
-            ret_list = []
-            for x in comm_list:
-                if x.get('created_at') >= start_time and x.get('created_at') <= end_time:
-                    ret_list.append(x)
-            return make_response(json.dumps(ret_list))
+            return make_response("400: uid parameter is not an integer (user identifier)", 400)
+    t_window = check_time_window(request.args)
+    if t_window['st_time'] == 'Error' or t_window['en_time'] == 'Error':
+        return make_response("400: start_time or end_time is bad format", 400)
+    elif t_window['st_time'] is not None and t_window['en_time'] is not None:
+        comm_list = drainer.api_project_branch_commits(pid, bid, user, offset)
+        ret_list = []
+        for x in comm_list:
+            if x.get('created_at') >= t_window['st_time'] and x.get('created_at') <= t_window['en_time']:
+                ret_list.append(x)
+        return make_response(json.dumps(ret_list))
     else:
         return make_response(json.dumps(drainer.api_project_branch_commits(pid, bid, user, offset)))
 
@@ -182,39 +156,23 @@ def api_project_commits(pid):
         try:
             offset = int(offset)
         except ValueError:
-            return make_response("", 400)
+            return make_response("400: offset parameter is not an integer", 400)
     user = request.args.get('uid', None)
     if user is not None:
         try:
             user = int(user)
         except ValueError:
-            return make_response("", 400)
-    start_time = request.args.get('start_time', None)
-    if start_time is not None:
-        try:
-            start_time = long(start_time)
-        except ValueError:
-            return make_response("", 400)
-    end_time = request.args.get('end_time', None)
-    if end_time is not None:
-        try:
-            end_time = long(end_time)
-        except ValueError:
-            return make_response("", 400)
-    if end_time is not None and start_time is None:
-        return make_response("", 400)
-    if start_time is not None:
-        if end_time is None:
-            end_time = long(datetime.datetime.now().strftime("%s")) * 1000
-        if end_time < start_time:
-            return make_response("", 400)
-        else:
-            comm_list = drainer.api_project_commits(pid, user, offset)
-            ret_list = []
-            for x in comm_list:
-                if x.get('created_at') >= start_time and x.get('created_at') <= end_time:
-                    ret_list.append(x)
-            return make_response(json.dumps(ret_list))
+            return make_response("400: uid parameter is not an integer (user identifier)", 400)
+    t_window = check_time_window(request.args)
+    if t_window['st_time'] == 'Error' or t_window['en_time'] == 'Error':
+        return make_response("400: start_time or end_time is bad format", 400)
+    elif t_window['st_time'] is not None and t_window['en_time'] is not None:
+        comm_list = drainer.api_project_commits(pid, user, offset)
+        ret_list = []
+        for x in comm_list:
+            if x.get('created_at') >= t_window['st_time'] and x.get('created_at') <= t_window['en_time']:
+                ret_list.append(x)
+        return make_response(json.dumps(ret_list))
     else:
         return make_response(json.dumps(drainer.api_project_commits(pid, user, offset)))
 
@@ -242,7 +200,7 @@ def api_project_requests(pid):
     mrstate = request.args.get('state', 'all')
     if mrstate is not 'all':
         if mrstate is not 'opened' and mrstate is not 'closed' and mrstate is not 'merged':
-            return make_response("", 400)
+            return make_response("400: state parameter is not a valid state (opened|closed|merged|all)", 400)
     return make_response(json.dumps(drainer.api_project_requests(pid, mrstate)))
 
 # /api/projects/:pid/merge_requests/:mrid
@@ -273,7 +231,7 @@ def api_project_file_tree(pid):
     view = request.args.get('view', 'full')
     if view != 'full':
         if view != 'full' and view != 'simple':
-            return make_response("", 400)
+            return make_response("400: view parameter is not a valid view (full|simple)", 400)
     path = request.args.get('path', None)
     branch = request.args.get('branch', None)
     return make_response(json.dumps(drainer.api_project_file_tree(pid, view, branch, path)))
@@ -286,23 +244,11 @@ def api_project_file_tree(pid):
 @app.route('/api/projects/<int:pid>/contributors', methods=['GET'])
 @produces('application/json')
 def api_project_contributors(pid):
-    start_time = request.args.get('start_time', None)
-    if start_time is not None:
-        try:
-            start_time = long(start_time)
-        except ValueError:
-            return make_response("", 400)
-    end_time = request.args.get('end_time', None)
-    if end_time is not None:
-        try:
-            end_time = long(end_time)
-        except ValueError:
-            return make_response("", 400)
-    if start_time is not None and end_time is None:
-        end_time = long(datetime.datetime.now().strftime("%s")) * 1000
-    else:
-        return make_response("", 400)
-    return make_response(json.dumps(drainer.api_project_contributors(pid, start_time, end_time)))
+    t_window = check_time_window(request.args)
+    if t_window['st_time'] == 'Error' or t_window['en_time'] == 'Error':
+        return make_response("400: start_time or end_time is bad format", 400)
+    return make_response(json.dumps(drainer.api_project_contributors(pid,
+                                    t_window['st_time'], t_window['en_time'])))
 
 # /api/users[?int:offset]
 # # offset = start from number of users
@@ -315,7 +261,7 @@ def api_users():
         try:
             offset = int(offset)
         except ValueError:
-            return make_response("", 400)
+            return make_response("400: offset parameter is not an integer", 400)
     return make_response(json.dumps(drainer.api_users(offset)))
 
 # /api/users/:uid
@@ -333,6 +279,8 @@ def api_user(uid):
 @produces('application/json')
 def api_user_projects(uid):
     relation = request.args.get('relation', 'contributor')
+    if relation != 'contributor' and relation != 'owner':
+        return make_response("400: relation parameter is not a valid relation (contributor|owner)", 400)
     return make_response(json.dumps(drainer.api_user_projects(uid, relation)))
 
 # /api/groups
@@ -357,7 +305,39 @@ def api_group(gid):
 @produces('application/json')
 def api_group_projects(gid):
     relation = request.args.get('relation', 'contributor')
+    if relation != 'contributor' and relation != 'owner':
+        return make_response("400: relation parameter is not a valid relation (contributor|owner)", 400)
     return make_response(json.dumps(drainer.api_group_projects(gid, relation)))
+
+
+# Functions to help another functions
+
+
+def check_time_window(args):
+    start_time = args.get('start_time', None)
+    if start_time is not None:
+        try:
+            start_time = long(start_time)
+        except ValueError:
+            start_time = 'Error'
+    end_time = args.get('end_time', None)
+    if end_time is not None:
+        try:
+            end_time = long(end_time)
+        except ValueError:
+            end_time = 'Error'
+    if start_time is not None and end_time is None:
+        end_time = long(datetime.datetime.now().strftime("%s")) * 1000
+    else:
+        start_time = long(0)
+    if start_time > end_time:
+        start_time = 'Error'
+        end_time = 'Error'
+    return {
+        'st_time': start_time,
+        'en_time': end_time
+    }
+
 
 # Main
 

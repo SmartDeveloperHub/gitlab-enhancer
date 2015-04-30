@@ -69,7 +69,7 @@ def get_project_branches(gl, project_id, default_flag):
     :param default_flag: Filter by type (bool)
     :return: Branches (List)
     """
-    if default_flag is False:
+    if default_flag == 'false':
         return gl.git.getbranches(project_id)
     else:
         git_project = get_project(gl, project_id)
