@@ -4,6 +4,7 @@ __author__ = 'alejandrofcarrera'
 from flask import request, make_response, Flask
 from flask_negotiate import consumes, produces
 import glmodule
+import datetime
 import json
 
 app = Flask(__name__)
@@ -108,6 +109,10 @@ def api_project_branch_contributors(pid, bid):
             end_time = long(end_time)
         except ValueError:
             return make_response("", 400)
+    if start_time is not None and end_time is None:
+        end_time = long(datetime.datetime.now().strftime("%s")) * 1000
+    else:
+        return make_response("", 400)
     return make_response(json.dumps(drainer.api_project_branch_contributors(pid, bid, start_time, end_time)))
 
 # /api/projects/:pid/branches/:bid/commits[?int:offset][?int:uid][?long:start_time][?long:end_time]
@@ -145,7 +150,11 @@ def api_project_branch_commits(pid, bid):
             end_time = long(end_time)
         except ValueError:
             return make_response("", 400)
-    if end_time is not None and start_time is not None:
+    if end_time is not None and start_time is None:
+        return make_response("", 400)
+    if start_time is not None:
+        if end_time is None:
+            end_time = long(datetime.datetime.now().strftime("%s")) * 1000
         if end_time < start_time:
             return make_response("", 400)
         else:
@@ -192,7 +201,11 @@ def api_project_commits(pid):
             end_time = long(end_time)
         except ValueError:
             return make_response("", 400)
-    if end_time is not None and start_time is not None:
+    if end_time is not None and start_time is None:
+        return make_response("", 400)
+    if start_time is not None:
+        if end_time is None:
+            end_time = long(datetime.datetime.now().strftime("%s")) * 1000
         if end_time < start_time:
             return make_response("", 400)
         else:
@@ -285,6 +298,10 @@ def api_project_contributors(pid):
             end_time = long(end_time)
         except ValueError:
             return make_response("", 400)
+    if start_time is not None and end_time is None:
+        end_time = long(datetime.datetime.now().strftime("%s")) * 1000
+    else:
+        return make_response("", 400)
     return make_response(json.dumps(drainer.api_project_contributors(pid, start_time, end_time)))
 
 # /api/users[?int:offset]
