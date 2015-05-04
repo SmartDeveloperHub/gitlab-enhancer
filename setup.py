@@ -16,11 +16,10 @@ setup(
     license="BSD",
     keywords="inner-source drainer",
     url="https://bitbucket.org/smartdeveloperhub/sdh-drainer",
-    namespace_packages=['sdh-drainer'],
     packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
     include_package_data=True,
-    long_description=read('README'),
-    install_requires=['pyapi-gitlab', 'flask', 'flask_negotiate'],
+    long_description=read('README.md'),
+    install_requires=['pyapi-gitlab', 'flask', 'flask_negotiate', 'python-dateutil'],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Topic :: Utilities",
