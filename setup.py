@@ -9,7 +9,7 @@ def read(fname):
 
 setup(
     name="sdh-drainer",
-    version="0.0.5",
+    version="0.0.6",
     author="Alejandro F. Carrera",
     author_email="alejandro.fernandez.carrera@centeropenmiddleware.com",
     description="A project for Drainer Service",
@@ -19,7 +19,7 @@ setup(
     packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
     include_package_data=True,
     long_description=read('README.md'),
-    install_requires=['pyapi-gitlab', 'flask', 'flask_negotiate', 'python-dateutil'],
+    install_requires=['pyapi-gitlab', 'flask', 'flask_negotiate', 'python-dateutil', 'redis'],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Topic :: Utilities",

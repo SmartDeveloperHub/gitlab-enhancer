@@ -3,12 +3,14 @@ __author__ = 'alejandrofcarrera'
 
 from glmodule import glsystem, glhook, glapi
 import gitlab
+import redis
 
 
 class GlDrainer(object):
     def __init__(self, config):
         self.cfg = config
         self.git = None
+        self.redis = None
         self.drainerHost = "%s://%s:%d/system" % (
             self.cfg.get('DRAINER_PROT', 'http'),
             self.cfg.get('DRAINER_IP', '127.0.0.1'),
@@ -25,6 +27,7 @@ class GlDrainer(object):
             self.cfg.get('GITLAB_PORT', 80)
         )
         self.connect_gitlab()
+        self.connect_redis()
 
     @property
     def config(self):
@@ -57,6 +60,18 @@ class GlDrainer(object):
                     __linked = True
             if not __linked:
                 self.git.addprojecthook(project_id=e['id'], url=self.hookHost)
+
+    def connect_redis(self):
+        self.redis = redis.ConnectionPool(
+            host=self.cfg.get('REDIS_IP', '127.0.0.1'),
+            port=self.cfg.get('REDIS_PORT', 6379),
+            db=self.cfg.get('REDIS_DB', 0)
+        )
+        self.redis = redis.Redis(connection_pool=self.redis)
+        try:
+            self.redis.client_list()
+        except redis.ConnectionError:
+            self.redis = None
 
     def connect_gitlab(self):
 
