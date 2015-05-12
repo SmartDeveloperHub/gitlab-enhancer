@@ -326,9 +326,9 @@ def check_time_window(args):
             end_time = long(end_time)
         except ValueError:
             end_time = 'Error'
-    if start_time is not None and end_time is None:
+    if end_time is None:
         end_time = long(datetime.datetime.now().strftime("%s")) * 1000
-    else:
+    if start_time is None:
         start_time = long(0)
     if start_time > end_time:
         start_time = 'Error'
@@ -357,8 +357,6 @@ if __name__ == '__main__':
         )
     else:
         print " * [SCM] Status: online"
-    if drainer.git is None and drainer.redis is None:
-        print " * [ERROR] None of the required services are active"
     if drainer.git is not None and drainer.redis is not None and drainer.redis != "non populated":
         app.run(app.config.get('DRAINER_LISTEN_IP', '0.0.0.0'), app.config.get('DRAINER_PORT', 5000))
     else:
