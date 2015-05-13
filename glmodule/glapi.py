@@ -8,7 +8,12 @@ def get_projects(gl):
     :param gl: GitLab Object Instance
     :return: Projects (List)
     """
-    return gl.git.getprojectsall()
+    git_projects = gl.getprojectsall()
+    for x in git_projects:
+        convert_time_keys(x)
+        if x.get('owner'):
+            del x['owner']
+    return git_projects
 
 
 def get_project(gl, project_id):
@@ -17,7 +22,12 @@ def get_project(gl, project_id):
     :param project_id: Project Identifier (int)
     :return: Project (Object)
     """
-    return gl.git.getproject(project_id)
+    git_project = gl.getproject(project_id)
+    if git_project is False:
+        return False
+    else:
+        convert_time_keys(git_project)
+        return git_project
 
 
 def get_project_owner(gl, project_id):
@@ -28,7 +38,7 @@ def get_project_owner(gl, project_id):
     """
     git_project = get_project(gl, project_id)
     if git_project is False:
-        return git_project
+        return False
 
     # Owner is a group
     if git_project.get('owner') is None:
@@ -37,7 +47,7 @@ def get_project_owner(gl, project_id):
 
     # Owner is a user
     else:
-        git_owner = git_project.get('owner')
+        git_owner = get_user(gl, git_project.get('owner').get('id'))
         git_owner['type'] = 'user'
 
     return git_owner
@@ -49,7 +59,13 @@ def get_project_milestones(gl, project_id):
     :param project_id: Project Identifier (int)
     :return: Milestones (List)
     """
-    return gl.git.getmilestones(project_id)
+    git_miles = gl.getmilestones(project_id)
+    if git_miles is False:
+        return False
+    else:
+        for x in git_miles:
+            convert_time_keys(x)
+        return git_miles
 
 
 def get_project_milestone(gl, project_id, milestone_id):
@@ -59,7 +75,12 @@ def get_project_milestone(gl, project_id, milestone_id):
     :param milestone_id: Milestone Identifier (int)
     :return: Milestone (Object)
     """
-    return gl.git.getmilestone(project_id, milestone_id)
+    git_mile = gl.getmilestone(project_id, milestone_id)
+    if git_mile is False:
+        return False
+    else:
+        convert_time_keys(git_mile)
+        return git_mile
 
 
 def get_project_branches(gl, project_id, default_flag):
@@ -70,12 +91,23 @@ def get_project_branches(gl, project_id, default_flag):
     :return: Branches (List)
     """
     if default_flag == 'false':
-        return gl.git.getbranches(project_id)
+        gl_branches = gl.getbranches(project_id)
+        if gl_branches is False:
+            return False
+        else:
+            for x in gl_branches:
+                convert_time_keys(x)
+            return gl_branches
     else:
         git_project = get_project(gl, project_id)
         if git_project is False:
-            return git_project
-        return [get_project_branch(gl, project_id, git_project.get('default_branch'))]
+            return False
+        else:
+            gl_branches = get_project_branch(gl, project_id, git_project.get('default_branch'))
+            if gl_branches is False:
+                return False
+            else:
+                return [gl_branches]
 
 
 def get_project_branch(gl, project_id, branch_name):
@@ -85,7 +117,12 @@ def get_project_branch(gl, project_id, branch_name):
     :param branch_name: Branch Identifier (string)
     :return: Branch (Object)
     """
-    return gl.git.getbranch(project_id, branch_name)
+    gl_branch = gl.getbranch(project_id, branch_name)
+    if gl_branch is False:
+        return gl_branch
+    else:
+        convert_time_keys(gl_branch)
+        return gl_branch
 
 
 def get_project_branch_contributors(gl, project_id, branch_name, st_time, en_time):
@@ -124,11 +161,11 @@ def get_project_branch_commits(gl, project_id, branch_name, user_id, offset):
     if get_project_branch(gl, project_id, branch_name) is False:
         return False
     while git_commits_len is not 0:
-        git_commits = gl.git.getrepositorycommits(project_id, branch_name, page=pag, per_page=number_page)
+        git_commits = gl.getrepositorycommits(project_id, branch_name, page=pag, per_page=number_page)
         git_commits_len = len(git_commits)
         git_ret = []
         for x in git_commits:
-            x['created_at'] = long(parser.parse(x.get('created_at')).strftime("%s")) * 1000
+            convert_time_keys(x)
             if user is not None:
                 if x.get('author_email') == user.get('email'):
                     git_ret.append(x)
@@ -165,10 +202,10 @@ def get_project_commits(gl, project_id, user_id, offset):
     for i in git_branches:
         git_commits_len = -1
         while git_commits_len is not 0:
-            git_commits = gl.git.getrepositorycommits(project_id, i.get('name'), page=pag, per_page=number_page)
+            git_commits = gl.getrepositorycommits(project_id, i.get('name'), page=pag, per_page=number_page)
             git_commits_len = len(git_commits)
             for x in git_commits:
-                x['created_at'] = long(parser.parse(x.get('created_at')).strftime("%s")) * 1000
+                convert_time_keys(x)
                 if ret_commits_hash.get(x.get('id')) is None:
                     if user is None:
                         ret_commits_hash[x.get('id')] = x
@@ -188,7 +225,9 @@ def get_project_commit(gl, project_id, commit_id):
     :param commit_id: Commit Identifier (sha)
     :return: Commit (Object)
     """
-    return gl.git.getrepositorycommit(project_id, commit_id)
+    gl_commit = gl.getrepositorycommit(project_id, commit_id)
+    convert_time_keys(gl_commit)
+    return gl_commit
 
 
 def get_project_commit_diff(gl, project_id, commit_id):
@@ -198,7 +237,7 @@ def get_project_commit_diff(gl, project_id, commit_id):
     :param commit_id: Commit Identifier (sha)
     :return: Differences (Object)
     """
-    return gl.git.getrepositorycommitdiff(project_id, commit_id)
+    return gl.getrepositorycommitdiff(project_id, commit_id)
 
 
 def get_project_requests(gl, project_id, request_state):
@@ -208,7 +247,10 @@ def get_project_requests(gl, project_id, request_state):
     :param request_state: Optional Type Identifier (string)
     :return: Merge Requests (List)
     """
-    return gl.git.getmergerequests(project_id=project_id, state=request_state)
+    gl_requests = gl.getmergerequests(project_id=project_id, state=request_state)
+    for x in gl_requests:
+        convert_time_keys(x)
+    return gl_requests
 
 
 def get_project_request(gl, project_id, request_id):
@@ -218,7 +260,9 @@ def get_project_request(gl, project_id, request_id):
     :param request_id: Merge Request Identifier (int)
     :return: Merge Request (Object)
     """
-    return gl.git.getmergerequest(project_id, request_id)
+    gl_request = gl.getmergerequest(project_id, request_id)
+    convert_time_keys(gl_request)
+    return gl_request
 
 
 def get_project_request_changes(gl, project_id, request_id):
@@ -228,7 +272,9 @@ def get_project_request_changes(gl, project_id, request_id):
     :param request_id: Merge Request Identifier (int)
     :return: Changes (List)
     """
-    return gl.git.getmergerequestchanges(project_id, request_id)
+    gl_request = gl.getmergerequestchanges(project_id, request_id)
+    convert_time_keys(gl_request)
+    return gl_request
 
 
 def get_project_file_tree(gl, project_id, view, branch_name, path):
@@ -246,7 +292,7 @@ def get_project_file_tree(gl, project_id, view, branch_name, path):
             return git_project
         else:
             branch_name = git_project.get('default_branch')
-    first_step = gl.git.getrepositorytree(project_id, ref_name=branch_name, path=path)
+    first_step = gl.getrepositorytree(project_id, ref_name=branch_name, path=path)
     if view == 'simple' or first_step is False:
         return first_step
     else:
@@ -294,7 +340,9 @@ def get_users(gl, offset):
     ret_users = []
     git_users_len = -1
     while git_users_len is not 0:
-        git_users = gl.git.getusers(page=pag, per_page=number_page)
+        git_users = gl.getusers(page=pag, per_page=number_page)
+        for x in git_users:
+            convert_time_keys(x)
         git_users_len = len(git_users)
         ret_users += git_users
         pag += 1
@@ -306,7 +354,9 @@ def get_user(gl, user_id):
     :param gl: GitLab Object Instance
     :return: User (Object)
     """
-    return gl.git.getuser(user_id)
+    gl_user = gl.getuser(user_id)
+    convert_time_keys(gl_user)
+    return gl_user
 
 
 def get_user_projects(gl, user_id, relation_type):
@@ -324,9 +374,10 @@ def get_groups(gl):
     :param gl: GitLab Object Instance
     :return: Groups (List)
     """
-    git_groups = gl.git.getgroups()
+    git_groups = gl.getgroups()
     for x in git_groups:
-        x['members'] = gl.git.getgroupmembers(x.get('id'))
+        convert_time_keys(x)
+        x['members'] = gl.getgroupmembers(x.get('id'))
     return git_groups
 
 
@@ -336,10 +387,11 @@ def get_group(gl, group_id):
     :param group_id: Group Identifier (int)
     :return: Group (Object)
     """
-    git_groups = gl.git.getgroups()
+    git_groups = gl.getgroups()
     for x in git_groups:
         if x.get('id') == group_id:
-            x['members'] = gl.git.getgroupmembers(x.get('id'))
+            convert_time_keys(x)
+            x['members'] = gl.getgroupmembers(x.get('id'))
             return x
     return False
 
@@ -355,6 +407,22 @@ def get_group_projects(gl, group_id, relation_type):
 
 
 # Functions to help another functions
+
+time_keys = [
+    'created_at', 'updated_at', 'last_activity_at',
+    'due_date', 'authored_date', 'committed_date'
+]
+
+
+def convert_time_keys(o):
+    for k in o.keys():
+        if isinstance(o[k], dict):
+            convert_time_keys(o[k])
+        else:
+            if k in time_keys:
+                o[k] = long(
+                    parser.parse(o.get(k)).strftime("%s")
+                ) * 1000
 
 
 def get_entity_projects(gl, entity_id, relation_type, user_type):

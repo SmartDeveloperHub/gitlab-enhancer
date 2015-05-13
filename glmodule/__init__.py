@@ -1,13 +1,15 @@
 
 __author__ = 'alejandrofcarrera'
 
-from glmodule import glsystem, glhook, glapi
+from glmodule import glsystem, glhook, glapi, glredis
 import gitlab
 import redis
+import sys
 
 
 class GlDrainer(object):
     def __init__(self, config):
+        print " * Drainer Started"
         self.cfg = config
         self.git = None
         self.redis = None
@@ -61,18 +63,6 @@ class GlDrainer(object):
             if not __linked:
                 self.git.addprojecthook(project_id=e['id'], url=self.hookHost)
 
-    def connect_redis(self):
-        self.redis = redis.ConnectionPool(
-            host=self.cfg.get('REDIS_IP', '127.0.0.1'),
-            port=self.cfg.get('REDIS_PORT', 6379),
-            db=self.cfg.get('REDIS_DB', 0)
-        )
-        self.redis = redis.Redis(connection_pool=self.redis)
-        try:
-            self.redis.client_list()
-        except redis.ConnectionError:
-            self.redis = None
-
     def connect_gitlab(self):
 
         # Create git object and connect
@@ -99,73 +89,107 @@ class GlDrainer(object):
             # Check Projects instead of admin area
             self.link_repositories()
 
-# GITLAB ENHANCER API REST
+# REDIS CONNECTION
+
+    def populate_redis(self):
+        print ""
+        # self.populate_redis_users()
+
+    def connect_redis(self):
+
+        # Create redis object and connect
+        __available = False
+        self.redis = redis.ConnectionPool(
+            host=self.cfg.get('REDIS_IP', '127.0.0.1'),
+            port=self.cfg.get('REDIS_PORT', 6379),
+            db=self.cfg.get('REDIS_DB', 0)
+        )
+        self.redis = redis.Redis(connection_pool=self.redis)
+        try:
+            self.redis.client_list()
+            __available = True
+        except redis.ConnectionError:
+            self.redis = None
+
+        # Check database is empty
+        if __available:
+            if self.redis.dbsize() == 3:
+                print " * [REDIS] Database empty detected!"
+                print " * [REDIS] Cold Init - Started."
+                if self.git is None:
+                    print " * [REDIS] Cold Init - Stopped."
+                    self.redis = "non populated"
+                else:
+                    self.populate_redis()
+                    print " * [REDIS] Cold Init - Finished."
+
+# GITLAB (REDIS) ENHANCER API REST
 
     def api_projects(self):
-        return glapi.get_projects(self)
+        return glapi.get_projects(self.git)
 
     def api_project(self, project_id):
-        return glapi.get_project(self, project_id)
+        return glapi.get_project(self.git, project_id)
 
     def api_project_owner(self, project_id):
-        return glapi.get_project_owner(self, project_id)
+        return glapi.get_project_owner(self.git, project_id)
 
     def api_project_milestones(self, project_id):
-        return glapi.get_project_milestones(self, project_id)
+        return glapi.get_project_milestones(self.git, project_id)
 
     def api_project_milestone(self, project_id, milestone_id):
-        return glapi.get_project_milestone(self, project_id, milestone_id)
+        return glapi.get_project_milestone(self.git, project_id, milestone_id)
 
     def api_project_branches(self, project_id, default_flag):
-        return glapi.get_project_branches(self, project_id, default_flag)
+        return glapi.get_project_branches(self.git, project_id, default_flag)
 
     def api_project_branch(self, project_id, branch_name):
-        return glapi.get_project_branch(self, project_id, branch_name)
+        return glapi.get_project_branch(self.git, project_id, branch_name)
 
     def api_project_branch_contributors(self, project_id, branch_name, st_time, en_time):
-        return glapi.get_project_branch_contributors(self, project_id, branch_name, st_time, en_time)
+        return glapi.get_project_branch_contributors(self.git, project_id, branch_name, st_time, en_time)
 
     def api_project_branch_commits(self, project_id, branch_name, user_id, offset):
-        return glapi.get_project_branch_commits(self, project_id, branch_name, user_id, offset)
+        return glapi.get_project_branch_commits(self.git, project_id, branch_name, user_id, offset)
 
     def api_project_commits(self, project_id, user_id, offset):
-        return glapi.get_project_commits(self, project_id, user_id, offset)
+        return glapi.get_project_commits(self.git, project_id, user_id, offset)
 
     def api_project_commit(self, project_id, commit_id):
-        return glapi.get_project_commit(self, project_id, commit_id)
+        return glapi.get_project_commit(self.git, project_id, commit_id)
 
     def api_project_commit_diff(self, project_id, commit_id):
-        return glapi.get_project_commit_diff(self, project_id, commit_id)
+        return glapi.get_project_commit_diff(self.git, project_id, commit_id)
 
     def api_project_requests(self, project_id, request_state):
-        return glapi.get_project_requests(self, project_id, request_state)
+        return glapi.get_project_requests(self.git, project_id, request_state)
 
     def api_project_request(self, project_id, request_id):
-        return glapi.get_project_request(self, project_id, request_id)
+        return glapi.get_project_request(self.git, project_id, request_id)
 
     def api_project_request_changes(self, project_id, request_id):
-        return glapi.get_project_request_changes(self, project_id, request_id)
+        return glapi.get_project_request_changes(self.git, project_id, request_id)
 
     def api_project_file_tree(self, project_id, view, branch_name, path):
-        return glapi.get_project_file_tree(self, project_id, view, branch_name, path)
+        return glapi.get_project_file_tree(self.git, project_id, view, branch_name, path)
 
     def api_project_contributors(self, project_id, st_time, en_time):
-        return glapi.get_project_contributors(self, project_id, st_time, en_time)
+        return glapi.get_project_contributors(self.git, project_id, st_time, en_time)
 
     def api_users(self, offset):
-        return glapi.get_users(self, offset)
+        return glapi.get_users(self.git, offset)
 
     def api_user(self, user_id):
-        return glapi.get_user(self, user_id)
+        return glapi.get_user(self.git, user_id)
 
     def api_user_projects(self, user_id, relation_type):
-        return glapi.get_user_projects(self, user_id, relation_type)
+        return glapi.get_user_projects(self.git, user_id, relation_type)
 
     def api_groups(self):
-        return glapi.get_groups(self)
+        return glapi.get_groups(self.git)
 
     def api_group(self, group_id):
-        return glapi.get_group(self, group_id)
+        return glapi.get_group(self.git, group_id)
 
     def api_group_projects(self, group_id, relation_type):
-        return glapi.get_group_projects(self, group_id, relation_type)
+        return glapi.get_group_projects(self.git, group_id, relation_type)
