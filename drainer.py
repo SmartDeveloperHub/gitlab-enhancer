@@ -60,17 +60,17 @@ def api_project_owner(pid):
 
 # /api/projects/:pid/milestones
 # Get milestone about specific gitlab project
-@app.route('/api/projects/<int:pid>/milestones', methods=['GET'])
-@produces('application/json')
-def api_project_milestones(pid):
-    return make_response(json.dumps(drainer.api_project_milestones(pid)))
+# @app.route('/api/projects/<int:pid>/milestones', methods=['GET'])
+# @produces('application/json')
+# def api_project_milestones(pid):
+#     return make_response(json.dumps(drainer.api_project_milestones(pid)))
 
 # /api/projects/:pid/milestones/:mid
 # Get specific milestone about specific gitlab project
-@app.route('/api/projects/<int:pid>/milestones/<int:mid>', methods=['GET'])
-@produces('application/json')
-def api_project_milestone(pid, mid):
-    return make_response(json.dumps(drainer.api_project_milestone(pid, mid)))
+# @app.route('/api/projects/<int:pid>/milestones/<int:mid>', methods=['GET'])
+# @produces('application/json')
+# def api_project_milestone(pid, mid):
+#     return make_response(json.dumps(drainer.api_project_milestone(pid, mid)))
 
 # /api/projects/:pid/branches[?bool:default]
 # # default = [true|false] for get default branch only
@@ -170,7 +170,7 @@ def api_project_commits(pid):
         comm_list = drainer.api_project_commits(pid, user, offset)
         ret_list = []
         for x in comm_list:
-            if x.get('created_at') >= t_window['st_time'] and x.get('created_at') <= t_window['en_time']:
+            if t_window['st_time'] <= x.get('created_at') <= t_window['en_time']:
                 ret_list.append(x)
         return make_response(json.dumps(ret_list))
     else:
@@ -194,28 +194,28 @@ def api_project_commit_diff(pid, cid):
 # # state = [opened, closed, merged]
 # Get merge requests about specific gitlab project
 # It is possible filter by state
-@app.route('/api/projects/<int:pid>/merge_requests', methods=['GET'])
-@produces('application/json')
-def api_project_requests(pid):
-    mrstate = request.args.get('state', 'all')
-    if mrstate is not 'all':
-        if mrstate is not 'opened' and mrstate is not 'closed' and mrstate is not 'merged':
-            return make_response("400: state parameter is not a valid state (opened|closed|merged|all)", 400)
-    return make_response(json.dumps(drainer.api_project_requests(pid, mrstate)))
+# @app.route('/api/projects/<int:pid>/merge_requests', methods=['GET'])
+# @produces('application/json')
+# def api_project_requests(pid):
+#     mrstate = request.args.get('state', 'all')
+#     if mrstate is not 'all':
+#         if mrstate is not 'opened' and mrstate is not 'closed' and mrstate is not 'merged':
+#             return make_response("400: state parameter is not a valid state (opened|closed|merged|all)", 400)
+#     return make_response(json.dumps(drainer.api_project_requests(pid, mrstate)))
 
 # /api/projects/:pid/merge_requests/:mrid
 # Get specific merge request about specific gitlab project
-@app.route('/api/projects/<int:pid>/merge_requests/<int:mrid>', methods=['GET'])
-@produces('application/json')
-def api_project_request(pid, mrid):
-    return make_response(json.dumps(drainer.api_project_request(pid, mrid)))
+# @app.route('/api/projects/<int:pid>/merge_requests/<int:mrid>', methods=['GET'])
+# @produces('application/json')
+# def api_project_request(pid, mrid):
+#     return make_response(json.dumps(drainer.api_project_request(pid, mrid)))
 
 # /api/projects/:pid/merge_requests/:mrid/changes
 # Get changes of specific merge request about specific gitlab project
-@app.route('/api/projects/<int:pid>/merge_requests/<int:mrid>/changes', methods=['GET'])
-@produces('application/json')
-def api_project_request_changes(pid, mrid):
-    return make_response(json.dumps(drainer.api_project_request_changes(pid, mrid)))
+# @app.route('/api/projects/<int:pid>/merge_requests/<int:mrid>/changes', methods=['GET'])
+# @produces('application/json')
+# def api_project_request_changes(pid, mrid):
+#     return make_response(json.dumps(drainer.api_project_request_changes(pid, mrid)))
 
 # /api/projects/:pid/file_tree[?string:view][?string:path][?string:branch]
 # # view = [simple, full]
