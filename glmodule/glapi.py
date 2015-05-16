@@ -146,11 +146,11 @@ def get_project_branch_commits(gl, project_id, branch_name, user_id, offset):
     :param offset: Optional Offset parameter (int)
     :return: Commits (List)
     """
-    pag = 1
+    pag = 0
     number_page = 100
     user = None
     if offset is not None:
-        pag = 2
+        pag = 1
         number_page = offset
     ret_commits = []
     git_commits_len = -1
@@ -184,11 +184,11 @@ def get_project_commits(gl, project_id, user_id, offset):
     :param offset: Optional Offset parameter (int)
     :return: Commits (List)
     """
-    pag = 1
+    pag = 0
     number_page = 100
     user = None
     if offset is not None:
-        pag = 2
+        pag = 1
         number_page = offset
     ret_commits_hash = {}
     ret_commits = []
@@ -332,10 +332,10 @@ def get_users(gl, offset):
     :param offset: Optional Offset parameter (int)
     :return: Users (List)
     """
-    pag = 1
+    pag = 0
     number_page = 50
     if offset is not None:
-        pag = 2
+        pag = 1
         number_page = offset
     ret_users = []
     git_users_len = -1
@@ -462,7 +462,7 @@ def get_contributors_projects(gl, project_id, branch_name, st_time, en_time):
     ret_users = []
     for x in commits_list:
         if st_time is not None and en_time is not None:
-            if x.get('created_at') >= st_time and x.get('created_at') <= en_time:
+            if st_time <= x.get('created_at') <= en_time:
                 if email_list.get(x.get('author_email')) is None:
                     email_list[x.get('author_email')] = 1
         else:
