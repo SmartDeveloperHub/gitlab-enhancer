@@ -166,6 +166,7 @@ def get_project_branch_commits(gl, project_id, branch_name, user_id, offset):
         git_ret = []
         for x in git_commits:
             convert_time_keys(x)
+            x['branch'] = branch_name
             if user is not None:
                 if x.get('author_email') == user.get('email'):
                     git_ret.append(x)
@@ -206,6 +207,7 @@ def get_project_commits(gl, project_id, user_id, offset):
             git_commits_len = len(git_commits)
             for x in git_commits:
                 convert_time_keys(x)
+                x['branch'] = i.get('name')
                 if ret_commits_hash.get(x.get('id')) is None:
                     if user is None:
                         ret_commits_hash[x.get('id')] = x
