@@ -147,7 +147,7 @@ def get_project_branch_commits(gl, project_id, branch_name, user_id, offset):
     :return: Commits (List)
     """
     pag = 0
-    number_page = 100
+    number_page = 10000
     user = None
     if offset is not None:
         pag = 1
@@ -166,7 +166,6 @@ def get_project_branch_commits(gl, project_id, branch_name, user_id, offset):
         git_ret = []
         for x in git_commits:
             convert_time_keys(x)
-            x['branch'] = branch_name
             if user is not None:
                 if x.get('author_email') == user.get('email'):
                     git_ret.append(x)
@@ -185,11 +184,9 @@ def get_project_commits(gl, project_id, user_id, offset):
     :param offset: Optional Offset parameter (int)
     :return: Commits (List)
     """
-    pag = 0
-    number_page = 100
+    number_page = 10000
     user = None
     if offset is not None:
-        pag = 1
         number_page = offset
     ret_commits_hash = {}
     ret_commits = []
@@ -197,17 +194,20 @@ def get_project_commits(gl, project_id, user_id, offset):
         user = get_user(gl, user_id)
         if user is False:
             return user
-    git_branches = get_project_branches(gl, project_id, False)
+    git_branches = get_project_branches(gl, project_id, 'false')
     if git_branches is False:
         return False
     for i in git_branches:
+        if offset is not None:
+            pag = 1
+        else:
+            pag = 0
         git_commits_len = -1
         while git_commits_len is not 0:
             git_commits = gl.getrepositorycommits(project_id, i.get('name'), page=pag, per_page=number_page)
             git_commits_len = len(git_commits)
             for x in git_commits:
                 convert_time_keys(x)
-                x['branch'] = i.get('name')
                 if ret_commits_hash.get(x.get('id')) is None:
                     if user is None:
                         ret_commits_hash[x.get('id')] = x
@@ -218,6 +218,48 @@ def get_project_commits(gl, project_id, user_id, offset):
                             ret_commits.append(x)
             pag += 1
     return ret_commits
+
+
+def get_project_commits_by_branch(gl, project_id, user_id, offset):
+    """ Get Project's Commits (branch filter)
+    :param gl: GitLab Object Instance
+    :param project_id: Project Identifier (int)
+    :param user_id: Optional User Identifier (int)
+    :param offset: Optional Offset parameter (int)
+    :return: Branch's Commits (Object)
+    """
+    number_page = 10000
+    user = None
+    if offset is not None:
+        number_page = offset
+    ret_commits_hash = {}
+    if user_id is not None:
+        user = get_user(gl, user_id)
+        if user is False:
+            return user
+    git_branches = get_project_branches(gl, project_id, 'false')
+    if git_branches is False:
+        return False
+    for i in git_branches:
+        if offset is not None:
+            pag = 1
+        else:
+            pag = 0
+        if i.get('name') not in ret_commits_hash:
+            ret_commits_hash[i.get('name')] = []
+        git_commits_len = -1
+        while git_commits_len is not 0:
+            git_commits = gl.getrepositorycommits(project_id, i.get('name'), page=pag, per_page=number_page)
+            git_commits_len = len(git_commits)
+            for x in git_commits:
+                convert_time_keys(x)
+            if user is None:
+                ret_commits_hash[i.get('name')].extend(git_commits)
+            else:
+                if x.get('author_email') == user.get('email'):
+                    ret_commits_hash[i.get('name')].extend(git_commits)
+            pag += 1
+    return ret_commits_hash
 
 
 def get_project_commit(gl, project_id, commit_id):

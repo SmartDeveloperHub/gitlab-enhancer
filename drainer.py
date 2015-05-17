@@ -135,7 +135,7 @@ def api_project_branch_commits(pid, bid):
         comm_list = drainer.api_project_branch_commits(pid, bid, user, offset)
         ret_list = []
         for x in comm_list:
-            if x.get('created_at') >= t_window['st_time'] and x.get('created_at') <= t_window['en_time']:
+            if t_window['st_time'] <= x.get('created_at') <= t_window['en_time']:
                 ret_list.append(x)
         return make_response(json.dumps(ret_list))
     else:
