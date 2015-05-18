@@ -1,4 +1,3 @@
-
 __author__ = 'alejandrofcarrera'
 
 from flask import request, make_response, Flask
@@ -26,6 +25,7 @@ def hook_system():
     resp = make_response('', 200)
     return resp
 
+
 @app.route('/hook', methods=['POST'])
 @consumes('application/json')
 def hook_specific():
@@ -34,6 +34,7 @@ def hook_specific():
     drainer.hook_specific(request.json)
     resp = make_response('', 200)
     return resp
+
 
 # GitLab API Mapping
 
@@ -63,7 +64,7 @@ def api_project_owner(pid):
 # @app.route('/api/projects/<int:pid>/milestones', methods=['GET'])
 # @produces('application/json')
 # def api_project_milestones(pid):
-#     return make_response(json.dumps(drainer.api_project_milestones(pid)))
+# return make_response(json.dumps(drainer.api_project_milestones(pid)))
 
 # /api/projects/:pid/milestones/:mid
 # Get specific milestone about specific gitlab project
@@ -102,8 +103,11 @@ def api_project_branch_contributors(pid, bid):
     t_window = check_time_window(request.args)
     if t_window['st_time'] == 'Error' or t_window['en_time'] == 'Error':
         return make_response("400: start_time or end_time is bad format", 400)
-    return make_response(json.dumps(drainer.api_project_branch_contributors(pid, bid,
-                                    t_window['st_time'], t_window['en_time'])))
+    return make_response(
+        json.dumps(
+            drainer.api_project_branch_contributors(pid, bid, t_window)
+        )
+    )
 
 # /api/projects/:pid/branches/:bid/commits[?int:offset][?int:uid][?long:start_time][?long:end_time]
 # # offset = start from number of commits
@@ -131,15 +135,11 @@ def api_project_branch_commits(pid, bid):
     t_window = check_time_window(request.args)
     if t_window['st_time'] == 'Error' or t_window['en_time'] == 'Error':
         return make_response("400: start_time or end_time is bad format", 400)
-    elif t_window['st_time'] is not None and t_window['en_time'] is not None:
-        comm_list = drainer.api_project_branch_commits(pid, bid, user, offset)
-        ret_list = []
-        for x in comm_list:
-            if t_window['st_time'] <= x.get('created_at') <= t_window['en_time']:
-                ret_list.append(x)
-        return make_response(json.dumps(ret_list))
-    else:
-        return make_response(json.dumps(drainer.api_project_branch_commits(pid, bid, user, offset)))
+    return make_response(
+        json.dumps(
+            drainer.api_project_branch_commits(pid, bid, user, offset, t_window)
+        )
+    )
 
 # /api/projects/:pid/commits[?int:uid][?long:start_time][?long:end_time]
 # # uid = user identifier
@@ -166,15 +166,11 @@ def api_project_commits(pid):
     t_window = check_time_window(request.args)
     if t_window['st_time'] == 'Error' or t_window['en_time'] == 'Error':
         return make_response("400: start_time or end_time is bad format", 400)
-    elif t_window['st_time'] is not None and t_window['en_time'] is not None:
-        comm_list = drainer.api_project_commits(pid, user, offset)
-        ret_list = []
-        for x in comm_list:
-            if t_window['st_time'] <= x.get('created_at') <= t_window['en_time']:
-                ret_list.append(x)
-        return make_response(json.dumps(ret_list))
-    else:
-        return make_response(json.dumps(drainer.api_project_commits(pid, user, offset)))
+    return make_response(
+        json.dumps(
+            drainer.api_project_commits(pid, user, offset, t_window)
+        )
+    )
 
 # /api/projects/:pid/commits/:cid
 # Get specific commit about specific gitlab project
@@ -247,8 +243,11 @@ def api_project_contributors(pid):
     t_window = check_time_window(request.args)
     if t_window['st_time'] == 'Error' or t_window['en_time'] == 'Error':
         return make_response("400: start_time or end_time is bad format", 400)
-    return make_response(json.dumps(drainer.api_project_contributors(pid,
-                                    t_window['st_time'], t_window['en_time'])))
+    return make_response(
+        json.dumps(
+            drainer.api_project_contributors(pid, t_window)
+        )
+    )
 
 # /api/users[?int:offset]
 # # offset = start from number of users
