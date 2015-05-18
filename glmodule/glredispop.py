@@ -13,7 +13,7 @@ def populate_redis_projects(gl_drainer, gl_redis):
     print_progress("    Projects", 0)
     for i in p:
         o = gl_drainer.api_project_owner(i.get('id'))
-        gl_redis.hmset("projects:" + str(i.get('id')), {
+        gl_redis.hmset("projects:" + str(i.get('id')) + ":", {
             'id': i.get('id'),
             'name': i.get('name'),
             'description': i.get('description'),
@@ -32,7 +32,7 @@ def populate_redis_projects(gl_drainer, gl_redis):
 
 
 def populate_redis_branches(gl_drainer, gl_redis):
-    p = map(lambda x: int(x.split(':')[1]), gl_redis.keys("projects:*"))
+    p = map(lambda x: int(x.split(':')[1]), gl_redis.keys("projects:*:"))
     p_number = 1
     print_progress("    Branches (0/" + str(len(p)) + ")", 0)
     for i in p:
@@ -68,9 +68,7 @@ def populate_redis_branches(gl_drainer, gl_redis):
 #     "users:id[favourite_language]" = top_language_value
 
 def populate_redis_commits(gl_drainer, gl_redis):
-    b = map(lambda x: int(x.split(':')[1]), gl_redis.keys("projects:*:branches:*"))
-    p = []
-    [p.append(item) for item in b if item not in p]
+    p = map(lambda x: int(x.split(':')[1]), gl_redis.keys("projects:*:"))
     p_number = 0
     for i in p:
         print_progress("    Commits (" + str(p_number) + "/" + str(len(p)) + ")", 0)
