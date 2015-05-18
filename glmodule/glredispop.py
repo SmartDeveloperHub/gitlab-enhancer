@@ -14,6 +14,7 @@ def populate_redis_projects(gl_drainer, gl_redis):
     for i in p:
         o = gl_drainer.api_project_owner(i.get('id'))
         gl_redis.hmset("projects:" + str(i.get('id')), {
+            'id': i.get('id'),
             'name': i.get('name'),
             'description': i.get('description'),
             'created_at': i.get('created_at'),
@@ -41,6 +42,7 @@ def populate_redis_branches(gl_drainer, gl_redis):
         for j in b:
             id_com = j.get('commit').get('id')
             gl_redis.hmset("projects:" + str(i) + ":branches:" + j.get('name'), {
+                'name': j.get('name'),
                 'protected': j.get('protected'),
                 'last_commit': "projects:" + str(i) + ":commits:" + id_com
             })
@@ -80,6 +82,7 @@ def populate_redis_commits(gl_drainer, gl_redis):
 
             # Insert commit information
             gl_redis.hmset("projects:" + str(i) + ":commits:" + j.get('id'), {
+                'id': j.get('id'),
                 'author_email': j.get('author_email'),
                 'author_name': j.get('author_name'),
                 'created_at': j.get('created_at'),
@@ -144,7 +147,9 @@ def populate_redis_users(gl_drainer, gl_redis):
     print_progress("    Users", 0)
     for i in u:
         gl_redis.hmset("users:" + str(i.get('id')), {
+            'id': i.get('id'),
             'name': i.get('name'),
+            'email': i.get('email'),
             'created_at': i.get('created_at'),
             'skype': i.get('skype'),
             'linkedin': i.get('linkedin'),
@@ -169,6 +174,7 @@ def populate_redis_groups(gl_drainer, gl_redis):
             gl_redis.rpush("groups:" + str(i.get('id')) +
                            ":members", "users:" + str(x.get('id')))
         gl_redis.hmset("groups:" + str(i.get('id')), {
+            'id': i.get('id'),
             'name': i.get('name'),
             'path': i.get('path'),
             'description': i.get('description')
