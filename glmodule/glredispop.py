@@ -89,7 +89,7 @@ def populate_redis_commits(gl_drainer, gl_redis):
             })
 
             # Insert commit to Sorted List (project)
-            gl_redis.zadd("projects:" + str(i) + ":commits",
+            gl_redis.zadd("projects:" + str(i) + ":commits:",
                           "projects:" + str(i) + ":commits:" + j.get('id'),
                           j.get('created_at'))
 
@@ -112,9 +112,9 @@ def populate_redis_commits(gl_drainer, gl_redis):
 
         # Insert Last and First Commit date (Sorted List by Score)
         gl_redis.hset("projects:" + str(i), 'first_commit_at', gl_redis.zrange("projects:" +
-                      str(i) + ":commits", 0, 0, withscores=True)[0][1])
+                      str(i) + ":commits:", 0, 0, withscores=True)[0][1])
         gl_redis.hset("projects:" + str(i), 'last_commit_at', gl_redis.zrange("projects:" +
-                      str(i) + ":commits", -1, -1, withscores=True)[0][1])
+                      str(i) + ":commits:", -1, -1, withscores=True)[0][1])
 
     # Insert user additional information
     pc = gl_redis.keys("users:*:projects:" + str(i) + ":commits")
@@ -205,7 +205,7 @@ def inject_user_info(gl_redis, project_id, commit):
     b = b[0]
 
     # Insert commit to Sorted List
-    gl_redis.zadd("users:" + str(b) + ":projects:" + str(project_id) + ":commits",
+    gl_redis.zadd("users:" + str(b) + ":projects:" + str(project_id) + ":commits:",
                   "projects:" + str(project_id) + ":commits:" + commit.get('id'),
                   commit.get('created_at'))
 
