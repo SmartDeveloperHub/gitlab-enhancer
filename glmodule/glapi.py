@@ -363,7 +363,9 @@ def get_users(gl, offset):
         [git_users_id.append(x.get('id')) for x in git_users]
         ret_users += git_users_id
         pag += 1
-    return ret_users
+    ret_users_unique = []
+    [ret_users_unique.append(x) for x in ret_users if x not in ret_users_unique]
+    return ret_users_unique
 
 
 def get_user(gl, user_id):
@@ -411,6 +413,7 @@ def get_group(gl, group_id):
     if git_group is False:
         return False
     else:
+        del git_group['projects']
         convert_time_keys(git_group)
         git_group['members'] = gl.getgroupmembers(git_group.get('id'))
         return git_group
@@ -476,7 +479,10 @@ def get_contributors_projects(gl, project_id, branch_name, t_window):
         return False
     else:
         [email_list.update({x.get('author_email'): '1'}) for x in commits_list]
+        email_list = email_list.keys()
         git_users = get_users(gl, None)
+        git_users_details = []
+        [git_users_details.append(get_user(gl, x)) for x in git_users]
         ret_users = []
-        [ret_users.append(x) for x in git_users if x.get('email') in email_list]
+        [ret_users.append(x) for x in git_users_details if x.get('email') in email_list]
         return ret_users

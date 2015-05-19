@@ -356,7 +356,7 @@ if __name__ == '__main__':
         )
     else:
         print " * [SCM] Status: online"
-    if drainer.git is not None and drainer.redis is not None and drainer.redis != "non populated":
+    if drainer.git is not None or (drainer.redis is not None and drainer.redis_status is True):
         app.run(app.config.get('DRAINER_LISTEN_IP', '0.0.0.0'), app.config.get('DRAINER_PORT', 5000))
     else:
         print " * Drainer finished"

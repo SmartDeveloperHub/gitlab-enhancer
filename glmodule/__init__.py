@@ -149,7 +149,7 @@ class GlDrainer(object):
             return glredis.get_project(self.redis, project_id)
 
     def api_project_owner(self, project_id):
-        if self.redis_status is not False:
+        if self.redis_status is False:
             return glapi.get_project_owner(self.git, project_id)
         else:
             return glredis.get_project_owner(self.redis, project_id)
