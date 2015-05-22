@@ -29,14 +29,14 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
-    name="sdh-drainer",
+    name="gl-enhancer",
     version="0.1.0",
     author="Alejandro F. Carrera",
     author_email="alejandro.fernandez.carrera@centeropenmiddleware.com",
-    description="A project for Drainer Service",
+    description="A project for Gitlab Enhancer Service",
     license="BSD",
     keywords="inner-source drainer",
-    url="https://bitbucket.org/smartdeveloperhub/sdh-drainer",
+    url="https://github.com/SmartDeveloperHub/gitlab-enhancer",
     packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
     include_package_data=True,
     long_description=read('README.md'),
