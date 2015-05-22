@@ -21,7 +21,7 @@
 
 __author__ = 'Alejandro F. Carrera'
 
-from glmodule import glsystem, glhook, glapi, glredis, glredispop
+from glmodule import glhook, glapi, glredis, glredispop
 import gitlab
 import redis
 import time
@@ -59,7 +59,7 @@ class GlDrainer(object):
 # GITLAB HOOKS
 
     def hook_system(self, response_hook):
-        glsystem.hook_system(response_hook)
+        glhook.hook_system(response_hook)
 
     def hook_specific(self, response_hook):
         glhook.hook_specific(response_hook)

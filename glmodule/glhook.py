@@ -23,13 +23,12 @@ __author__ = 'Alejandro F. Carrera'
 
 import json
 
-# Repository Web Hooks (glmodule-ce)
-# Push (push tags is not included)
-# Tags: create / delete
-# Issues: create / update / close / reopen
-# Merge Request: create / update / merge / close
+# Web Hooks (glmodule-ce)
 
 
 def hook_specific(event):
-    print("hook_specific from glhook")
+    print("hook_specific from glhook (repository)")
 
+
+def hook_system(event):
+    print("hook_specific from glhook (system)")
