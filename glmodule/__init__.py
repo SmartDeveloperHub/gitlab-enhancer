@@ -156,11 +156,11 @@ class GlDrainer(object):
 
 # GITLAB (REDIS) ENHANCER API REST
 
-    def api_projects(self):
+    def api_projects(self, details):
         if self.redis_status is False:
-            return glapi.get_projects(self.git)
+            return glapi.get_projects(self.git, details)
         else:
-            return glredis.get_projects(self.redis)
+            return glredis.get_projects(self.redis, details)
 
     def api_project(self, project_id):
         if self.redis_status is False:
@@ -180,13 +180,13 @@ class GlDrainer(object):
     # def api_project_milestone(self, project_id, milestone_id):
     #     return glapi.get_project_milestone(self.git, project_id, milestone_id)
 
-    def api_project_branches(self, project_id, default_flag):
+    def api_project_branches(self, project_id, default_flag, details):
         if self.redis_status is False:
             return glapi.get_project_branches(
-                self.git, project_id, default_flag)
+                self.git, project_id, default_flag, details)
         else:
             return glredis.get_project_branches(
-                self.redis, project_id, default_flag)
+                self.redis, project_id, default_flag, details)
 
     def api_project_branch(self, project_id, branch_name):
         if self.redis_status is False:
@@ -210,7 +210,7 @@ class GlDrainer(object):
                 self.git,project_id, branch_name, user_id, offset, t_window, details)
         else:
             return glredis.get_project_branch_commits(
-                self.redis, project_id, branch_name, user_id, offset, t_window)
+                self.redis, project_id, branch_name, user_id, offset, t_window, details)
 
     def api_project_commits(self, project_id, user_id, offset, t_window, details):
         if self.redis_status is False:
@@ -218,14 +218,6 @@ class GlDrainer(object):
                 self.git, project_id, user_id, offset, t_window, details)
         else:
             return glredis.get_project_commits(
-                self.redis, project_id, user_id, offset, t_window)
-
-    def get_project_commits_by_branch(self, project_id, user_id, offset, t_window, details):
-        if self.redis_status is False:
-            return glapi.get_project_commits_by_branch(
-                self.git, project_id, user_id, offset, t_window, details)
-        else:
-            return glredis.get_project_commits_by_branch(
                 self.redis, project_id, user_id, offset, t_window)
 
     def api_project_commit(self, project_id, commit_id):
@@ -254,12 +246,7 @@ class GlDrainer(object):
     #     return glapi.get_project_request_changes(self.git, project_id, request_id)
 
     def api_project_file_tree(self, project_id, view, branch_name, path):
-        if self.redis_status is False:
-            return glapi.get_project_file_tree(
-                self.git, project_id, view, branch_name, path)
-        else:
-            return glredis.get_project_file_tree(
-                self.redis, project_id, view, branch_name, path)
+        return glapi.get_project_file_tree(self.git, project_id, view, branch_name, path)
 
     def api_project_contributors(self, project_id, t_window):
         if self.redis_status is False:
@@ -279,11 +266,11 @@ class GlDrainer(object):
         else:
             return glredis.get_user(self.redis, user_id)
 
-    def api_user_projects(self, user_id, relation_type):
+    def api_user_projects(self, user_id, relation_type, t_window):
         if self.redis_status is False:
-            return glapi.get_user_projects(self.git, user_id, relation_type)
+            return glapi.get_user_projects(self.git, user_id, relation_type, t_window)
         else:
-            return glredis.get_user_projects(self.redis, user_id, relation_type)
+            return glredis.get_user_projects(self.redis, user_id, relation_type, t_window)
 
     def api_groups(self):
         if self.redis_status is False:
@@ -297,8 +284,11 @@ class GlDrainer(object):
         else:
             return glredis.get_group(self.redis, group_id)
 
-    def api_group_projects(self, group_id, relation_type):
+    def api_group_projects(self, group_id, relation_type, t_window):
         if self.redis_status is False:
-            return glapi.get_group_projects(self.git, group_id, relation_type)
+            return glapi.get_group_projects(self.git, group_id, relation_type, t_window)
         else:
-            return glredis.get_group_projects(self.redis, group_id, relation_type)
+            return glredis.get_group_projects(self.redis, group_id, relation_type, t_window)
+
+    def sp_project_commits_by_branch(self, project_id, t_window):
+        return glapi.sp_project_commits_by_branch(self.git, project_id, t_window)

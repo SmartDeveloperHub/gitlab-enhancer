@@ -64,7 +64,7 @@ def hook_specific():
 @app.route('/api/projects', methods=['GET'])
 @produces('application/json')
 def api_projects():
-    return make_response(json.dumps(drainer.api_projects()))
+    return make_response(json.dumps(drainer.api_projects(False)))
 
 # /api/projects/:pid
 # Get specific gitlab project
@@ -82,17 +82,17 @@ def api_project_owner(pid):
 
 # /api/projects/:pid/milestones
 # Get milestone about specific gitlab project
-# @app.route('/api/projects/<int:pid>/milestones', methods=['GET'])
-# @produces('application/json')
-# def api_project_milestones(pid):
-# return make_response(json.dumps(drainer.api_project_milestones(pid)))
+@app.route('/api/projects/<int:pid>/milestones', methods=['GET'])
+@produces('application/json')
+def api_project_milestones(pid):
+    return make_response(json.dumps(drainer.api_project_milestones(pid)))
 
 # /api/projects/:pid/milestones/:mid
 # Get specific milestone about specific gitlab project
-# @app.route('/api/projects/<int:pid>/milestones/<int:mid>', methods=['GET'])
-# @produces('application/json')
-# def api_project_milestone(pid, mid):
-#     return make_response(json.dumps(drainer.api_project_milestone(pid, mid)))
+@app.route('/api/projects/<int:pid>/milestones/<int:mid>', methods=['GET'])
+@produces('application/json')
+def api_project_milestone(pid, mid):
+    return make_response(json.dumps(drainer.api_project_milestone(pid, mid)))
 
 # /api/projects/:pid/branches[?bool:default]
 # # default = [true|false] for get default branch only
@@ -104,7 +104,7 @@ def api_project_branches(pid):
     default = request.args.get('default', 'false')
     if default != 'false' and default != 'true':
         return make_response("400: default parameter must be true or false", 400)
-    return make_response(json.dumps(drainer.api_project_branches(pid, default)))
+    return make_response(json.dumps(drainer.api_project_branches(pid, default, False)))
 
 # /api/projects/:pid/branches/:bid
 # Get specific branch about specific gitlab project
@@ -158,7 +158,7 @@ def api_project_branch_commits(pid, bid):
         return make_response("400: start_time or end_time is bad format", 400)
     return make_response(
         json.dumps(
-            drainer.api_project_branch_commits(pid, bid, user, offset, t_window)
+            drainer.api_project_branch_commits(pid, bid, user, offset, t_window, False)
         )
     )
 
@@ -189,7 +189,7 @@ def api_project_commits(pid):
         return make_response("400: start_time or end_time is bad format", 400)
     return make_response(
         json.dumps(
-            drainer.api_project_commits(pid, user, offset, t_window)
+            drainer.api_project_commits(pid, user, offset, t_window, False)
         )
     )
 
@@ -200,39 +200,32 @@ def api_project_commits(pid):
 def api_project_commit(pid, cid):
     return make_response(json.dumps(drainer.api_project_commit(pid, cid)))
 
-# /api/projects/:pid/commits/:cid/diff
-# Get differences of specific commit about specific gitlab project
-@app.route('/api/projects/<int:pid>/commits/<string:cid>/diff', methods=['GET'])
-@produces('application/json')
-def api_project_commit_diff(pid, cid):
-    return make_response(json.dumps(drainer.api_project_commit_diff(pid, cid)))
-
 # /api/projects/:pid/merge_requests[?string:state]
 # # state = [opened, closed, merged]
 # Get merge requests about specific gitlab project
 # It is possible filter by state
-# @app.route('/api/projects/<int:pid>/merge_requests', methods=['GET'])
-# @produces('application/json')
-# def api_project_requests(pid):
-#     mrstate = request.args.get('state', 'all')
-#     if mrstate is not 'all':
-#         if mrstate is not 'opened' and mrstate is not 'closed' and mrstate is not 'merged':
-#             return make_response("400: state parameter is not a valid state (opened|closed|merged|all)", 400)
-#     return make_response(json.dumps(drainer.api_project_requests(pid, mrstate)))
+@app.route('/api/projects/<int:pid>/merge_requests', methods=['GET'])
+@produces('application/json')
+def api_project_requests(pid):
+    mrstate = request.args.get('state', 'all')
+    if mrstate is not 'all':
+        if mrstate is not 'opened' and mrstate is not 'closed' and mrstate is not 'merged':
+            return make_response("400: state parameter is not a valid state (opened|closed|merged|all)", 400)
+    return make_response(json.dumps(drainer.api_project_requests(pid, mrstate)))
 
 # /api/projects/:pid/merge_requests/:mrid
 # Get specific merge request about specific gitlab project
-# @app.route('/api/projects/<int:pid>/merge_requests/<int:mrid>', methods=['GET'])
-# @produces('application/json')
-# def api_project_request(pid, mrid):
-#     return make_response(json.dumps(drainer.api_project_request(pid, mrid)))
+@app.route('/api/projects/<int:pid>/merge_requests/<int:mrid>', methods=['GET'])
+@produces('application/json')
+def api_project_request(pid, mrid):
+    return make_response(json.dumps(drainer.api_project_request(pid, mrid)))
 
 # /api/projects/:pid/merge_requests/:mrid/changes
 # Get changes of specific merge request about specific gitlab project
-# @app.route('/api/projects/<int:pid>/merge_requests/<int:mrid>/changes', methods=['GET'])
-# @produces('application/json')
-# def api_project_request_changes(pid, mrid):
-#     return make_response(json.dumps(drainer.api_project_request_changes(pid, mrid)))
+@app.route('/api/projects/<int:pid>/merge_requests/<int:mrid>/changes', methods=['GET'])
+@produces('application/json')
+def api_project_request_changes(pid, mrid):
+    return make_response(json.dumps(drainer.api_project_request_changes(pid, mrid)))
 
 # /api/projects/:pid/file_tree[?string:view][?string:path][?string:branch]
 # # view = [simple, full]
@@ -298,10 +291,13 @@ def api_user(uid):
 @app.route('/api/users/<int:uid>/projects', methods=['GET'])
 @produces('application/json')
 def api_user_projects(uid):
+    t_window = check_time_window(request.args)
+    if t_window['st_time'] == 'Error' or t_window['en_time'] == 'Error':
+        return make_response("400: start_time or end_time is bad format", 400)
     relation = request.args.get('relation', 'contributor')
     if relation != 'contributor' and relation != 'owner':
         return make_response("400: relation parameter is not a valid relation (contributor|owner)", 400)
-    return make_response(json.dumps(drainer.api_user_projects(uid, relation)))
+    return make_response(json.dumps(drainer.api_user_projects(uid, relation, t_window)))
 
 # /api/groups
 # Get gitlab groups
@@ -324,10 +320,13 @@ def api_group(gid):
 @app.route('/api/groups/<int:gid>/projects', methods=['GET'])
 @produces('application/json')
 def api_group_projects(gid):
+    t_window = check_time_window(request.args)
+    if t_window['st_time'] == 'Error' or t_window['en_time'] == 'Error':
+        return make_response("400: start_time or end_time is bad format", 400)
     relation = request.args.get('relation', 'contributor')
     if relation != 'contributor' and relation != 'owner':
         return make_response("400: relation parameter is not a valid relation (contributor|owner)", 400)
-    return make_response(json.dumps(drainer.api_group_projects(gid, relation)))
+    return make_response(json.dumps(drainer.api_group_projects(gid, relation, t_window)))
 
 
 # Functions to help another functions

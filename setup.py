@@ -30,7 +30,7 @@ def read(fname):
 
 setup(
     name="gl-enhancer",
-    version="0.1.0",
+    version="0.2.0",
     author="Alejandro F. Carrera",
     author_email="alejandro.fernandez.carrera@centeropenmiddleware.com",
     description="A project for Gitlab Enhancer Service",
@@ -40,7 +40,7 @@ setup(
     packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
     include_package_data=True,
     long_description=read('README.md'),
-    install_requires=['pyapi-gitlab', 'flask', 'flask_negotiate', 'python-dateutil', 'redis'],
+    install_requires=['pyapi-gitlab', 'flask', 'flask_negotiate', 'python-dateutil', 'redis', 'unittest2'],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Topic :: Utilities",
