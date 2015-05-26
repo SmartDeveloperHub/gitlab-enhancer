@@ -40,7 +40,7 @@ setup(
     packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
     include_package_data=True,
     long_description=read('README.md'),
-    install_requires=['pyapi-gitlab', 'flask', 'flask_negotiate', 'python-dateutil', 'redis', 'unittest2'],
+    install_requires=['pyapi-gitlab', 'flask', 'flask_negotiate', 'python-dateutil', 'redis'],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Topic :: Utilities",
