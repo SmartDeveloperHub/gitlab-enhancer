@@ -111,24 +111,25 @@ def populate_redis_commits(gl_drainer, gl_redis):
         gl_redis.hset("projects:" + str(i), 'contributors', u)
 
     # Insert user additional information
-    pc = gl_redis.keys("users:*:projects:" + str(i) + ":commits:")
-    users_temp = {}
-    for i in pc:
-        f = gl_redis.zrange(i, 0, 0, withscores=True)[0][1]
-        l = gl_redis.zrange(i, -1, -1, withscores=True)[0][1]
-        user_id = "users:" + i.split(':')[1]
-        if user_id in users_temp:
-            if l > users_temp[user_id]["last"]:
+    for i in projects:
+        pc = gl_redis.keys("users:*:projects:" + str(i) + ":commits:")
+        users_temp = {}
+        for j in pc:
+            f = gl_redis.zrange(j, 0, 0, withscores=True)[0][1]
+            l = gl_redis.zrange(j, -1, -1, withscores=True)[0][1]
+            user_id = "users:" + j.split(':')[1]
+            if user_id in users_temp:
+                if l > users_temp[user_id]["last"]:
+                    users_temp[user_id]["last"] = l
+                if f < users_temp[user_id]["first"]:
+                    users_temp[user_id]["first"] = f
+            else:
+                users_temp[user_id] = {}
                 users_temp[user_id]["last"] = l
-            if f < users_temp[user_id]["first"]:
                 users_temp[user_id]["first"] = f
-        else:
-            users_temp[user_id] = {}
-            users_temp[user_id]["last"] = l
-            users_temp[user_id]["first"] = f
-    for i in users_temp.keys():
-        gl_redis.hset(i, 'first_commit_at', users_temp[i]['first'])
-        gl_redis.hset(i, 'last_commit_at', users_temp[i]['last'])
+        for j in users_temp.keys():
+            gl_redis.hset(j, 'first_commit_at', users_temp[j]['first'])
+            gl_redis.hset(j, 'last_commit_at', users_temp[j]['last'])
 
     print ""
 
