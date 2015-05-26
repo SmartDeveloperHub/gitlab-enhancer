@@ -410,12 +410,8 @@ def get_groups(gl):
     """
     gl_g = gl.getgroups()
     if gl_g is False:
-        return False
-    g = map(lambda x: int(x.get('id')), gl_g)
-    if len(g) == 0:
-        return False
-    else:
-        return g
+        return []
+    return map(lambda x: int(x.get('id')), gl_g)
 
 
 def get_group(gl, group_id):
