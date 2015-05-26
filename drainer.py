@@ -239,9 +239,8 @@ def api_project_request_changes(pid, mrid):
 @produces('application/json')
 def api_project_file_tree(pid):
     view = request.args.get('view', 'full')
-    if view != 'full':
-        if view != 'full' and view != 'simple':
-            return make_response("400: view parameter is not a valid view (full|simple)", 400)
+    if view != 'full' and view != 'simple':
+        return make_response("400: view parameter is not a valid view (full|simple)", 400)
     path = request.args.get('path', None)
     branch = request.args.get('branch', None)
     return make_response(json.dumps(drainer.api_project_file_tree(pid, view, branch, path)))

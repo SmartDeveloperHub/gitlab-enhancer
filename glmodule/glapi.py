@@ -32,6 +32,7 @@ def get_projects(gl, details):
 
     """
     p = map(lambda x: int(x.get('id')), gl.getprojectsall())
+    p.sort()
     if details is True:
         return map(lambda w: get_project(gl, w), p)
     else:
@@ -381,6 +382,8 @@ def get_user(gl, user_id):
     :return: User (Object)
     """
     gl_user = gl.getuser(user_id)
+    if gl_user is False:
+        return False
     parse_info_user(gl_user)
     convert_time_keys(gl_user)
     return gl_user
@@ -394,6 +397,9 @@ def get_user_projects(gl, user_id, relation_type, t_window):
     :param t_window: (Time Window) filter (Object)
     :return: Projects (List)
     """
+    gl_user = gl.getuser(user_id)
+    if gl_user is False:
+        return False
     return get_entity_projects(gl, user_id, relation_type, 'users', t_window)
 
 
@@ -437,6 +443,9 @@ def get_group_projects(gl, group_id, relation_type, t_window):
     :param t_window: (Time Window) filter (Object)
     :return: Projects (List)
     """
+    git_group = gl.getgroups(group_id)
+    if git_group is False:
+        return False
     return get_entity_projects(gl, group_id, relation_type, 'groups', t_window)
 
 
@@ -518,6 +527,7 @@ def get_language_by_extension(ext):
 
 
 def get_entity_projects(gl, entity_id, relation_type, user_type, t_window):
+
     # Get Entity's projects
     git_projects_details = get_projects(gl, True)
     git_ret = []
@@ -527,8 +537,20 @@ def get_entity_projects(gl, entity_id, relation_type, user_type, t_window):
     else:
         for x in git_projects_details:
             users_list = get_contributors_projects(gl, x.get('id'), None, t_window)
-            [git_ret.append(x.get('id')) for k in users_list if get_user(gl, k).get('id') == entity_id]
 
+            # Search through group's members
+            if user_type == 'groups':
+                g_m = get_group(gl, entity_id).get('members')
+                [git_ret.append(x.get('id')) for j in g_m if j in users_list]
+
+            # Search about user
+            else:
+                [git_ret.append(x.get('id')) for k in users_list if k == entity_id]
+    if user_type == 'groups':
+        git_ret_un = []
+        [git_ret_un.append(x) for x in git_ret if x not in git_ret_un]
+        git_ret_un.sort()
+        git_ret = git_ret_un
     return git_ret
 
 

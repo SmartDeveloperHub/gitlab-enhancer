@@ -174,11 +174,17 @@ class GlDrainer(object):
         else:
             return glredis.get_project_owner(self.redis, project_id)
 
-    # def api_project_milestones(self, project_id):
-    #     return glapi.get_project_milestones(self.git, project_id)
+    def api_project_milestones(self, project_id):
+        if self.redis_status is False:
+            return glapi.get_project_milestones(self.git, project_id)
+        else:
+            return glredis.get_project_milestones(self.redis, project_id)
 
-    # def api_project_milestone(self, project_id, milestone_id):
-    #     return glapi.get_project_milestone(self.git, project_id, milestone_id)
+    def api_project_milestone(self, project_id, milestone_id):
+        if self.redis_status is False:
+            return glapi.get_project_milestone(self.git, project_id, milestone_id)
+        else:
+            return glredis.get_project_milestone(self.redis, project_id, milestone_id)
 
     def api_project_branches(self, project_id, default_flag, details):
         if self.redis_status is False:
@@ -218,7 +224,7 @@ class GlDrainer(object):
                 self.git, project_id, user_id, offset, t_window, details)
         else:
             return glredis.get_project_commits(
-                self.redis, project_id, user_id, offset, t_window)
+                self.redis, project_id, user_id, offset, t_window, details)
 
     def api_project_commit(self, project_id, commit_id):
         if self.redis_status is False:
@@ -236,14 +242,23 @@ class GlDrainer(object):
             return glredis.get_project_commit_diff(
                 self.redis, project_id, commit_id)
 
-    # def api_project_requests(self, project_id, request_state):
-    #     return glapi.get_project_requests(self.git, project_id, request_state)
-    #
-    # def api_project_request(self, project_id, request_id):
-    #     return glapi.get_project_request(self.git, project_id, request_id)
-    #
-    # def api_project_request_changes(self, project_id, request_id):
-    #     return glapi.get_project_request_changes(self.git, project_id, request_id)
+    def api_project_requests(self, project_id, request_state):
+        if self.redis_status is False:
+            return glapi.get_project_requests(self.git, project_id, request_state)
+        else:
+            return glredis.get_project_requests(self.redis, project_id, request_state)
+
+    def api_project_request(self, project_id, request_id):
+        if self.redis_status is False:
+            return glapi.get_project_request(self.git, project_id, request_id)
+        else:
+            return glredis.get_project_request(self.redis, project_id, request_id)
+
+    def api_project_request_changes(self, project_id, request_id):
+        if self.redis_status is False:
+            return glapi.get_project_request_changes(self.git, project_id, request_id)
+        else:
+            return glredis.get_project_request_changes(self.redis, project_id, request_id)
 
     def api_project_file_tree(self, project_id, view, branch_name, path):
         return glapi.get_project_file_tree(self.git, project_id, view, branch_name, path)
