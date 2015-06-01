@@ -285,6 +285,8 @@ def api_user(uid):
 
 # /api/users/:uid/projects[?string:relation]
 # # relation = [contributor only in default branch, owner]
+# # start_time = time (start) filter
+# # end_time = time (end) filter
 # Get projects about specific gitlab user
 # It is possible filter by relation between user and project
 @app.route('/api/users/<int:uid>/projects', methods=['GET'])
@@ -313,6 +315,8 @@ def api_group(gid):
     return make_response(json.dumps(drainer.api_group(gid)))
 
 # /api/groups/:gid/projects[?string:relation]
+# # start_time = time (start) filter
+# # end_time = time (end) filter
 # # relation = [contributor only in default branch, owner]
 # Get projects about specific gitlab group
 # It is possible filter by relation between user and project

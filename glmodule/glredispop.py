@@ -37,6 +37,7 @@ def populate_redis_projects(gl_drainer, gl_redis):
     for i in p:
         projects.append(i.get('id'))
         i['owner'] = i.get('owner').get('type') + ":" + str(i.get('owner').get('id'))
+        i['tags'] = i.get('tags', [])
         gl_redis.hmset("projects:" + str(i.get('id')) + ":", i)
         print_progress("    Projects", float(p_number) / len(p))
         p_number += 1
@@ -82,9 +83,9 @@ def populate_redis_commits(gl_drainer, gl_redis):
         inject_project_commits(gl_redis, str(i), comm_project_score)
 
         # Insert Last and First Commit date (Sorted List by Score)
-        gl_redis.hset("projects:" + str(i), 'first_commit_at', gl_redis.zrange("projects:" +
+        gl_redis.hset("projects:" + str(i) + ":", 'first_commit_at', gl_redis.zrange("projects:" +
                       str(i) + ":commits:", 0, 0, withscores=True)[0][1])
-        gl_redis.hset("projects:" + str(i), 'last_commit_at', gl_redis.zrange("projects:" +
+        gl_redis.hset("projects:" + str(i) + ":", 'last_commit_at', gl_redis.zrange("projects:" +
                       str(i) + ":commits:", -1, -1, withscores=True)[0][1])
 
         # Insert commits by project's branch
@@ -108,7 +109,7 @@ def populate_redis_commits(gl_drainer, gl_redis):
         # Insert Contributors
         u = map(lambda k: "users:" + str(k.split(':')[1]),
                 gl_redis.keys("users:*:projects:" + str(i) + ":commits:"))
-        gl_redis.hset("projects:" + str(i), 'contributors', u)
+        gl_redis.hset("projects:" + str(i) + ":", 'contributors', u)
 
     # Insert user additional information
     for i in projects:
@@ -140,6 +141,8 @@ def populate_redis_users(gl_drainer, gl_redis):
     print_progress("    Users", 0)
     for j in u:
         i = gl_drainer.api_user(j)
+        i['first_commit_at'] = "null"
+        i['last_commit_at'] = "null"
         gl_redis.hmset("users:" + str(i.get('id')), i)
         gl_redis.set("users:" + str(i.get('id')) + ":email:" + i.get('email'), "")
         print_progress("    Users", float(u_number) / len(u))
