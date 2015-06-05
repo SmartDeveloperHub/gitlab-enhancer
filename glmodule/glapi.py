@@ -266,8 +266,12 @@ def get_project_commit(gl, project_id, commit_id):
                 j = j[::2]
                 j = map(lambda w: w.splitlines(), j)
             for i in j:
-                [add_lines_j.append(1) for item in i if item[0] == '+']
-                [rem_lines_j.append(1) for item in i if item[0] == '-']
+                for item in i:
+                    if item != "":
+                        if item[0] == '+':
+                            add_lines_j.append(1)
+                        elif item[0] == '-':
+                            rem_lines_j.append(1)
     gl_commit['lines_added'] = len(add_lines_j)
     gl_commit['lines_removed'] = len(rem_lines_j)
     return gl_commit
@@ -570,4 +574,5 @@ def get_contributors_projects(gl, project_id, branch_name, t_window):
         git_users = get_users(gl, None)
         ret_users = []
         [ret_users.append(i) for i in git_users if get_user(gl, i).get('email') in email_list]
+        ret_users.sort()
         return ret_users
