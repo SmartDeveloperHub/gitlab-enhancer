@@ -274,6 +274,14 @@ def get_project_commit(gl, project_id, commit_id):
                             rem_lines_j.append(1)
     gl_commit['lines_added'] = len(add_lines_j)
     gl_commit['lines_removed'] = len(rem_lines_j)
+    git_users = get_users(gl, None)
+    for i in git_users:
+        u = get_user(gl, i)
+        if u.get('email') == gl_commit['author_email']:
+            gl_commit['author'] = u.get('id')
+            break
+    del gl_commit['author_email']
+    del gl_commit['author_name']
     return gl_commit
 
 
