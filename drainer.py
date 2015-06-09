@@ -113,7 +113,7 @@ def api_project_branches(pid):
 def api_project_branch(pid, bid):
     return make_response(json.dumps(drainer.api_project_branch(pid, bid)))
 
-# /api/projects/:pid/branches/:bid[?long:start_time][?long:end_time]
+# /api/projects/:pid/branches/:bid/contributors[?long:start_time][?long:end_time]
 # # start_time = time (start) filter
 # # end_time = time (end) filter
 # Get contributors of specific branch about specific gitlab project
@@ -274,7 +274,7 @@ def api_users():
             offset = int(offset)
         except ValueError:
             return make_response("400: offset parameter is not an integer", 400)
-    return make_response(json.dumps(drainer.api_users(offset)))
+    return make_response(json.dumps(drainer.api_users(offset, False)))
 
 # /api/users/:uid
 # Get specific gitlab user
@@ -305,7 +305,7 @@ def api_user_projects(uid):
 @app.route('/api/groups', methods=['GET'])
 @produces('application/json')
 def api_groups():
-    return make_response(json.dumps(drainer.api_groups()))
+    return make_response(json.dumps(drainer.api_groups(False)))
 
 # /api/groups/:gid
 # Get specific gitlab groups

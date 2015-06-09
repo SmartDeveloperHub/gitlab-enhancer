@@ -269,11 +269,11 @@ class GlDrainer(object):
         else:
             return glredis.get_project_contributors(self.redis, project_id, t_window)
 
-    def api_users(self, offset):
+    def api_users(self, offset, details):
         if self.redis_status is False:
-            return glapi.get_users(self.git, offset)
+            return glapi.get_users(self.git, offset, details)
         else:
-            return glredis.get_users(self.redis, offset)
+            return glredis.get_users(self.redis, offset, details)
 
     def api_user(self, user_id):
         if self.redis_status is False:
@@ -287,11 +287,11 @@ class GlDrainer(object):
         else:
             return glredis.get_user_projects(self.redis, user_id, relation_type, t_window)
 
-    def api_groups(self):
+    def api_groups(self, details):
         if self.redis_status is False:
-            return glapi.get_groups(self.git)
+            return glapi.get_groups(self.git, details)
         else:
-            return glredis.get_groups(self.redis)
+            return glredis.get_groups(self.redis, details)
 
     def api_group(self, group_id):
         if self.redis_status is False:
