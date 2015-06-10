@@ -24,19 +24,15 @@ __author__ = 'Alejandro F. Carrera'
 from dateutil import parser
 
 
-def get_projects(gl, details):
+def get_projects(gl):
     """ Get Projects
     :param gl: GitLab Object Instance
-    :param details: Project details (bool)
     :return: Projects (List)
 
     """
     p = map(lambda x: int(x.get('id')), gl.getprojectsall())
     p.sort()
-    if details is True:
-        return map(lambda w: get_project(gl, w), p)
-    else:
-        return p
+    return p
 
 
 def get_project(gl, project_id):
@@ -61,8 +57,14 @@ def get_project(gl, project_id):
                 'id': git_project.get('owner').get('id')
             }
             git_project['owner'] = git_owner
-        parse_info_project(git_project)
         convert_time_keys(git_project)
+        git_project['tags'] = map(lambda x: x.get('name'), gl.getrepositorytags(project_id))
+        ci = get_project_commits_information(gl, project_id, None)
+        git_project['contributors'] = ci.get('collaborators')
+        if len(ci.get('commits')) > 0:
+            git_project['first_commit_at'] = ci.get('commits')[0].get('created_at')
+            git_project['last_commit_at'] = ci.get('commits')[len(ci.get('commits'))-1].get('created_at')
+        parse_info_project(git_project)
         return git_project
 
 
@@ -72,13 +74,16 @@ def get_project_owner(gl, project_id):
     :param project_id: Project Identifier (int)
     :return: Owner (User Object | Group Object)
     """
-    git_project = get_project(gl, project_id)
+    git_project = gl.getproject(project_id)
     if git_project is False:
         return False
-    if git_project.get('owner').get('type') == 'groups':
-        return get_group(gl, git_project.get('owner').get('id'))
+    if git_project.get('owner') is None:
+        u = get_group(gl, git_project.get('namespace').get('id'))
+        u['type'] = 'group'
     else:
-        return get_user(gl, git_project.get('owner').get('id'))
+        u = get_user(gl, git_project.get('owner').get('id'))
+        u['type'] = 'user'
+    return u
 
 
 def get_project_milestones(gl, project_id):
@@ -100,7 +105,7 @@ def get_project_milestone(gl, project_id, milestone_id):
     return False
 
 
-def get_project_branches(gl, project_id, default_flag, details):
+def get_project_branches(gl, project_id, default_flag):
     """ Get Project's Branches
     :param gl: GitLab Object Instance
     :param project_id: Project Identifier (int)
@@ -112,26 +117,13 @@ def get_project_branches(gl, project_id, default_flag, details):
         gl_b = gl.getbranches(project_id)
         if gl_b is False:
             return False
-        if details is True:
-            for x in gl_b:
-                x['last_commit'] = x.get('commit').get('id')
-                if x.get('protected') is False:
-                    x['protected'] = 'false'
-                else:
-                    x['protected'] = 'true'
-                del x['commit']
-            return gl_b
-        else:
-            return map(lambda w: w.get('name'), gl_b)
+        return map(lambda w: w.get('name'), gl_b)
     else:
         git_project = get_project(gl, project_id)
         if git_project is False:
             return False
         else:
-            if details is False:
-                return [git_project.get('default_branch')]
-            else:
-                return [get_project_branch(gl, project_id, git_project.get('default_branch'))]
+            return [git_project.get('default_branch')]
 
 
 def get_project_branch(gl, project_id, branch_name):
@@ -143,9 +135,12 @@ def get_project_branch(gl, project_id, branch_name):
     """
     gl_branch = gl.getbranch(project_id, branch_name)
     if gl_branch is False:
-        return gl_branch
+        return False
     else:
-        gl_branch['last_commit'] = gl_branch.get('commit').get('id')
+        cm = get_project_commits_information(gl, project_id, branch_name)
+        gl_branch['created_at'] = cm.get('commits')[0].get('created_at')
+        gl_branch['last_commit'] = cm.get('commits')[len(cm.get('commits'))-1].get('id')
+        gl_branch['contributors'] = cm.get('collaborators')
         if gl_branch.get('protected') is False:
             gl_branch['protected'] = 'false'
         else:
@@ -165,81 +160,78 @@ def get_project_branch_contributors(gl, project_id, branch_name, t_window):
     return get_contributors_projects(gl, project_id, branch_name, t_window)
 
 
-def get_project_branch_commits(gl, project_id, branch_name, user_id, offset, t_window, details):
+def get_project_branch_commits(gl, project_id, branch_name, user_id, t_window):
     """ Get Branch's Commits
     :param gl: GitLab Object Instance
     :param project_id: Project Identifier (int)
     :param branch_name: Branch Identifier (string)
     :param user_id: Optional User Identifier (int)
-    :param offset: Optional Offset parameter (int)
     :param t_window: (Time Window) filter (Object)
-    :param details: Commit details (bool)
     :return: Commits (List)
     """
-    pag = 0
-    number_page = 10000
     user = None
-    if offset is not None:
-        pag = 1
-        number_page = offset
-    ret_commits = []
-    git_commits_len = -1
     if user_id is not None:
-        user = get_user(gl, user_id)
+        user = gl.getuser(user_id)
         if user is False:
             return False
-    if get_project_branch(gl, project_id, branch_name) is False:
-        return False
-    while git_commits_len is not 0:
-        git_commits = gl.getrepositorycommits(project_id, branch_name, page=pag, per_page=number_page)
-        git_commits_len = len(git_commits)
-        [convert_time_keys(x) for x in git_commits]
-
-        # Filter by time
-        git_commits_time = []
-        [git_commits_time.append(x) for x in git_commits if
-         t_window.get('st_time') <= x.get('created_at') <= t_window.get('en_time')]
-
-        # Filter by user
-        if user is None:
-            ret_commits += git_commits_time
         else:
-            git_commits_user = []
-            [git_commits_user.append(x) for x in git_commits_time if
-             x.get('author_email') == user.get('email')]
-            ret_commits += git_commits_user
-        pag += 1
+            user = user.get('email')
+    if gl.getbranch(project_id, branch_name) is False:
+        return False
+    ci = get_project_commits_information(gl, project_id, branch_name)
+    ci_commits = ci.get('commits')
+    git_commits_time = []
 
-    # Sort and return ids
-    ret_commits.sort(key=lambda w: w.get('created_at'), reverse=False)
-    if details is False:
-        return map(lambda k: k.get('id'), ret_commits)
+    # Filter by time
+    [git_commits_time.append(x) for x in ci_commits if
+        t_window.get('st_time') <= x.get('created_at') <= t_window.get('en_time')]
+
+    # Filter by user
+    if user is None:
+        ret_commits = git_commits_time
     else:
-        return ret_commits
+        git_commits_user = []
+        [git_commits_user.append(x) for x in git_commits_time if
+            x.get('author_email') == user.get('email')]
+        ret_commits = git_commits_user
+
+    return map(lambda k: k.get('id'), ret_commits)
 
 
-def get_project_commits(gl, project_id, user_id, offset, t_window, details):
+def get_project_commits(gl, project_id, user_id, t_window):
     """ Get Project's Commits
     :param gl: GitLab Object Instance
     :param project_id: Project Identifier (int)
     :param user_id: Optional User Identifier (int)
-    :param offset: Optional Offset parameter (int)
     :param t_window: (Time Window) filter (Object)
-    :param details: Project details (bool)
     :return: Commits (List)
     """
-    ret_commits_hash = {}
-    git_branches = get_project_branches(gl, project_id, 'false', False)
-    if git_branches is False:
-        return False
-    for i in git_branches:
-        c = get_project_branch_commits(gl, project_id, i, user_id, offset, t_window, False)
-        [ret_commits_hash.update({x: '1'}) for x in c if (x not in ret_commits_hash)]
-    if details is False:
-        return ret_commits_hash.keys()
+    user = None
+    if user_id is not None:
+        user = gl.getuser(user_id)
+        if user is False:
+            return False
+        else:
+            user = user.get('email')
+
+    ci = get_project_commits_information(gl, project_id, None)
+    ci_commits = ci.get('commits')
+    git_commits_time = []
+
+    # Filter by time
+    [git_commits_time.append(x) for x in ci_commits if
+        t_window.get('st_time') <= x.get('created_at') <= t_window.get('en_time')]
+
+    # Filter by user
+    if user is None:
+        ret_commits = git_commits_time
     else:
-        [ret_commits_hash.update({x: get_project_commit(gl, project_id, x)}) for x in ret_commits_hash.keys()]
-        return ret_commits_hash
+        git_commits_user = []
+        [git_commits_user.append(x) for x in git_commits_time if
+            x.get('author_email') == user.get('email')]
+        ret_commits = git_commits_user
+
+    return map(lambda k: k.get('id'), ret_commits)
 
 
 def get_project_commit(gl, project_id, commit_id):
@@ -250,36 +242,38 @@ def get_project_commit(gl, project_id, commit_id):
     :return: Commit (Object)
     """
     gl_commit = gl.getrepositorycommit(project_id, commit_id)
+    if gl_commit is False:
+        return False
     convert_time_keys(gl_commit)
     cd = gl.getrepositorycommitdiff(project_id, commit_id)
     add_lines_j = []
     rem_lines_j = []
     if cd is not False:
-        for x in cd:
-            j = x.get('diff').split("@@ ")
-            if len(j) == 2:
-                j = [j[1].splitlines()]
-            elif len(j) == 3:
-                j = [j[2].splitlines()]
-            elif len(j) > 3:
-                j = j[2:]
-                j = j[::2]
-                j = map(lambda w: w.splitlines(), j)
-            for i in j:
-                for item in i:
-                    if item != "":
-                        if item[0] == '+':
-                            add_lines_j.append(1)
-                        elif item[0] == '-':
-                            rem_lines_j.append(1)
+
+        def split_cd(cd_commit):
+            cd_line = cd_commit.get('diff').split('@@')
+            if len(cd_line) == 1:
+                return
+            elif len(cd_line) == 2:
+                cd_line = [cd_line[1].splitlines()]
+            elif len(cd_line) == 3:
+                cd_line = [cd_line[2].splitlines()]
+            elif len(cd_line) > 3:
+                cd_line = cd_line[2:]
+                cd_line = cd_line[::2]
+                cd_line = map(lambda w: w.splitlines(), cd_line)
+
+            [add_lines_j.append(1) for w in cd_line[0] if w != "" and w[0] == '+']
+            [rem_lines_j.append(1) for w in cd_line[0] if w != "" and w[0] == '-']
+
+        [split_cd(i) for i in cd]
+
     gl_commit['lines_added'] = len(add_lines_j)
     gl_commit['lines_removed'] = len(rem_lines_j)
-    git_users = get_users(gl, None)
-    for i in git_users:
-        u = get_user(gl, i)
-        if u.get('email') == gl_commit['author_email']:
-            gl_commit['author'] = u.get('id')
-            break
+    git_users = get_users(gl)
+    git_users = map(lambda w: gl.getuser(w), git_users)
+    [gl_commit.update({'author': x.get('id')}) for x in git_users
+        if x.get('email') == gl_commit.get('author_email').lower()]
     del gl_commit['author_email']
     del gl_commit['author_name']
     return gl_commit
@@ -363,29 +357,24 @@ def get_project_contributors(gl, project_id, t_window):
     return get_contributors_projects(gl, project_id, None, t_window)
 
 
-def get_users(gl, offset):
+def get_users(gl):
     """ Get Users
     :param gl: GitLab Object Instance
-    :param offset: Optional Offset parameter (int)
     :return: Users (List)
     """
     pag = 0
     number_page = 50
-    if offset is not None:
-        pag = 1
-        number_page = offset
-    ret_users = []
     git_users_len = -1
+    git_users_id = {}
     while git_users_len is not 0:
         git_users = gl.getusers(page=pag, per_page=number_page)
         git_users_len = len(git_users)
-        git_users_id = []
-        [git_users_id.append(x.get('id')) for x in git_users]
-        ret_users += git_users_id
+        [git_users_id.update({x.get('id'): '1'}) for x in git_users
+            if x.get('id') not in git_users_id]
         pag += 1
-    ret_users_unique = []
-    [ret_users_unique.append(x) for x in ret_users if x not in ret_users_unique]
-    return ret_users_unique
+    git_users_id = git_users_id.keys()
+    git_users_id.sort()
+    return git_users_id
 
 
 def get_user(gl, user_id):
@@ -396,8 +385,31 @@ def get_user(gl, user_id):
     gl_user = gl.getuser(user_id)
     if gl_user is False:
         return False
-    parse_info_user(gl_user)
     convert_time_keys(gl_user)
+    git_projects = get_projects(gl)
+    f_commit = -1
+    l_commit = -1
+    for i in git_projects:
+        gpc = get_project_commits_information(gl, i, None)
+        if gl_user.get('id') in gpc.get('collaborators'):
+            for j in gpc.get('commits'):
+                if f_commit == -1 and \
+                   j.get('author_email').lower() == gl_user.get('email'):
+                    f_commit = j.get('created_at')
+                if l_commit == -1 and \
+                   j.get('author_email').lower() == gl_user.get('email'):
+                    l_commit = j.get('created_at')
+                if f_commit > j.get('created_at') and \
+                   j.get('author_email').lower() == gl_user.get('email'):
+                    f_commit = j.get('created_at')
+                if l_commit < j.get('created_at') and \
+                   j.get('author_email').lower() == gl_user.get('email'):
+                    l_commit = j.get('created_at')
+    if f_commit != -1:
+        gl_user['first_commit_at'] = f_commit
+    if l_commit != -1:
+        gl_user['last_commit_at'] = l_commit
+    parse_info_user(gl_user)
     return gl_user
 
 
@@ -460,23 +472,10 @@ def get_group_projects(gl, group_id, relation_type, t_window):
 # Functions to help another functions
 
 
-def sp_project_commits_by_branch(gl, project_id, t_window):
-    git_branches = get_project_branches(gl, project_id, 'false', False)
-    if git_branches is False:
-        return False
-    ret_commits_hash = {}
-    ret_commits_project = {}
-    for i in git_branches:
-        cb = get_project_branch_commits(gl, project_id, i, None, None, t_window, False)
-        [ret_commits_project.update({x: '1'}) for x in cb if (x not in ret_commits_project)]
-        ret_commits_hash[i] = cb
-    [ret_commits_project.update({x: get_project_commit(gl, project_id, x)}) for x in ret_commits_project.keys()]
-    return [ret_commits_project, ret_commits_hash]
-
-
 time_keys = [
     'created_at', 'updated_at', 'last_activity_at',
-    'due_date', 'authored_date', 'committed_date'
+    'due_date', 'authored_date', 'committed_date',
+    'first_commit_at', 'last_commit_at'
 ]
 
 
@@ -486,37 +485,40 @@ def convert_time_keys(o):
             convert_time_keys(o[k])
         else:
             if k in time_keys:
-                o[k] = long(
-                    parser.parse(o.get(k)).strftime("%s")
-                ) * 1000
+                if o[k] != "null":
+                    o[k] = long(
+                        parser.parse(o.get(k)).strftime("%s")
+                    ) * 1000
 
 
 def parse_info_user(o):
-    del o['bio']
-    del o['can_create_group']
-    del o['can_create_project']
-    del o['color_scheme_id']
-    del o['identities']
-    del o['is_admin']
-    del o['projects_limit']
-    del o['theme_id']
+    k_users = [
+        "username", "name", "twitter", "created_at",
+        "linkedin", "email", "state", "avatar_url",
+        "skype", "id", "website_url", "first_commit_at",
+        "last_commit_at"
+    ]
+    for k in o.keys():
+        if k not in k_users:
+            del o[k]
+        elif o[k] is None or o[k] == '':
+            del o[k]
+        else:
+            pass
 
 
 def parse_info_project(o):
-    del o['namespace']
-    del o['wiki_enabled']
-    del o['merge_requests_enabled']
-    del o['snippets_enabled']
-    del o['issues_enabled']
-    del o['path_with_namespace']
-    del o['ssh_url_to_repo']
-    del o['path']
-    del o['visibility_level']
-    del o['permissions']
-    del o['name_with_namespace']
+    k_projects = [
+        "first_commit_at", "contributors", "http_url_to_repo", "web_url",
+        "owner", "id", "archived", "public", "description", "default_branch",
+        "last_commit_at", "last_activity_at", "name", "created_at", "avatar_url",
+        "tags"
+    ]
     for k in o.keys():
-        if o[k] is None:
-            o[k] = 'null'
+        if k not in k_projects:
+            del o[k]
+        elif o[k] is None or o[k] == '':
+            del o[k]
         elif o[k] is False:
             o[k] = 'false'
         elif o[k] is True:
@@ -526,10 +528,6 @@ def parse_info_project(o):
 
 
 # TODO: Source Code - Language (Language Mapping)
-# "projects:id:commits:sha[language]" = {'language': 'number_files'}
-#     "projects:id:branches:name[language]" = {'language': 'number_files'}
-#     "projects:id[language]" = top_language_value in project
-#     "users:id[favourite_language]" = top_language_value
 def get_language_by_extension(ext):
     return "code"
 
@@ -537,23 +535,26 @@ def get_language_by_extension(ext):
 def get_entity_projects(gl, entity_id, relation_type, user_type, t_window):
 
     # Get Entity's projects
-    git_projects_details = get_projects(gl, True)
+    git_projects = get_projects(gl)
+
     git_ret = []
+    if user_type == 'groups':
+        g_m = get_group(gl, entity_id).get('members')
     if relation_type == 'owner':
-        [git_ret.append(k.get('id')) for k in git_projects_details
-         if k.get('owner').get('type') == user_type and k.get('owner').get('id') == entity_id]
-    else:
-        for x in git_projects_details:
-            users_list = get_contributors_projects(gl, x.get('id'), None, t_window)
+        user_type = user_type[:-1]
 
-            # Search through group's members
+    for k in git_projects:
+        if relation_type == 'owner':
+            o = get_project_owner(gl, k)
+            if o.get('type') == user_type and o.get('id') == entity_id:
+                git_ret.append(k)
+        else:
+            c = get_project_contributors(gl, k, t_window)
             if user_type == 'groups':
-                g_m = get_group(gl, entity_id).get('members')
-                [git_ret.append(x.get('id')) for j in g_m if j in users_list]
-
-            # Search about user
+                [git_ret.append(k) for j in c if j in g_m]
             else:
-                [git_ret.append(x.get('id')) for k in users_list if k == entity_id]
+                [git_ret.append(k) for j in c if j == entity_id]
+
     if user_type == 'groups':
         git_ret_un = []
         [git_ret_un.append(x) for x in git_ret if x not in git_ret_un]
@@ -564,23 +565,95 @@ def get_entity_projects(gl, entity_id, relation_type, user_type, t_window):
 
 def get_contributors_projects(gl, project_id, branch_name, t_window):
 
-    # Specific Branch
-    email_list = {}
-    if branch_name is not None:
-        commits_list = get_project_branch_commits(gl, project_id, branch_name, None, None, t_window, True)
+    ret_users = {}
 
-    # Generic Project (all branches)
-    else:
-        commits_list = get_project_commits(gl, project_id, None, None, t_window, True)
-        commits_list = map(lambda w: commits_list[w], commits_list.keys())
+    # Get Commits
+    ci = get_project_commits_information(gl, project_id, branch_name)
+    ci_commits = []
+    [ci_commits.append(w) for w in ci.get('commits') if
+        t_window.get('st_time') <= w.get('created_at') <= t_window.get('en_time')]
 
-    if commits_list is False:
+    # Get Users emails and identifiers
+    pag = 0
+    number_page = 100
+    git_users_len = -1
+    git_users_em_id = {}
+    while git_users_len is not 0:
+        git_users = gl.getusers(page=pag, per_page=number_page)
+        git_users_len = len(git_users)
+        [git_users_em_id.update({x.get('email'): x.get('id')}) for x in git_users]
+        pag += 1
+
+    for w in ci_commits:
+        w['author_email'] = w.get('author_email').lower()
+        if w.get('author_email') in git_users_em_id:
+            if w.get('author_email') not in ret_users:
+                ret_users[w.get('author_email')] = git_users_em_id[w.get('author_email')]
+
+    ret_users = ret_users.values()
+    ret_users.sort()
+    return ret_users
+
+
+def get_project_commits_information(gl, project_id, branch_name):
+
+    # Detect possible failures
+    git_project = gl.getproject(project_id)
+    if git_project is False:
         return False
+    if branch_name is not None:
+        if gl.getbranch(project_id, branch_name) is False:
+            return False
+        git_branches = [git_project.get('default_branch')]
     else:
-        [email_list.update({x.get('author_email'): '1'}) for x in commits_list]
-        email_list = email_list.keys()
-        git_users = get_users(gl, None)
-        ret_users = []
-        [ret_users.append(i) for i in git_users if get_user(gl, i).get('email') in email_list]
-        ret_users.sort()
-        return ret_users
+        git_branches = get_project_branches(gl, project_id, 'false')
+
+    # Get Users emails and identifiers
+    pag = 0
+    number_page = 100
+    git_users_len = -1
+    git_users_em_id = {}
+    while git_users_len is not 0:
+        git_users = gl.getusers(page=pag, per_page=number_page)
+        git_users_len = len(git_users)
+        [git_users_em_id.update({x.get('email'): x.get('id')}) for x in git_users]
+        pag += 1
+
+    information = {
+        'branches': {},
+        'collaborators': {},
+        'commits': []
+    }
+    commits_hash = {}
+    for i in git_branches:
+        information['branches'][i] = {
+            'commits': None,
+            'collaborators': {}
+        }
+        pag = 0
+        number_page = 10000
+        ret_commits = []
+        git_commits_len = -1
+        while git_commits_len is not 0:
+            git_commits = gl.getrepositorycommits(project_id, branch_name, page=pag, per_page=number_page)
+            git_commits_len = len(git_commits)
+            for w in git_commits:
+                convert_time_keys(w)
+                w['author_email'] = w.get('author_email').lower()
+                if w.get('author_email') in git_users_em_id:
+                    collaborator_id = git_users_em_id[w.get('author_email')]
+                    information['branches'][i]['collaborators'][collaborator_id] = '1'
+                    information['collaborators'][collaborator_id] = '1'
+                    if w.get('id') not in commits_hash:
+                        commits_hash[w.get('id')] = '1'
+                        information['commits'].append(w)
+            ret_commits += git_commits
+            pag += 1
+
+        ret_commits.sort(key=lambda j: j.get('created_at'), reverse=False)
+        information['branches'][i]['commits'] = ret_commits
+        information['commits'].sort(key=lambda j: j.get('created_at'), reverse=False)
+        information['branches'][i]['collaborators'] = information['branches'][i]['collaborators'].keys()
+
+    information['collaborators'] = information['collaborators'].keys()
+    return information
