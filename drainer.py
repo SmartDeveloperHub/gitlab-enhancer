@@ -64,7 +64,7 @@ def hook_specific():
 @app.route('/api/projects', methods=['GET'])
 @produces('application/json')
 def api_projects():
-    return make_response(json.dumps(drainer.api_projects(False)))
+    return make_response(json.dumps(drainer.api_projects()))
 
 # /api/projects/:pid
 # Get specific gitlab project
@@ -104,7 +104,7 @@ def api_project_branches(pid):
     default = request.args.get('default', 'false')
     if default != 'false' and default != 'true':
         return make_response("400: default parameter must be true or false", 400)
-    return make_response(json.dumps(drainer.api_project_branches(pid, default, False)))
+    return make_response(json.dumps(drainer.api_project_branches(pid, default)))
 
 # /api/projects/:pid/branches/:bid
 # Get specific branch about specific gitlab project
@@ -130,8 +130,7 @@ def api_project_branch_contributors(pid, bid):
         )
     )
 
-# /api/projects/:pid/branches/:bid/commits[?int:offset][?int:uid][?long:start_time][?long:end_time]
-# # offset = start from number of commits
+# /api/projects/:pid/branches/:bid/commits[?int:uid][?long:start_time][?long:end_time]
 # # uid = user identifier
 # # start_time = time (start) filter
 # # end_time = time (end) filter
@@ -141,12 +140,6 @@ def api_project_branch_contributors(pid, bid):
 @app.route('/api/projects/<int:pid>/branches/<string:bid>/commits', methods=['GET'])
 @produces('application/json')
 def api_project_branch_commits(pid, bid):
-    offset = request.args.get('offset', None)
-    if offset is not None:
-        try:
-            offset = int(offset)
-        except ValueError:
-            return make_response("400: offset parameter is not an integer", 400)
     user = request.args.get('uid', None)
     if user is not None:
         try:
@@ -158,7 +151,7 @@ def api_project_branch_commits(pid, bid):
         return make_response("400: start_time or end_time is bad format", 400)
     return make_response(
         json.dumps(
-            drainer.api_project_branch_commits(pid, bid, user, offset, t_window, False)
+            drainer.api_project_branch_commits(pid, bid, user, t_window)
         )
     )
 
@@ -172,12 +165,6 @@ def api_project_branch_commits(pid, bid):
 @app.route('/api/projects/<int:pid>/commits', methods=['GET'])
 @produces('application/json')
 def api_project_commits(pid):
-    offset = request.args.get('offset', None)
-    if offset is not None:
-        try:
-            offset = int(offset)
-        except ValueError:
-            return make_response("400: offset parameter is not an integer", 400)
     user = request.args.get('uid', None)
     if user is not None:
         try:
@@ -189,7 +176,7 @@ def api_project_commits(pid):
         return make_response("400: start_time or end_time is bad format", 400)
     return make_response(
         json.dumps(
-            drainer.api_project_commits(pid, user, offset, t_window, False)
+            drainer.api_project_commits(pid, user, t_window)
         )
     )
 
@@ -262,19 +249,12 @@ def api_project_contributors(pid):
         )
     )
 
-# /api/users[?int:offset]
-# # offset = start from number of users
+# /api/users
 # Get gitlab users
 @app.route('/api/users', methods=['GET'])
 @produces('application/json')
 def api_users():
-    offset = request.args.get('offset', None)
-    if offset is not None:
-        try:
-            offset = int(offset)
-        except ValueError:
-            return make_response("400: offset parameter is not an integer", 400)
-    return make_response(json.dumps(drainer.api_users(offset, False)))
+    return make_response(json.dumps(drainer.api_users()))
 
 # /api/users/:uid
 # Get specific gitlab user
@@ -305,7 +285,7 @@ def api_user_projects(uid):
 @app.route('/api/groups', methods=['GET'])
 @produces('application/json')
 def api_groups():
-    return make_response(json.dumps(drainer.api_groups(False)))
+    return make_response(json.dumps(drainer.api_groups()))
 
 # /api/groups/:gid
 # Get specific gitlab groups
