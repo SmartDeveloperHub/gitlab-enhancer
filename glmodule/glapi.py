@@ -448,7 +448,8 @@ def get_group(gl, group_id):
     if git_group is False:
         return False
     else:
-        del git_group['projects']
+        if 'projects' in git_group:
+            del git_group['projects']
         convert_time_keys(git_group)
         git_group['members'] = []
         [git_group['members'].append(x.get('id')) for x in gl.getgroupmembers(git_group.get('id'))]
