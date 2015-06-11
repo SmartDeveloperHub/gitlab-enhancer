@@ -305,5 +305,5 @@ class GlDrainer(object):
         else:
             return glredis.get_group_projects(self.redis, group_id, relation_type, t_window)
 
-    def sp_project_commits_by_branch(self, project_id, t_window):
-        return glapi.sp_project_commits_by_branch(self.git, project_id, t_window)
+    def api_project_commits_information(self, project_id, branch_name):
+        return glapi.get_project_commits_information(self.git, project_id, branch_name)
