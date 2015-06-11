@@ -22,8 +22,7 @@
 __author__ = 'Alejandro F. Carrera'
 
 import sys
-import json
-import datetime
++from dateutil import parser
 
 projects = []
 
@@ -31,13 +30,18 @@ projects = []
 
 
 def populate_redis_projects(gl_drainer, gl_redis):
-    p = gl_drainer.api_projects(True)
+    p = gl_drainer.git.getprojectsall()
     p_number = 1
     print_progress("    Projects", 0)
     for i in p:
         projects.append(i.get('id'))
-        i['owner'] = i.get('owner').get('type') + ":" + str(i.get('owner').get('id'))
-        i['tags'] = i.get('tags', [])
+        if i.get('owner') is None:
+            i['owner'] = 'groups:' + str(i.get('namespace').get('id'))
+        else:
+            i['owner'] = 'users:' + str(i.get('owner').get('id'))
+        convert_time_keys(i)
+        i['tags'] = map(lambda x: x.get('name').encode('ascii','ignore'),
+                        gl_drainer.git.getrepositorytags(i.get('id')))
         gl_redis.hmset("projects:" + str(i.get('id')) + ":", i)
         print_progress("    Projects", float(p_number) / len(p))
         p_number += 1
@@ -48,10 +52,15 @@ def populate_redis_branches(gl_drainer, gl_redis):
     p_number = 1
     print_progress("    Branches (0/" + str(len(projects)) + ")", 0)
     for i in projects:
-        b = gl_drainer.api_project_branches(i, 'false', True)
+        b = gl_drainer.git.getbranches(i)
         b_length = len(b)
         b_number = 1
         for j in b:
+            if j.get('protected') is False:
+                j['protected'] = 'false'
+            else:
+                j['protected'] = 'true'
+            del j['commit']
             gl_redis.hmset("projects:" + str(i) + ":branches:" + j.get('name'), j)
             print_progress("    Branches (" + str(p_number) + "/" + str(len(projects)) +
                            ")", float(b_number) / float(b_length))
@@ -62,113 +71,175 @@ def populate_redis_branches(gl_drainer, gl_redis):
 
 def populate_redis_commits(gl_drainer, gl_redis):
     p_number = 0
+    list_users = {}
     for i in projects:
         print_progress("    Commits (" + str(p_number) + "/" + str(len(projects)) + ")", 0)
         p_number += 1
-        c = gl_drainer.sp_project_commits_by_branch(i, {
-            'st_time': long(0),
-            'en_time': long(datetime.datetime.now().strftime("%s")) * 1000
-        })
+        ci = gl_drainer.api_project_commits_information(i, None)
+        gl_redis.hset("projects:" + str(i) + ":", 'contributors',
+                      ci.get('collaborators'))
+        gl_redis.hset("projects:" + str(i) + ":", 'first_commit_at',
+                      ci.get('commits')[0].get('created_at'))
+        gl_redis.hset("projects:" + str(i) + ":", 'last_commit_at',
+                      ci.get('commits')[len(ci.get('commits'))-1].get('created_at'))
 
-        comm_project = c[0]
-        bran_project = c[1]
+        # Insert commits (info and ids) by project
         comm_project_score = []
-
-        # Insert commits by project
-        for j in comm_project:
-            comm_unique = comm_project[j]
-            gl_redis.hmset("projects:" + str(i) + ":commits:" + comm_unique.get('id'), comm_unique)
-            comm_project_score.append("projects:" + str(i) + ":commits:" + comm_unique.get('id'))
-            comm_project_score.append(comm_unique.get('created_at'))
+        comm_project_user = {}
+        ci_commits = ci.get('commits')
+        for j in ci_commits:
+            comm = gl_drainer.api_project_commit(i, j.get('id'))
+            comm['parent_ids'] = map(lambda x: x.encode('ascii','ignore'), comm.get('parent_ids'))
+            gl_redis.hmset("projects:" + str(i) + ":commits:" + j.get('id'), comm)
+            comm_project_score.append("projects:" + str(i) + ":commits:" + j.get('id'))
+            comm_project_score.append(j.get('created_at'))
+            if comm.get('author') is not comm_project_user:
+                comm_project_user[comm.get('author')] = []
+            if comm.get('author') is not list_users:
+                list_users[comm.get('author')] = {
+                    'last': comm.get('created_at'),
+                    'first': comm.get('created_at')
+                }
+            if list_users[comm.get('author')]['first'] > comm.get('created_at'):
+                list_users[comm.get('author')]['first'] = comm.get('created_at')
+            if list_users[comm.get('author')]['last'] < comm.get('created_at'):
+                list_users[comm.get('author')]['last'] = comm.get('created_at')
+            comm_project_user[comm.get('author')].append(comm)
         inject_project_commits(gl_redis, str(i), comm_project_score)
 
-        # Insert Last and First Commit date (Sorted List by Score)
-        gl_redis.hset("projects:" + str(i) + ":", 'first_commit_at', gl_redis.zrange("projects:" +
-                      str(i) + ":commits:", 0, 0, withscores=True)[0][1])
-        gl_redis.hset("projects:" + str(i) + ":", 'last_commit_at', gl_redis.zrange("projects:" +
-                      str(i) + ":commits:", -1, -1, withscores=True)[0][1])
-
         # Insert commits by project's branch
-        for b in bran_project:
-            c_length = len(bran_project[b])
+        ci_branches = ci.get('branches')
+        for b in ci_branches:
+            ci_branch_commits = ci_branches[b].get('commits')
+            gl_redis.hset("projects:" + str(i) + ":branches:" + b, 'contributors',
+                          ci_branches[b].get('collaborators'))
+            gl_redis.hset("projects:" + str(i) + ":branches:" + b, 'created_at',
+                          ci_branch_commits[0].get('created_at'))
+            gl_redis.hset("projects:" + str(i) + ":branches:" + b, 'last_commit',
+                          ci_branch_commits[len(ci_branch_commits)-1].get('id'))
             c_number = 1
+            c_length = len(ci_branch_commits)
             com_list_branch = []
-            for j in bran_project[b]:
-                com_list_branch.append("projects:" + str(i) + ":commits:" + j)
-                com_list_branch.append(comm_project[j].get('created_at'))
-
-                # Insert user additional information
-                inject_user_info(gl_redis, i, b, comm_project[j])
-
+            for j in ci_branch_commits:
+                com_list_branch.append("projects:" + str(i) + ":commits:" + j.get('id'))
+                com_list_branch.append(j.get('created_at'))
             inject_branch_commits(gl_redis, str(i), b, com_list_branch)
-
             print_progress("    Commits (" + str(p_number) + "/" + str(len(projects)) +
                            ")", float(c_number) / c_length)
             c_number += 1
 
-        # Insert Contributors
-        u = map(lambda k: "users:" + str(k.split(':')[1]),
-                gl_redis.keys("users:*:projects:" + str(i) + ":commits:"))
-        gl_redis.hset("projects:" + str(i) + ":", 'contributors', u)
+        # Insert commits by user
+        for w in comm_project_user:
+            comm_project_user[w].sort(key=lambda j: j.get('created_at'), reverse=False)
+            comm_un_project_user = []
+            for j in comm_project_user[w]:
+                comm_un_project_user.append("projects:" + str(i) + ":commits:" + j.get('id'))
+                comm_un_project_user.append(j.get('created_at'))
+            inject_user_commits(gl_redis, i, w, comm_un_project_user)
 
-    # Insert user additional information
-    for i in projects:
-        pc = gl_redis.keys("users:*:projects:" + str(i) + ":commits:")
-        users_temp = {}
-        for j in pc:
-            f = gl_redis.zrange(j, 0, 0, withscores=True)[0][1]
-            l = gl_redis.zrange(j, -1, -1, withscores=True)[0][1]
-            user_id = "users:" + j.split(':')[1]
-            if user_id in users_temp:
-                if l > users_temp[user_id]["last"]:
-                    users_temp[user_id]["last"] = l
-                if f < users_temp[user_id]["first"]:
-                    users_temp[user_id]["first"] = f
-            else:
-                users_temp[user_id] = {}
-                users_temp[user_id]["last"] = l
-                users_temp[user_id]["first"] = f
-        for j in users_temp.keys():
-            gl_redis.hset(j, 'first_commit_at', users_temp[j]['first'])
-            gl_redis.hset(j, 'last_commit_at', users_temp[j]['last'])
+    # Insert user's information
+    for i in list_users.keys():
+        gl_redis.hset("users:" + str(i) + ":", 'first_commit_at', list_users[i]['first'])
+        gl_redis.hset("users:" + str(i) + ":", 'last_commit_at', list_users[i]['last'])
 
     print ""
 
 
 def populate_redis_users(gl_drainer, gl_redis):
-    u = gl_drainer.api_users(None)
+    pag = 0
+    number_page = 50
+    git_users_len = -1
+    u = {}
+    while git_users_len is not 0:
+        git_users = gl_drainer.git.getusers(page=pag, per_page=number_page)
+        git_users_len = len(git_users)
+        for i in git_users:
+            if i.get('id') not in u:
+                convert_time_keys(i)
+                parse_info_user(i)
+                u[i.get('id')] = i
+        pag += 1
     u_number = 1
     print_progress("    Users", 0)
     for j in u:
-        i = gl_drainer.api_user(j)
-        i['first_commit_at'] = "null"
-        i['last_commit_at'] = "null"
-        gl_redis.hmset("users:" + str(i.get('id')), i)
-        gl_redis.set("users:" + str(i.get('id')) + ":email:" + i.get('email'), "")
-        print_progress("    Users", float(u_number) / len(u))
+        gl_redis.hmset("users:" + str(u[j].get('id')) + ":", u[j])
+        print_progress("    Users", float(u_number) / len(u.keys()))
         u_number += 1
     print ""
 
 
 def populate_redis_groups(gl_drainer, gl_redis):
-    g = gl_drainer.api_groups()
+    g = gl_drainer.git.getgroups()
     g_number = 1
     print_progress("    Groups", 0)
     for j in g:
-        i = gl_drainer.api_group(j)
-        am = i.get('members')
-        [gl_redis.rpush(
-            "groups:" + str(i.get('id')) +
-            ":members", "users:" + str(x)) for x in am
-        ]
-        del i['members']
-        gl_redis.hmset("groups:" + str(i.get('id')), i)
+        if 'projects' in j:
+            del j['projects']
+        convert_time_keys(j)
+        j['members'] = []
+        [j['members'].append(x.get('id')) for x in gl_drainer.git.getgroupmembers(j.get('id'))]
+        gl_redis.hmset("groups:" + str(j.get('id')) + ":", j)
         print_progress("    Groups", float(g_number) / len(g))
         g_number += 1
     print ""
 
 
 # Functions to help another functions
+
+
+time_keys = [
+    'created_at', 'updated_at', 'last_activity_at',
+    'due_date', 'authored_date', 'committed_date',
+    'first_commit_at', 'last_commit_at'
+]
+
+
+def convert_time_keys(o):
+    for k in o.keys():
+        if isinstance(o[k], dict):
+            convert_time_keys(o[k])
+        else:
+            if k in time_keys:
+                if o[k] != "null":
+                    o[k] = long(
+                        parser.parse(o.get(k)).strftime("%s")
+                    ) * 1000
+
+
+def parse_info_user(o):
+    k_users = [
+        "username", "name", "twitter", "created_at",
+        "linkedin", "email", "state", "avatar_url",
+        "skype", "id", "website_url", "first_commit_at",
+        "last_commit_at"
+    ]
+    for k in o.keys():
+        if k not in k_users:
+            del o[k]
+        elif o[k] is None or o[k] == '':
+            del o[k]
+        else:
+            pass
+
+
+def parse_info_project(o):
+    k_projects = [
+        "first_commit_at", "contributors", "http_url_to_repo", "web_url",
+        "owner", "id", "archived", "public", "description", "default_branch",
+        "last_commit_at", "last_activity_at", "name", "created_at", "avatar_url",
+        "tags"
+    ]
+    for k in o.keys():
+        if k not in k_projects:
+            del o[k]
+        elif o[k] is None or o[k] == '':
+            del o[k]
+        elif o[k] is False:
+            o[k] = 'false'
+        elif o[k] is True:
+            o[k] = 'true'
+        else:
+            pass
 
 
 def print_progress(label, percent):
@@ -207,19 +278,15 @@ def inject_project_commits(gl_redis, project_id, commits):
     gl_redis.zadd("projects:" + project_id + ":commits:", *commits_push)
 
 
-def inject_user_info(gl_redis, project_id, branch, commit):
-    b = map(lambda x: int(x.split(':')[1]),
-            gl_redis.keys("users:*:email:" + commit.get('author_email')))
-    if len(b) == 0:
-        return
-    b = b[0]
-
-    # Insert commit to Sorted List (project)
-    gl_redis.zadd("users:" + str(b) + ":projects:" + str(project_id) + ":commits:",
-                  "projects:" + str(project_id) + ":commits:" + commit.get('id'),
-                  commit.get('created_at'))
-
-    # Insert commit to Sorted List (branch)
-    gl_redis.zadd("users:" + str(b) + ":projects:" + str(project_id) + ":branches:" + branch + ":commits:",
-                  "projects:" + str(project_id) + ":commits:" + commit.get('id'),
-                  commit.get('created_at'))
+def inject_user_commits(gl_redis, project_id, user_id, commits):
+    c = 0
+    commits_push = []
+    for i in commits:
+        if c == 10000:
+            gl_redis.zadd("users:" + str(user_id) + ":projects:" + str(project_id) + ":commits:", *commits_push)
+            commits_push = [i]
+            c = 1
+        else:
+            commits_push.append(i)
+            c += 1
+    gl_redis.zadd("users:" + str(user_id) + ":projects:" + str(project_id) + ":commits:", *commits_push)
