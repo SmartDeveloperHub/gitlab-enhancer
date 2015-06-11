@@ -605,7 +605,7 @@ def get_project_commits_information(gl, project_id, branch_name):
     if branch_name is not None:
         if gl.getbranch(project_id, branch_name) is False:
             return False
-        git_branches = [git_project.get('default_branch')]
+        git_branches = [branch_name]
     else:
         git_branches = get_project_branches(gl, project_id, 'false')
 
@@ -636,7 +636,7 @@ def get_project_commits_information(gl, project_id, branch_name):
         ret_commits = []
         git_commits_len = -1
         while git_commits_len is not 0:
-            git_commits = gl.getrepositorycommits(project_id, branch_name, page=pag, per_page=number_page)
+            git_commits = gl.getrepositorycommits(project_id, i, page=pag, per_page=number_page)
             git_commits_len = len(git_commits)
             for w in git_commits:
                 convert_time_keys(w)
