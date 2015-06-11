@@ -653,8 +653,8 @@ def get_project_commits_information(gl, project_id, branch_name):
 
         ret_commits.sort(key=lambda j: j.get('created_at'), reverse=False)
         information['branches'][i]['commits'] = ret_commits
-        information['commits'].sort(key=lambda j: j.get('created_at'), reverse=False)
         information['branches'][i]['collaborators'] = information['branches'][i]['collaborators'].keys()
 
+    information['commits'].sort(key=lambda j: j.get('created_at'), reverse=False)
     information['collaborators'] = information['collaborators'].keys()
     return information
