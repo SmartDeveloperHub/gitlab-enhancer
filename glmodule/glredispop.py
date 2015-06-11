@@ -39,9 +39,11 @@ def populate_redis_projects(gl_drainer, gl_redis):
             i['owner'] = 'groups:' + str(i.get('namespace').get('id'))
         else:
             i['owner'] = 'users:' + str(i.get('owner').get('id'))
+
         convert_time_keys(i)
         i['tags'] = map(lambda x: x.get('name').encode('ascii','ignore'),
                         gl_drainer.git.getrepositorytags(i.get('id')))
+        parse_info_project(i)
         gl_redis.hmset("projects:" + str(i.get('id')) + ":", i)
         print_progress("    Projects", float(p_number) / len(p))
         p_number += 1
