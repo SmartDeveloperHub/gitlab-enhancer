@@ -179,6 +179,7 @@ def get_project_branch_commits(gl, project_id, branch_name, user_id, t_window):
             return False
         else:
             user = user.get('email')
+    branch_name = base64.b16decode(branch_name)
     if gl.getbranch(project_id, branch_name) is False:
         return False
     ci = get_project_commits_information(gl, project_id, branch_name)
