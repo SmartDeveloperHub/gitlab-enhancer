@@ -21,8 +21,8 @@
 
 __author__ = 'Alejandro F. Carrera'
 
-import json
-import datetime
+import base64
+import hashlib
 
 def get_projects(rd):
     """ Get Projects
@@ -54,6 +54,8 @@ def get_project(rd, project_id):
         git_project['tags'] = eval(git_project.get('tags'))
         git_project['contributors'] = eval(git_project.get('contributors'))
         convert_time_keys(git_project)
+        git_project['default_branch_name'] = git_project['default_branch']
+        git_project['default_branch'] = base64.b16encode(git_project['default_branch'])
         return git_project
 
 
@@ -103,7 +105,7 @@ def get_project_branches(rd, project_id, default_flag):
     """
     if default_flag == 'false':
         gl_b = rd.keys("projects:" + str(project_id) + ":branches:*")
-        gl_b = map(lambda w: w.split(":")[3], gl_b)
+        gl_b = map(lambda w: base64.b16encode(w.split(":")[3]), gl_b)
         if len(gl_b) == 0:
             return False
         gl_b_un = []
@@ -114,7 +116,7 @@ def get_project_branches(rd, project_id, default_flag):
         if git_project is False:
             return False
         else:
-            return [git_project.get('default_branch')]
+            return [base64.b16encode(git_project.get('default_branch'))]
 
 
 def get_project_branch(rd, project_id, branch_name):
@@ -124,6 +126,7 @@ def get_project_branch(rd, project_id, branch_name):
     :param branch_name: Branch Identifier (string)
     :return: Branch (Object)
     """
+    branch_name = base64.b16decode(branch_name)
     git_branch = rd.hgetall("projects:" + str(project_id) + ":branches:" + branch_name)
     if bool(git_branch) is False:
         return False
@@ -158,6 +161,7 @@ def get_project_branch_commits(rd, project_id, branch_name, user_id, t_window):
         user = get_user(rd, user_id)
         if user is False:
             return False
+    branch_name = base64.b16decode(branch_name)
     if get_project_branch(rd, project_id, branch_name) is False:
         return False
 
@@ -170,7 +174,10 @@ def get_project_branch_commits(rd, project_id, branch_name, user_id, t_window):
     if user is not None:
         git_commits_user = []
         for x in git_commits:
-            if x.get('author_email') == user.get('email'):
+            u = hashlib.md5()
+            u.update(x.get('author_email'))
+            u = u.hexdigest() + "@c.com"
+            if u == user.get('email'):
                 git_commits_user.append(x)
         git_commits = git_commits_user
 
@@ -200,7 +207,10 @@ def get_project_commits(rd, project_id, user_id, t_window):
     if user is not None:
         git_commits_user = []
         for x in git_commits:
-            if x.get('author_email') == user.get('email'):
+            u = hashlib.md5()
+            u.update(x.get('author_email'))
+            u = u.hexdigest() + "@c.com"
+            if u == user.get('email'):
                 git_commits_user.append(x)
         git_commits = git_commits_user
 
@@ -407,6 +417,7 @@ def get_entity_projects(rd, entity_id, relation_type, user_type, t_window):
 def get_contributors_projects(rd, project_id, branch_name, t_window):
 
     ret_users = {}
+    branch_name = base64.b16decode(branch_name)
 
     # Search and Filter by time
     if branch_name is not None:
