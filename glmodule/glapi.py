@@ -23,6 +23,7 @@ __author__ = 'Alejandro F. Carrera'
 
 from dateutil import parser
 import base64
+import hashlib
 
 def get_projects(gl):
     """ Get Projects
@@ -179,6 +180,7 @@ def get_project_branch_commits(gl, project_id, branch_name, user_id, t_window):
             return False
         else:
             user = user.get('email')
+    branch_name = base64.b16decode(branch_name)
     if gl.getbranch(project_id, branch_name) is False:
         return False
     ci = get_project_commits_information(gl, project_id, branch_name)
@@ -194,8 +196,12 @@ def get_project_branch_commits(gl, project_id, branch_name, user_id, t_window):
         ret_commits = git_commits_time
     else:
         git_commits_user = []
-        [git_commits_user.append(x) for x in git_commits_time if
-            x.get('author_email') == user.get('email')]
+        for x in git_commits_time:
+            u = hashlib.md5()
+            u.update(x.get('author_email'))
+            u = u.hexdigest() + "@c.com"
+            if u == user.get('email'):
+                git_commits_user.append(x)
         ret_commits = git_commits_user
 
     return map(lambda k: k.get('id'), ret_commits)
@@ -230,8 +236,12 @@ def get_project_commits(gl, project_id, user_id, t_window):
         ret_commits = git_commits_time
     else:
         git_commits_user = []
-        [git_commits_user.append(x) for x in git_commits_time if
-            x.get('author_email') == user.get('email')]
+        for x in git_commits_time:
+            u = hashlib.md5()
+            u.update(x.get('author_email'))
+            u = u.hexdigest() + "@c.com"
+            if u == user.get('email'):
+                git_commits_user.append(x)
         ret_commits = git_commits_user
 
     return map(lambda k: k.get('id'), ret_commits)
@@ -275,8 +285,11 @@ def get_project_commit(gl, project_id, commit_id):
     gl_commit['lines_removed'] = len(rem_lines_j)
     git_users = get_users(gl)
     git_users = map(lambda w: gl.getuser(w), git_users)
+    u_commit = hashlib.md5()
+    u_commit.update(gl_commit.get('author_email'))
+    u_commit = u_commit.hexdigest() + "@c.com"
     [gl_commit.update({'author': x.get('id')}) for x in git_users
-        if x.get('email') == gl_commit.get('author_email').lower()]
+        if x.get('email') == u_commit]
     del gl_commit['author_email']
     del gl_commit['author_name']
     return gl_commit
@@ -396,17 +409,20 @@ def get_user(gl, user_id):
         gpc = get_project_commits_information(gl, i, None)
         if gl_user.get('id') in gpc.get('collaborators'):
             for j in gpc.get('commits'):
+                u = hashlib.md5()
+                u.update(j.get('author_email'))
+                u = u.hexdigest() + "@c.com"
                 if f_commit == -1 and \
-                   j.get('author_email').lower() == gl_user.get('email'):
+                   u == gl_user.get('email'):
                     f_commit = j.get('created_at')
                 if l_commit == -1 and \
-                   j.get('author_email').lower() == gl_user.get('email'):
+                   u == gl_user.get('email'):
                     l_commit = j.get('created_at')
                 if f_commit > j.get('created_at') and \
-                   j.get('author_email').lower() == gl_user.get('email'):
+                   u == gl_user.get('email'):
                     f_commit = j.get('created_at')
                 if l_commit < j.get('created_at') and \
-                   j.get('author_email').lower() == gl_user.get('email'):
+                   u == gl_user.get('email'):
                     l_commit = j.get('created_at')
     if f_commit != -1:
         gl_user['first_commit_at'] = f_commit
@@ -589,10 +605,12 @@ def get_contributors_projects(gl, project_id, branch_name, t_window):
         pag += 1
 
     for w in ci_commits:
-        w['author_email'] = w.get('author_email').lower()
-        if w.get('author_email') in git_users_em_id:
-            if w.get('author_email') not in ret_users:
-                ret_users[w.get('author_email')] = git_users_em_id[w.get('author_email')]
+        u = hashlib.md5()
+        u.update(w.get('author_email'))
+        u = u.hexdigest() + "@c.com"
+        if u in git_users_em_id:
+            if u not in ret_users:
+                ret_users[u] = git_users_em_id[u]
 
     ret_users = ret_users.values()
     ret_users.sort()
@@ -644,9 +662,11 @@ def get_project_commits_information(gl, project_id, branch_name):
             git_commits_len = len(git_commits)
             for w in git_commits:
                 convert_time_keys(w)
-                w['author_email'] = w.get('author_email').lower()
-                if w.get('author_email') in git_users_em_id:
-                    collaborator_id = git_users_em_id[w.get('author_email')]
+                u = hashlib.md5()
+                u.update(w.get('author_email'))
+                u = u.hexdigest() + "@c.com"
+                if u in git_users_em_id:
+                    collaborator_id = git_users_em_id[u]
                     information['branches'][i]['collaborators'][collaborator_id] = '1'
                     information['collaborators'][collaborator_id] = '1'
                     if w.get('id') not in commits_hash:

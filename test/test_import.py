@@ -26,6 +26,7 @@ from settings import *
 import time
 import sys
 from random import randint
+import hashlib
 
 if __name__ == '__main__':
     for arg in sys.argv:
@@ -37,15 +38,7 @@ if __name__ == '__main__':
         ))
     git.login(user=GITLAB_USER, password=GITLAB_PASS)
 
-    pag = 0
-    number_page = 100
-    git_users_len = -1
     git_users_em_id = {}
-    while git_users_len is not 0:
-        git_users = git.getusers(page=pag, per_page=number_page)
-        git_users_len = len(git_users)
-        [git_users_em_id.update({x.get('email'): '1'}) for x in git_users]
-        pag += 1
 
     print "Creating Group: jenkins"
     group = git.creategroup("jenkins", "jenkins")
@@ -106,13 +99,15 @@ if __name__ == '__main__':
                         git_commits_hash[w.get('id')] = '1'
                         if w.get('author_email') not in git_users_em_id:
                             git_users_em_id[w.get('author_email')] = '1'
-                            us = w.get('author_email').split("@")[0] + "_" + str(randint(0, 5000))
-                            r = git.createuser(us, us, "pass12345", w.get('author_email'))
+                            u = hashlib.md5()
+                            u.update(w.get('author_email'))
+                            u = u.hexdigest()
+                            r = git.createuser(u, u, "pass12345", u + "@c.com")
                             time.sleep(10)
                             if r is False:
-                                print "Error: " + us + ' - ' + w.get('author_email')
+                                print "Error: " + u + ' - ' + w.get('author_email')
                             else:
-                                print "Created: " + us + ' - ' + w.get('author_email')
+                                print "Created: " + u + ' - ' + w.get('author_email')
                                 total_users += 1
                 pag += 1
         print " - Commits (All Branches): " + str(total_commits)
