@@ -107,8 +107,13 @@ if __name__ == '__main__':
                         if w.get('author_email') not in git_users_em_id:
                             git_users_em_id[w.get('author_email')] = '1'
                             us = w.get('author_email').split("@")[0] + "_" + str(randint(0, 5000))
-                            git.createuser(us, us, "pass12345", w.get('author_email'))
-                            total_users += 1
+                            r = git.createuser(us, us, "pass12345", w.get('author_email'))
+                            time.sleep(10)
+                            if r is False:
+                                print "Error: " + us + ' - ' + w.get('author_email')
+                            else:
+                                print "Created: " + us + ' - ' + w.get('author_email')
+                                total_users += 1
                 pag += 1
         print " - Commits (All Branches): " + str(total_commits)
         print " - Commits (Unique): " + str(len(git_commits_hash.keys()))
