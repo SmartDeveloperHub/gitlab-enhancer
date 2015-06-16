@@ -611,6 +611,7 @@ def get_project_commits_information(gl, project_id, branch_name):
         git_branches = [branch_name]
     else:
         git_branches = get_project_branches(gl, project_id, 'false')
+        git_branches = map(lambda j: base64.b16decode(j), git_branches)
 
     # Get Users emails and identifiers
     pag = 0
