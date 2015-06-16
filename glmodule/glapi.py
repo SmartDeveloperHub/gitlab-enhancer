@@ -22,7 +22,7 @@
 __author__ = 'Alejandro F. Carrera'
 
 from dateutil import parser
-
+import base64
 
 def get_projects(gl):
     """ Get Projects
@@ -65,6 +65,8 @@ def get_project(gl, project_id):
             git_project['first_commit_at'] = ci.get('commits')[0].get('created_at')
             git_project['last_commit_at'] = ci.get('commits')[len(ci.get('commits'))-1].get('created_at')
         parse_info_project(git_project)
+        git_project['default_branch_name'] = git_project['default_branch']
+        git_project['default_branch'] = base64.b16encode(git_project['default_branch'])
         return git_project
 
 
@@ -117,13 +119,13 @@ def get_project_branches(gl, project_id, default_flag):
         gl_b = gl.getbranches(project_id)
         if gl_b is False:
             return False
-        return map(lambda w: w.get('name'), gl_b)
+        return map(lambda w: base64.b16encode(w.get('name')), gl_b)
     else:
         git_project = get_project(gl, project_id)
         if git_project is False:
             return False
         else:
-            return [git_project.get('default_branch')]
+            return [base64.b16encode(git_project['default_branch'])]
 
 
 def get_project_branch(gl, project_id, branch_name):
@@ -133,6 +135,7 @@ def get_project_branch(gl, project_id, branch_name):
     :param branch_name: Branch Identifier (string)
     :return: Branch (Object)
     """
+    branch_name = base64.b16decode(branch_name)
     gl_branch = gl.getbranch(project_id, branch_name)
     if gl_branch is False:
         return False
