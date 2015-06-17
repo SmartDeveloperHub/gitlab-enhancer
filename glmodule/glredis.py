@@ -161,10 +161,11 @@ def get_project_branch_commits(rd, project_id, branch_name, user_id, t_window):
         user = get_user(rd, user_id)
         if user is False:
             return False
-    branch_name = base64.b16decode(branch_name)
+
     if get_project_branch(rd, project_id, branch_name) is False:
         return False
 
+    branch_name = base64.b16decode(branch_name)
     # Search and Filter by time
     git_commits = rd.zrange("projects:" + str(project_id) + ":branches:" + branch_name + ":commits:",
                             t_window.get('st_time'), t_window.get('en_time'))
