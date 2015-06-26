@@ -21,6 +21,8 @@
 
 __author__ = 'Alejandro F. Carrera'
 
+import os
+
 DEBUGGER = True
 
 DRAINER_PROT = 'http'
@@ -29,13 +31,13 @@ DRAINER_PORT = 5000
 DRAINER_LISTEN_IP = '0.0.0.0'
 
 GITLAB_PROT = 'http'
-GITLAB_IP = '127.0.0.1'
-GITLAB_PORT = 8000
-GITLAB_USER = 'root'
-GITLAB_PASS = '12345678'
-
-REDIS_IP = '127.0.0.1'
-REDIS_PORT = 6379
-REDIS_DB = 0
+GITLAB_IP = os.environ.get("ENH_GITLAB_IP", "127.0.0.1")
+GITLAB_PORT = int(os.environ.get("ENH_GITLAB_PORT", 8000))
+GITLAB_USER = os.environ.get("ENH_GITLAB_USER", 'root')
+GITLAB_PASS = os.environ.get("ENH_GITLAB_PASS", '12345678')
 
 # GITLAB_PASS = '5iveL!fe'
+
+REDIS_IP = os.environ.get("ENH_REDIS_IP", "127.0.0.1")
+REDIS_PORT = int(os.environ.get("ENH_REDIS_PORT", 6379))
+REDIS_DB = int(os.environ.get("ENH_REDIS_DB", 0))
