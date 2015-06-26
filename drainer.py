@@ -339,27 +339,3 @@ def check_time_window(args):
         'st_time': start_time,
         'en_time': end_time
     }
-
-
-# Main
-
-if __name__ == '__main__':
-    if drainer.redis is None:
-        print " * [REDIS] Redis is not available at http://%s:%d" % (
-            app.config.get('REDIS_IP', '127.0.0.1'),
-            app.config.get('REDIS_PORT', 6379)
-        )
-    else:
-        print " * [REDIS] Status: online"
-    if drainer.git is None:
-        print " * [SCM] Gitlab is not available at %s://%s:%d" % (
-            app.config.get('GITLAB_PROT', 'http'),
-            app.config.get('GITLAB_IP', '127.0.0.1'),
-            app.config.get('GITLAB_PORT', 8080)
-        )
-    else:
-        print " * [SCM] Status: online"
-    if drainer.git is not None or (drainer.redis is not None and drainer.redis_status is True):
-        app.run(app.config.get('DRAINER_LISTEN_IP', '0.0.0.0'), app.config.get('DRAINER_PORT', 5000))
-    else:
-        print " * Drainer finished"
