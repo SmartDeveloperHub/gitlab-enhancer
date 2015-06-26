@@ -20,25 +20,3 @@
 """
 
 __author__ = 'Alejandro F. Carrera'
-
-import os
-from setuptools import setup, find_packages
-
-
-def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
-
-setup(
-    name="gl-enhancer",
-    version="0.3.0.dev4",
-    author="Alejandro F. Carrera",
-    author_email="alejandro.fernandez.carrera@centeropenmiddleware.com",
-    description="A project for Gitlab Enhancer Service",
-    license="Apache 2",
-    keywords="inner-source drainer",
-    url="https://github.com/SmartDeveloperHub/gitlab-enhancer",
-    packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
-    install_requires=['pyapi-gitlab', 'flask', 'flask_negotiate', 'python-dateutil', 'redis'],
-    classifiers=[],
-    scripts=['enhancer']
-)

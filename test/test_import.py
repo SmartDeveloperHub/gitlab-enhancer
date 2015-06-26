@@ -21,12 +21,14 @@
 
 __author__ = 'Alejandro F. Carrera'
 
-import gitlab
-from settings import *
 import time
 import sys
 from random import randint
 import hashlib
+
+import gitlab
+
+from drainer.settings import *
 
 if __name__ == '__main__':
     for arg in sys.argv:
