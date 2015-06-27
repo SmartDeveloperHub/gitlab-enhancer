@@ -23,6 +23,16 @@ __author__ = 'Alejandro F. Carrera'
 
 import base64
 import hashlib
+import json
+import os
+
+json_users = None
+json_users_loc = os.path.realpath(
+    os.path.join(os.getcwd(), os.path.dirname(__file__)))
+json_users_loc = os.path.join(json_users_loc, 'json_users.json')
+with open(json_users_loc, 'r') as json_file:
+    json_users = json.load(json_file)
+
 
 def get_projects(rd):
     """ Get Projects
@@ -299,6 +309,9 @@ def get_user(rd, user_id):
         return False
     else:
         git_user['id'] = int(git_user.get('id'))
+        if git_user['email'] in json_users:
+            git_user['name'] = json_users.get(git_user['email']).get('username')
+            git_user['email'] = json_users.get(git_user['email']).get('email')
         convert_time_keys(git_user)
         return git_user
 
@@ -418,10 +431,10 @@ def get_entity_projects(rd, entity_id, relation_type, user_type, t_window):
 def get_contributors_projects(rd, project_id, branch_name, t_window):
 
     ret_users = {}
-    branch_name = base64.b16decode(branch_name)
 
     # Search and Filter by time
     if branch_name is not None:
+        branch_name = base64.b16decode(branch_name)
         git_commits = rd.zrange("projects:" + str(project_id) + ":branches:" + branch_name + ":commits:",
                                 t_window.get('st_time'), t_window.get('en_time'))
     else:
