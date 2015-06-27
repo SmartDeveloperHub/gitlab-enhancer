@@ -1,5 +1,0 @@
-pyapi-gitlab
-flask
-flask_negotiate
-python-dateutil
-redis
