@@ -30,15 +30,17 @@ def read(fname):
 
 setup(
     name="gl-enhancer",
-    version="0.3.0.dev5",
+    version="0.3.0.dev6",
     author="Alejandro F. Carrera",
     author_email="alejandro.fernandez.carrera@centeropenmiddleware.com",
     description="A project for Gitlab Enhancer Service",
     license="Apache 2",
     keywords="inner-source drainer",
     url="https://github.com/SmartDeveloperHub/gitlab-enhancer",
-    packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
+    packages=find_packages(exclude=['ez_setup', 'test']),
     install_requires=['pyapi-gitlab', 'flask', 'flask_negotiate', 'python-dateutil', 'redis'],
     classifiers=[],
-    scripts=['enhancer']
+    scripts=['enhancer'],
+    package_dir={'glmodule': 'glmodule'},
+    package_data={'glmodule': ['*.json']},
 )
