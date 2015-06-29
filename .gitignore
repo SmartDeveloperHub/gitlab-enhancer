@@ -1,5 +1,7 @@
 .idea
 .DS_Store
 *.pyc
-dist
+dist/
 gl_enhancer.egg*
+.env/
+build/
