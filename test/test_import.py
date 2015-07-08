@@ -40,6 +40,7 @@ if __name__ == '__main__':
         ))
     git.login(user=GITLAB_USER, password=GITLAB_PASS)
 
+    git_users_json = {}
     git_users_em_id = {}
 
     print "Creating Group: jenkins"
@@ -50,24 +51,24 @@ if __name__ == '__main__':
     visibility_levels = ['public', 'private', 'internal']
     projects = [
         {
-            'git': "https://github.com/jenkinsci/docker-plugin.git",
-            'name': 'docker-plugin',
+            'git': "https://github.com/jenkinsci/jenkins.git",
+            'name': 'jenkins',
+        },
+        {
+            'git': "https://github.com/jenkinsci/pom.git",
+            'name': 'pom',
+        },
+        {
+            'git': "https://github.com/jenkinsci/maven-interceptors.git",
+            'name': 'maven-interceptors',
         },
         {
             'git': "https://github.com/jenkinsci/maven-hpi-plugin.git",
             'name': 'maven-hpi-plugin',
         },
         {
-            'git': "https://github.com/jenkinsci/gradle-jpi-plugin.git",
-            'name': 'gradle-jpi-plugin',
-        },
-        {
-            'git': "https://github.com/jenkinsci/docker-workflow-plugin.git",
-            'name': 'docker-workflow-plugin',
-        },
-        {
-            'git': "https://github.com/jenkinsci/github-pullrequest-plugin.git",
-            'name': 'github-pullrequest-plugin',
+            'git': "https://github.com/jenkinsci/backend-extension-indexer.git",
+            'name': 'backend-extension-indexer',
         }
     ]
 
@@ -104,6 +105,10 @@ if __name__ == '__main__':
                             u = hashlib.md5()
                             u.update(w.get('author_email'))
                             u = u.hexdigest()
+                            git_users_json[u] = {
+                                "username": w.get('author_email').split("@")[0],
+                                "email": w.get('author_email')
+                            }
                             r = git.createuser(u, u, "pass12345", u + "@c.com")
                             time.sleep(10)
                             if r is False:
@@ -116,3 +121,7 @@ if __name__ == '__main__':
         print " - Commits (Unique): " + str(len(git_commits_hash.keys()))
         print " - New Users: " + str(total_users)
         print " - Done"
+
+        import json
+        with open('json_users.json', 'w') as outfile:
+            json.dump(git_users_json, outfile)

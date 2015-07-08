@@ -1,1 +1,2402 @@
-{"892661b14bc7a3d488adbfef30581402@c.com": {"username": "sebastian.menski", "email": "sebastian.menski@googlemail.com"}, "2983ff4b1cfdd190e9a42e1e6c6e7327@c.com": {"username": "nicolas.deloof", "email": "nicolas.deloof@gmail.com"}, "6559d4b2de15cb1433fc13c34599e4c7@c.com": {"username": "carlos", "email": "carlos@apache.org"}, "8c5a2936fbb1b2daff71b326dd3c6f2e@c.com": {"username": "dpospisi", "email": "dpospisi@redhat.com"}, "584382af21b2a0443598e86257c14c88@c.com": {"username": "alavi", "email": "alavi@vmware.com"}, "8de995fe20a4218d8cdadb0fafa863d7@c.com": {"username": "thibault.jamet", "email": "thibault.jamet@scmfrance.fr"}, "6b1ddbbd68356af130cd7d28ee5ba2d2@c.com": {"username": "kutzi", "email": "kutzi@gmx.de"}, "9eb5ddde93c5ea66f178d96e26ab9bc5@c.com": {"username": "github", "email": "github@folk.de"}, "5015a95954038a66fed0ba870ec759c8@c.com": {"username": "mindless", "email": "mindless@@dev.java.net"}, "44e8ad1ad57cd5ef4c373a7e085e23c2@c.com": {"username": "kiy0taka333", "email": "kiy0taka333@gmail.com"}, "d4e857088d94788fe3a6bb15148171ae@c.com": {"username": "josh.griffiths", "email": "josh.griffiths@opsview.com"}, "bab29f762bea8e578505424443d8cd41@c.com": {"username": "olamy", "email": "olamy@apache.org"}, "83fa7ba05155576b5864304ce2404e9e@c.com": {"username": "ustuehler", "email": "ustuehler@bsdx.de"}, "8984ef6d12ee96008c8e4b5afb53da85@c.com": {"username": "wolfs", "email": "wolfs@fs.tum.de"}, "4cdbbd7940afcdf979a50b2950423e38@c.com": {"username": "hy.leung", "email": "hy.leung@gmail.com"}, "dbbddb832902ac6c29e838d7da878e6b@c.com": {"username": "nigel.magnay", "email": "nigel.magnay@gmail.com"}, "139b7e66a99111adb5d996c8f8e67ec7@c.com": {"username": "domi", "email": "domi@fortysix.ch"}, "cb9ee6f122ed14a1fab924126cc330d7@c.com": {"username": "redsolo", "email": "redsolo@@dev.java.net"}, "0a07d72b32a4a087e249746d0f44ada1@c.com": {"username": "github", "email": "github@andreaskoch.net"}, "9dbc237fd00285c591c8723d042bcf9e@c.com": {"username": "rws", "email": "rws@us.ibm.com"}, "79a6ce5109e75b2ecae8b7b40425068d@c.com": {"username": "lanwen", "email": "lanwen@yandex-team.ru"}, "44d451ffa4fe640f2a0f6ec05bf5d962@c.com": {"username": "mamciek", "email": "mamciek@gmail.com"}, "417faefca83783e9162757b2a79c6976@c.com": {"username": "erdi84", "email": "erdi84@gmail.com"}, "afbf0de35880d680634c678d9cb1422f@c.com": {"username": "bernie.schelberg", "email": "bernie.schelberg@zoak.solutions"}, "8d1e0eddeed0a04565499c2f8429fb17@c.com": {"username": "user57", "email": "user57@@dev.java.net"}, "6f3d30c6abb44a9b8324c6287bf619fd@c.com": {"username": "hashar", "email": "hashar@free.fr"}, "c1ccb81aa27de309933384652c7b0635@c.com": {"username": "hirose31", "email": "hirose31@gmail.com"}, "e7bf5851facf3f2a8bd83452600ee21a@c.com": {"username": "daniel.j.laird", "email": "daniel.j.laird@googlemail.com"}, "34d86e5da885fe60bfb18286fc71663e@c.com": {"username": "ogondza", "email": "ogondza@gmail.com"}, "136ae15b583f50063f6560b433c06ec2@c.com": {"username": "ed", "email": "ed@iweb.co.uk"}, "0c0176e75af64c75b15483523b1f3745@c.com": {"username": "mindless", "email": "mindless@dev.java.net"}, "479099be5042206c679d64e17748a694@c.com": {"username": "kanstantsin.sha", "email": "kanstantsin.sha@gmail.com"}, "d6dc207a6524f5698a4cfdd278747ae0@c.com": {"username": "jglick", "email": "jglick@@dev.java.net"}, "105e56de7181f0e34e92a3a85a7e3092@c.com": {"username": "km", "email": "km@@dev.java.net"}, "e25bf438b823ffbd43110cab8d8c7807@c.com": {"username": "jocelyn.delarosa", "email": "jocelyn.delarosa@scmfrance.fr"}, "5d115f6b84610fa2f63d8f008e2e9cb9@c.com": {"username": "jn.avila", "email": "jn.avila@free.fr"}, "b834282ca95da211c1eb47eed46deec8@c.com": {"username": "mdonohue", "email": "mdonohue@@dev.java.net"}, "1491b11fe484af03f7beff7f1c39bf8a@c.com": {"username": "jglick", "email": "jglick@cloudbees.com"}, "d69759a052f3f989f3a42977ba583479@c.com": {"username": "abayer", "email": "abayer@@dev.java.net"}, "a135f0f4dca3614ff25f1fb41b0efda1@c.com": {"username": "aaron", "email": "aaron@iweb.co.uk"}, "4288488df0c2d44d36a042e79dca2539@c.com": {"username": "noamt", "email": "noamt@jfrog.com"}, "cced29b382c0b2c5b9933b5036711f74@c.com": {"username": "dustin.chaloupka", "email": "dustin.chaloupka@banno.com"}, "425fa324109675a6f5025abaa80f9311@c.com": {"username": "daniel-beck", "email": "daniel-beck@github.com"}, "60b018bfe2d2dd9bfee89f15775465f0@c.com": {"username": "kohsuke", "email": "kohsuke@@dev.java.net"}, "6d3091303307b73a7da4e807f3d5ce2b@c.com": {"username": "stevenrwalter", "email": "stevenrwalter@gmail.com"}, "833b7ef3fce0aa7e1b6e58c2785dba44@c.com": {"username": "stephane.duchesneau", "email": "stephane.duchesneau@savoirfairelinux.com"}, "323470d61798c27a7073bbc4cab69003@c.com": {"username": "guilhem", "email": "guilhem@lettron.fr"}, "f9dd9951e43919f9572f674c9916b418@c.com": {"username": "alina_karpovich", "email": "alina_karpovich@epam.com"}, "abf7b1125d0be244972753887820c153@c.com": {"username": "mfriedenhagen", "email": "mfriedenhagen@gmail.com"}, "1b295995f463248ef130ae0f9b9518d9@c.com": {"username": "stephane.duchesneau", "email": "stephane.duchesneau@gmail.com"}, "352562269baa83b3e390f8f29f5e01ad@c.com": {"username": "thomas.suckow", "email": "thomas.suckow@pnnl.gov"}, "5d1be7acdf34e465321a33ccb8ef743d@c.com": {"username": "igor.masen", "email": "igor.masen@icloud.com"}, "556aae19948b39214c736a9cc8a63778@c.com": {"username": "senthil_kumar.selvaraj", "email": "senthil_kumar.selvaraj@atmel.com"}, "c0de98ae17fa45d01407fcd0e77c6841@c.com": {"username": "stephen.alan.connolly", "email": "stephen.alan.connolly@gmail.com"}, "ad8f9c02be2ad2ea3ff9aa8fb2d8d842@c.com": {"username": "daniel.spilker", "email": "daniel.spilker@coremedia.com"}, "248b0ebabaf672d07d70410d024e6c97@c.com": {"username": "Kanstantsin_Shautsou", "email": "Kanstantsin_Shautsou@epam.com"}, "bdf1ebe835ef0838ccb49256d6e199b9@c.com": {"username": "mgius7096", "email": "mgius7096@gmail.com"}, "9e72cb56cb0287226df466098381e673@c.com": {"username": "richard.sae.kang", "email": "richard.sae.kang@ericsson.com"}, "405745cc9d15139cfc03bc391bf32e00@c.com": {"username": "senthil.thecoder", "email": "senthil.thecoder@gmail.com"}, "8e6f5f031f70158ffffb654354189928@c.com": {"username": "btosabre", "email": "btosabre@@dev.java.net"}, "8ef45acabe82a50fbab3e7b48e906fe4@c.com": {"username": "kiy0taka333+github", "email": "kiy0taka333+github@gmail.com"}, "1e22e63a68883ad2de90dd541b6e2b32@c.com": {"username": "vjuranek", "email": "vjuranek@redhat.com"}, "568e3391c8b528f2b255443e4cca27ca@c.com": {"username": "o.v.nenashev", "email": "o.v.nenashev@gmail.com"}, "8385c0b1043e2035ff9829b06d2e27e0@c.com": {"username": "name.alari", "email": "name.alari@gmail.com"}, "80a7128b641e370c1ee0bceeaca9e764@c.com": {"username": "olamy", "email": "olamy@@dev.java.net"}, "f60688386d745dfc74d3fd385c7bd2fc@c.com": {"username": "mail", "email": "mail@daniel-spilker.com"}, "ec27d19a908fde4195da98a0a4f5a42a@c.com": {"username": "damien.coraboeuf", "email": "damien.coraboeuf@gmail.com"}, "aaa3d4f91cf23a6041c436c9d183d807@c.com": {"username": "Alina_Karpovich", "email": "Alina_Karpovich@epam.com"}, "9dc9023094b9cf490f7a7774344ff75a@c.com": {"username": "andrew.bayer", "email": "andrew.bayer@gmail.com"}, "0cb9832a01c22c083390f3c5dcb64105@c.com": {"username": "kk", "email": "kk@kohsuke.org"}, "7e5dd9a49d4e5c2001a0b87f9be046c3@c.com": {"username": "mike.gilbode", "email": "mike.gilbode@oracle.com"}, "70a1a57574ff18e6d694bc918223befd@c.com": {"username": "swiest", "email": "swiest@@dev.java.net"}, "202e5576f882787d0c99138a68e511d3@c.com": {"username": "stephenconnolly", "email": "stephenconnolly@@dev.java.net"}, "c54d4613209b41d379edb0dc3a0fd422@c.com": {"username": "jan.marco.mueller", "email": "jan.marco.mueller@gmail.com"}}
+{
+  "d6dc207a6524f5698a4cfdd278747ae0@c.com": {
+    "username": "jglick",
+    "email": "jglick@@dev.java.net"
+  },
+  "70a1a57574ff18e6d694bc918223befd@c.com": {
+    "username": "swiest",
+    "email": "swiest@@dev.java.net"
+  },
+  "01bd909b3215f03e3be4957448c60d8e@c.com": {
+    "username": "michael.ocleirigh",
+    "email": "michael.ocleirigh@rivulet.ca"
+  },
+  "e365979754ac167b2f3a37101ab22c6f@c.com": {
+    "username": "ant.kampo",
+    "email": "ant.kampo@gmail.com"
+  },
+  "4dae1c81775f88926db6de7dd77df9c7@c.com": {
+    "username": "richie",
+    "email": "richie@groupon.com"
+  },
+  "19f6e15ddefc4b1196d11cbad2f9d73f@c.com": {
+    "username": "paxswill",
+    "email": "paxswill@gmail.com"
+  },
+  "c41362a8541dc1ea0ce4a650c0591bad@c.com": {
+    "username": "quinox",
+    "email": "quinox@qtea.nl"
+  },
+  "724e96858e09e4439df633c574fc611a@c.com": {
+    "username": "bruno",
+    "email": "bruno@meneguello.com"
+  },
+  "a6afd5142dcb7b2795a55ce8e168fe6c@c.com": {
+    "username": "matthias.vach",
+    "email": "matthias.vach@sap.com"
+  },
+  "1432b18a50008bb0bfe60e1e1512b4b7@c.com": {
+    "username": "draco2k8",
+    "email": "draco2k8@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "f5bd3f9bc8246f755353a6339fd75aae@c.com": {
+    "username": "vglushenkov",
+    "email": "vglushenkov@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "6a0503c195f533b5cd6bd4ccdd6cdc3e@c.com": {
+    "username": "webmaster",
+    "email": "webmaster@kenichimaehashi.com"
+  },
+  "d92a156d53434b9a8d64a1792584493b@c.com": {
+    "username": "arielpeltz",
+    "email": "arielpeltz@gmail.com"
+  },
+  "61e3c8fa1021888ee41b65efa61a10ea@c.com": {
+    "username": "tom.payne",
+    "email": "tom.payne@camptocamp.com"
+  },
+  "c5837601ff56622da9ac1d26016b474e@c.com": {
+    "username": "wyukawa",
+    "email": "wyukawa@gmail.com"
+  },
+  "90e4d00dcbfd009f6050233ebcfe394f@c.com": {
+    "username": "ea333",
+    "email": "ea333@freemail.hu"
+  },
+  "2ad13673ad83a81442a64a43f76c7d58@c.com": {
+    "username": "abradley",
+    "email": "abradley@mitre.org"
+  },
+  "164e346d6bc1fe9cfcde846ae214b3f0@c.com": {
+    "username": "beta",
+    "email": "beta@cht.com.tw"
+  },
+  "5a5c71619716d0dfebf67f5f9778422f@c.com": {
+    "username": "daniel.lemos",
+    "email": "daniel.lemos@concretesolutions.com.br"
+  },
+  "b8e2b5046579f6ef2707b1fb8dbcef8f@c.com": {
+    "username": "davidwbb",
+    "email": "davidwbb@gmail.com"
+  },
+  "1b80ac1b894297d6df212fd8af93053b@c.com": {
+    "username": "krzysztof",
+    "email": "krzysztof@rakowski.pl"
+  },
+  "3923334bb045e454f44768b0ff691bc1@c.com": {
+    "username": "kbertelson",
+    "email": "kbertelson@gmail.com"
+  },
+  "0c0176e75af64c75b15483523b1f3745@c.com": {
+    "username": "mindless",
+    "email": "mindless@dev.java.net"
+  },
+  "ae0450c3b3cf1e138f41bb39273f4103@c.com": {
+    "username": "simon",
+    "email": "simon@simonandrews.org"
+  },
+  "9b418d9fca3f05b16fcceabb9fca0991@c.com": {
+    "username": "stefanl2",
+    "email": "stefanl2@yahoo.fr"
+  },
+  "1ef32af64d0ab981d6bbb6eda4d6e4c6@c.com": {
+    "username": "mbarr",
+    "email": "mbarr@snap-interactive.com"
+  },
+  "8446c5dc79ef6b289b9ccf826f24c6c3@c.com": {
+    "username": "michael",
+    "email": "michael@michaelstrasser.com"
+  },
+  "f1a8a21b480a96da7f9a35f027267e88@c.com": {
+    "username": "costincaraivan",
+    "email": "costincaraivan@gmail.com"
+  },
+  "283d3ef33ea5f5e17157e833206b64d6@c.com": {
+    "username": "ewongbb",
+    "email": "ewongbb@pw-wspx.org"
+  },
+  "5c14bf8571e84d94400312823ed01242@c.com": {
+    "username": "tmorse",
+    "email": "tmorse@empowercampaigns.com"
+  },
+  "9711f0384b4527a0dbdb9e2edf5720c4@c.com": {
+    "username": "patbos",
+    "email": "patbos@patbos.com"
+  },
+  "f989c44296059b02f5b49da5ede8be5f@c.com": {
+    "username": "abayer",
+    "email": "abayer@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "75fcbdda355f366e6d3a4c0d24ee6ac2@c.com": {
+    "username": "lecric",
+    "email": "lecric@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "8737141de091852c64db8964bee30a87@c.com": {
+    "username": "jyrki.puttonen",
+    "email": "jyrki.puttonen@sysart.fi"
+  },
+  "9ed0294db5703c0bb88096c9c15f6894@c.com": {
+    "username": "sergey.burkov",
+    "email": "sergey.burkov@gmail.com"
+  },
+  "e9a32289511cd3f634014ecc5eb11f10@c.com": {
+    "username": "ljaderdev",
+    "email": "ljaderdev@gmail.com"
+  },
+  "59b1d8320f017d123338df07da02898e@c.com": {
+    "username": "lyle2.0",
+    "email": "lyle2.0@gmail.com"
+  },
+  "e88672248b744a24ad28de9b720b6d09@c.com": {
+    "username": "romain.seguy",
+    "email": "romain.seguy@gmail.com"
+  },
+  "4dc911c8050b40170a93e729695c23ea@c.com": {
+    "username": "StevenGBrown",
+    "email": "StevenGBrown@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "c204f41b22fadfafc25a5a3fb5c47360@c.com": {
+    "username": "Robert",
+    "email": "Robert@imac.local"
+  },
+  "bce5c94e01d3fde02f6ff481f7f2759a@c.com": {
+    "username": "albers",
+    "email": "albers@users.noreply.github.com"
+  },
+  "ab45997628fc46155cb2fccb1f55d722@c.com": {
+    "username": "murank42",
+    "email": "murank42@gmail.com"
+  },
+  "292b5ad9b7fef138bb72cab78f2e36c6@c.com": {
+    "username": "greg",
+    "email": "greg@nzmsv.com"
+  },
+  "479099be5042206c679d64e17748a694@c.com": {
+    "username": "kanstantsin.sha",
+    "email": "kanstantsin.sha@gmail.com"
+  },
+  "12d4363e5eb483ecaa69e8ac3f9bfd2e@c.com": {
+    "username": "sounie",
+    "email": "sounie@hotmail.com"
+  },
+  "2268a1f4c7d2f594a5d3c5b5fe32d540@c.com": {
+    "username": "mrebasti",
+    "email": "mrebasti@gmail.com"
+  },
+  "920952d5b5e7946f5f656635bd64a45e@c.com": {
+    "username": "wross",
+    "email": "wross@cmf.nrl.navy.mil"
+  },
+  "d60ef535e32457a9e1be48b95e007b4d@c.com": {
+    "username": "kamil",
+    "email": "kamil@zymeworks.com"
+  },
+  "9ffb442a48668af086545427b7042902@c.com": {
+    "username": "popsul1993",
+    "email": "popsul1993@gmail.com"
+  },
+  "2d68a980622ade569cd06f2ba331299f@c.com": {
+    "username": "frzlollo",
+    "email": "frzlollo@gmail.com"
+  },
+  "5a9d8fda68538f0db77ebfc8a55db853@c.com": {
+    "username": "batmat",
+    "email": "batmat@batmat.net"
+  },
+  "e1c7ebfa8d4ab31a21117d02492f47a4@c.com": {
+    "username": "dev",
+    "email": "dev@borispenck.de"
+  },
+  "8228ed824369cd870783abf77cc2291d@c.com": {
+    "username": "russell.barnes.1",
+    "email": "russell.barnes.1@gmail.com"
+  },
+  "80f664ad0b733b41243f3c37956c909e@c.com": {
+    "username": "evernat",
+    "email": "evernat@free.fr"
+  },
+  "7e19cd5486b5d6dc1ef90e671ba52ae0@c.com": {
+    "username": "wynn.netherland",
+    "email": "wynn.netherland@gmail.com"
+  },
+  "d4ffe78be2c0c611b3bdb7964e33a18a@c.com": {
+    "username": "daniel.l.olausson",
+    "email": "daniel.l.olausson@ericsson.com"
+  },
+  "71621b30eec6fb6eaf29a6b8fcac947a@c.com": {
+    "username": "manolo",
+    "email": "manolo@talkwheel.com"
+  },
+  "aad06e334677718597b947ed94ddbfe1@c.com": {
+    "username": "elefevre",
+    "email": "elefevre@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "c82d3c9f30de9062dcfed596b7a92ca1@c.com": {
+    "username": "andreyev",
+    "email": "andreyev@cpqd.com.br"
+  },
+  "3f20d1d11a434c3e9aa2deb2caca2526@c.com": {
+    "username": "iplaman",
+    "email": "iplaman@gmail.com"
+  },
+  "f175eaddec52007dc4da922a9d5ab1c1@c.com": {
+    "username": "michael.koch",
+    "email": "michael.koch@enough.de"
+  },
+  "9a26ce83035fae409aea75a6a214f94b@c.com": {
+    "username": "frizbog",
+    "email": "frizbog@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "ddbc6da5ade0b070f44a05a570d74270@c.com": {
+    "username": "wyukawa",
+    "email": "wyukawa@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "98e24d145e40688d49ff4a8eca1febdf@c.com": {
+    "username": "balder",
+    "email": "balder@redlab.be"
+  },
+  "5a0755373b338118982857d06439ce0b@c.com": {
+    "username": "eduard.bartosh",
+    "email": "eduard.bartosh@intel.com"
+  },
+  "0cb9832a01c22c083390f3c5dcb64105@c.com": {
+    "username": "kk",
+    "email": "kk@kohsuke.org"
+  },
+  "c9035273707b9d6d9cd9e583cbdc11fe@c.com": {
+    "username": "godin",
+    "email": "godin@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "ee41916aeeca1581df641fe3c0a12114@c.com": {
+    "username": "jieryn",
+    "email": "jieryn@gmail.com"
+  },
+  "5cd827dc5825641dbde2be45e0730a12@c.com": {
+    "username": "wade.carpenter+jenk",
+    "email": "wade.carpenter+jenk@gmail.com"
+  },
+  "31e921970f7170d7db90d2c975f75b74@c.com": {
+    "username": "shawn.mccarthy3",
+    "email": "shawn.mccarthy3@gmail.com"
+  },
+  "830257379aa0b44a17acdab802c98df7@c.com": {
+    "username": "kevinsawicki",
+    "email": "kevinsawicki@gmail.com"
+  },
+  "c0f3a16674c4570f0f05614b89b28153@c.com": {
+    "username": "lSchoelens",
+    "email": "lSchoelens@.dhcp.manh.fr.sopra"
+  },
+  "5eeea2571a7fdf4bd0544c4d2742ba63@c.com": {
+    "username": "chandrodayv",
+    "email": "chandrodayv@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "732a52f3989d9cbc02bbc8b73dc54fe8@c.com": {
+    "username": "oguzdag",
+    "email": "oguzdag@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "fa98e020381392732698cb4fd1d6b658@c.com": {
+    "username": "mspring",
+    "email": "mspring@cisco.com"
+  },
+  "c0b9c87325afc3c144e16007080969c3@c.com": {
+    "username": "olamy",
+    "email": "olamy@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "c345f908151aafac2c91308112b5d11f@c.com": {
+    "username": "thiagozanetti",
+    "email": "thiagozanetti@users.noreply.github.com"
+  },
+  "d8e12c6752e3a095cfeb6193b6d253a7@c.com": {
+    "username": "lucinka",
+    "email": "lucinka@localhost.localdomain"
+  },
+  "2c4b1b36008034fb0615decc8f983232@c.com": {
+    "username": "Kenneth.Garland",
+    "email": "Kenneth.Garland@hbo.com"
+  },
+  "19f99f3a89c5e538058785ef5507615d@c.com": {
+    "username": "kevin",
+    "email": "kevin@striiv.com"
+  },
+  "cfd6e12dd64775347d2edcfb09e427d1@c.com": {
+    "username": "hayderimran7",
+    "email": "hayderimran7@gmail.com"
+  },
+  "f8732f6febbf1d2e0d8d7ec696a9097f@c.com": {
+    "username": "t.bevers",
+    "email": "t.bevers@gmail.com"
+  },
+  "c9f63896d78a8fdc78624e2d2da479ca@c.com": {
+    "username": "tuladharpuru",
+    "email": "tuladharpuru@gmail.com"
+  },
+  "40825589ef2b8865a1a642098b0c64f8@c.com": {
+    "username": "mn",
+    "email": "mn@mn.com.ua"
+  },
+  "6018eca43cecafe317c89d45a7b1f34a@c.com": {
+    "username": "sghill.dev",
+    "email": "sghill.dev@gmail.com"
+  },
+  "01fbc159c2b6e37c53b6782244571831@c.com": {
+    "username": "acora6",
+    "email": "acora6@gmail.com"
+  },
+  "56d02089a25424f03f1737c5819ca58c@c.com": {
+    "username": "sstorey",
+    "email": "sstorey@gmail.com"
+  },
+  "41910a452554b187d044c00c576866b1@c.com": {
+    "username": "kev",
+    "email": "kev@inburke.com"
+  },
+  "c5962e1d8904fe6dd4ef3bc026dc8509@c.com": {
+    "username": "dhoover",
+    "email": "dhoover@google.com"
+  },
+  "ebbdf6910e6309130d2714ea358895e4@c.com": {
+    "username": "konteineris",
+    "email": "konteineris@yahoo.com"
+  },
+  "db09d0dd57912e268268939cf294cd5e@c.com": {
+    "username": "bruyeron",
+    "email": "bruyeron@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "012488261a46ffbc34c963eeb5aa7a61@c.com": {
+    "username": "jpederzolli",
+    "email": "jpederzolli@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "fe16036c17ff63e0fed03f23473339ad@c.com": {
+    "username": "janick.reynders",
+    "email": "janick.reynders@gmail.com"
+  },
+  "2edf1609219c39b583b96e6eeb9e5aa7@c.com": {
+    "username": "kohsuke",
+    "email": "kohsuke@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "34766f2d6f75795f238ddc117b4ba1b6@c.com": {
+    "username": "pmaccamp",
+    "email": "pmaccamp@yahoo.com"
+  },
+  "b75805f5c6b8a35089415ae88eebfd10@c.com": {
+    "username": "wil.moore",
+    "email": "wil.moore@wilmoore.com"
+  },
+  "6938ff653610ee5d5c315068b32acb61@c.com": {
+    "username": "liorha",
+    "email": "liorha@jfrog.com"
+  },
+  "feb648ea6a37f0ffd99f63c4bde4f6f5@c.com": {
+    "username": "nithril",
+    "email": "nithril@gmail.com"
+  },
+  "08fdc408ec6d07b292b8fdf46b1e3e1e@c.com": {
+    "username": "adrian",
+    "email": "adrian@jclouds.org"
+  },
+  "9600c99fd97423e64219153a46e335fa@c.com": {
+    "username": "chris.3.johnson",
+    "email": "chris.3.johnson@nokia.com"
+  },
+  "fc1e243321aeb85e241fecacff67f7a1@c.com": {
+    "username": "laurence.hey",
+    "email": "laurence.hey@gmail.com"
+  },
+  "e7312cc786478f54f0fe1f90ab19c891@c.com": {
+    "username": "andrew.melo",
+    "email": "andrew.melo@gmail.com"
+  },
+  "4e07a438946e1eafdbf95e115b93d34c@c.com": {
+    "username": "cynipe",
+    "email": "cynipe@gmail.com"
+  },
+  "18e2a26d1649ae645d369b37048494b7@c.com": {
+    "username": "gcoutant",
+    "email": "gcoutant@excilys.com"
+  },
+  "3bd851e9c818ce0cf015a267300737bb@c.com": {
+    "username": "sogabe",
+    "email": "sogabe@emilia.localnet"
+  },
+  "ce671c288143364e63755587b032186f@c.com": {
+    "username": "jjasper",
+    "email": "jjasper@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "ac093edef7f24210740ebd74babe104d@c.com": {
+    "username": "mdillon",
+    "email": "mdillon@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "295b8d097b3bfd88ccd3b7529248bd6d@c.com": {
+    "username": "rsandell",
+    "email": "rsandell@cloudbees.com"
+  },
+  "417f2eb2b4e7a94a0b7f43764359bb8f@c.com": {
+    "username": "tom",
+    "email": "tom@.(none)"
+  },
+  "f082e32f0f8fba85cc867017d0925b85@c.com": {
+    "username": "rene.scheibe",
+    "email": "rene.scheibe@gmail.com"
+  },
+  "bc8cb99d8559cdfc7808896a8581b10a@c.com": {
+    "username": "ctapobep",
+    "email": "ctapobep@javatalks.ru"
+  },
+  "faf2da11801b55057fdcafdeb51775ae@c.com": {
+    "username": "yoichi.nakayama",
+    "email": "yoichi.nakayama@gmail.com"
+  },
+  "40c0079f8761a057b4c7a07242c71db8@c.com": {
+    "username": "Phaygo.One",
+    "email": "Phaygo.One@gmail.com"
+  },
+  "2a07b7f7b56f46c59ce07618c382e726@c.com": {
+    "username": "jens.hausherr",
+    "email": "jens.hausherr@xing.com"
+  },
+  "53affea9424c8579e9a5252cc146c671@c.com": {
+    "username": "kingfai",
+    "email": "kingfai@yahoo-inc.com"
+  },
+  "13b795c9e892a69081296d7c2a08a77f@c.com": {
+    "username": "iordan.boev",
+    "email": "iordan.boev@gmail.com"
+  },
+  "e4c210aa5138fbafff97536f2ce677f6@c.com": {
+    "username": "mcrooney",
+    "email": "mcrooney@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "60b018bfe2d2dd9bfee89f15775465f0@c.com": {
+    "username": "kohsuke",
+    "email": "kohsuke@@dev.java.net"
+  },
+  "11b409999e8cbb71e1bcac8e48f2c8cc@c.com": {
+    "username": "ashlux",
+    "email": "ashlux@@dev.java.net"
+  },
+  "99581c289400be0f89188abe3c65c373@c.com": {
+    "username": "ingo.richter",
+    "email": "ingo.richter@gmail.com"
+  },
+  "303f927315c9d091870f6a902d8c8286@c.com": {
+    "username": "emanuele.zattin",
+    "email": "emanuele.zattin@nokia.com"
+  },
+  "77a67082517bdb475861295975cc34ff@c.com": {
+    "username": "BCabe",
+    "email": "BCabe@sierrawireless.com"
+  },
+  "58791dd2908c0a92ff5c014ee8959659@c.com": {
+    "username": "ari.hyttinen",
+    "email": "ari.hyttinen@gmail.com"
+  },
+  "c8c932e72d5794efee4a78b1951870af@c.com": {
+    "username": "mnfield",
+    "email": "mnfield@gmail.com"
+  },
+  "62143abc582113a20b48a0248637190f@c.com": {
+    "username": "zigarn",
+    "email": "zigarn@gmail.com"
+  },
+  "58a0519303629b02bd0ff5986906d345@c.com": {
+    "username": "brunodepaulak",
+    "email": "brunodepaulak@yahoo.com.br"
+  },
+  "64b8502783f159fd4b9f39054228dad0@c.com": {
+    "username": "esa.laine",
+    "email": "esa.laine@chase.com"
+  },
+  "cf319fd4966c5cd630e3ff0cecd85267@c.com": {
+    "username": "kuuyee",
+    "email": "kuuyee@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "e618b1d8824d1acda72e8579aaf7682b@c.com": {
+    "username": "sogabe",
+    "email": "sogabe@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "6302a288a1948f56a0b2b91c41f0a9f4@c.com": {
+    "username": "cleibersilva",
+    "email": "cleibersilva@bb.com.br"
+  },
+  "ca4c0058e4a4c3a587078057709420e3@c.com": {
+    "username": "Matthias.Kraft",
+    "email": "Matthias.Kraft@softwareag.com"
+  },
+  "84dd66df2fd7362ed63eafc47c66a751@c.com": {
+    "username": "daniel.davison",
+    "email": "daniel.davison@proquest.com"
+  },
+  "4e7e2a0fe3fe69de6363128e9a5cce74@c.com": {
+    "username": "kalecser",
+    "email": "kalecser@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "f09a2c6cf15f3efe6a172814318abe2e@c.com": {
+    "username": "larrys",
+    "email": "larrys@gmail.com"
+  },
+  "95b94adec38a4ff904317801f77839ae@c.com": {
+    "username": "abayer",
+    "email": "abayer@281f4120-3fa0-11df-aa16-63b581e3290d"
+  },
+  "0367488facc8622083bfbc88757a9f3d@c.com": {
+    "username": "johno",
+    "email": "johno@bytenibble.com"
+  },
+  "b5f1fa653aac8cd39738dce251cb7a3e@c.com": {
+    "username": "paul.d.sandoz",
+    "email": "paul.d.sandoz@googlemail.com"
+  },
+  "e97d631e4b7f9afaf78fc86026948745@c.com": {
+    "username": "eramfelt",
+    "email": "eramfelt@gmail.com"
+  },
+  "f51571627b2aa080294e6723de76560e@c.com": {
+    "username": "robert.sandell",
+    "email": "robert.sandell@sonyericsson.com"
+  },
+  "8304c64641badd4218a89a5f97d2ae86@c.com": {
+    "username": "ebourg",
+    "email": "ebourg@apache.org"
+  },
+  "2169e90a6679af8ccc31f65f7d53497b@c.com": {
+    "username": "brauliobezerra",
+    "email": "brauliobezerra@gmail.com"
+  },
+  "b5c65d275029939aa233050482b8d152@c.com": {
+    "username": "joris.devries",
+    "email": "joris.devries@itnext.nl"
+  },
+  "a611b1ca936ef96eb747482e76279fd2@c.com": {
+    "username": "jglick",
+    "email": "jglick@281f4120-3fa0-11df-aa16-63b581e3290d"
+  },
+  "76785f570346bea0867a02ae25c7bd7a@c.com": {
+    "username": "justin",
+    "email": "justin@fathomdb.com"
+  },
+  "e3f515b6beae3a68947759d7f06b7b3d@c.com": {
+    "username": "anders",
+    "email": "anders@hammar.net"
+  },
+  "7c800312b029e7999803d323dcf1988e@c.com": {
+    "username": "nmullaney",
+    "email": "nmullaney@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "8dc9581cb642aefafda7af628ad49d47@c.com": {
+    "username": "daniel-beck",
+    "email": "daniel-beck@users.noreply.github.com"
+  },
+  "35b0cc47b5e6d602734c636082d630df@c.com": {
+    "username": "hboutemy",
+    "email": "hboutemy@apache.org"
+  },
+  "38fb438afe73bda384a01e2d0b989eac@c.com": {
+    "username": "nsternhagen",
+    "email": "nsternhagen@gmail.com"
+  },
+  "b0ed79ba5d9424eece7620858eb90b94@c.com": {
+    "username": "jasnapaka",
+    "email": "jasnapaka@jasnapaka.com"
+  },
+  "7d22f7cb49ab9e7ba179995cb0bebbeb@c.com": {
+    "username": "karma",
+    "email": "karma@deadmoose.com"
+  },
+  "34d86e5da885fe60bfb18286fc71663e@c.com": {
+    "username": "ogondza",
+    "email": "ogondza@gmail.com"
+  },
+  "a46ec403fa8ff82fe60ae4d20e9c4369@c.com": {
+    "username": "MarkWaite",
+    "email": "MarkWaite@yahoo.com"
+  },
+  "8db1702678f2612f46f07eff86101f85@c.com": {
+    "username": "sergiu",
+    "email": "sergiu@xwiki.org"
+  },
+  "0a18b814a99079631d54a3f5f4dc48c7@c.com": {
+    "username": "alex.rovner",
+    "email": "alex.rovner@flurry.com"
+  },
+  "77f390868643433670736c5ecb02ad01@c.com": {
+    "username": "martin.h.schroeder",
+    "email": "martin.h.schroeder@intel.com"
+  },
+  "d7a2a2d7fcd6a94c9ac13fce8a3ab067@c.com": {
+    "username": "sfarbota",
+    "email": "sfarbota@gmail.com"
+  },
+  "ac034c84faa8ef786f46faf88e439664@c.com": {
+    "username": "dreis2211",
+    "email": "dreis2211@users.noreply.github.com"
+  },
+  "11b2dba7b4f77df4884c1309794f88b0@c.com": {
+    "username": "brucechapman",
+    "email": "brucechapman@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "b46c37a4e82ccc34ff024ab2f577593c@c.com": {
+    "username": "jeffmaury.github",
+    "email": "jeffmaury.github@jeffmaury.com"
+  },
+  "99cc9e66483555eca0c6ab5af3b416c9@c.com": {
+    "username": "adam.nafke",
+    "email": "adam.nafke@gmail.com"
+  },
+  "4e3f068bcac207404306e790c0d662ed@c.com": {
+    "username": "kevin",
+    "email": "kevin@github.com"
+  },
+  "8b9a38cda4cfb47d4471de509e2abac5@c.com": {
+    "username": "baptiste.millemathias",
+    "email": "baptiste.millemathias@gmail.com"
+  },
+  "a206e13cd5c1a44ba38051308387e085@c.com": {
+    "username": "tangtheone",
+    "email": "tangtheone@gmail.com"
+  },
+  "b6da8477cc08648c863464d74f916fa1@c.com": {
+    "username": "rjiang",
+    "email": "rjiang@lazycakestudios.net"
+  },
+  "a64bd3f8f4c7c12daa3531ac8736e9b7@c.com": {
+    "username": "JNord",
+    "email": "JNord@nds.com"
+  },
+  "63568c878d6891b0a283041b5fe97aef@c.com": {
+    "username": "james.page",
+    "email": "james.page@canonical.com"
+  },
+  "5f9a82b58ae4f5b1eec50a48b441275f@c.com": {
+    "username": "bastian.gloeckle",
+    "email": "bastian.gloeckle@bosch-si.com"
+  },
+  "9eb5ddde93c5ea66f178d96e26ab9bc5@c.com": {
+    "username": "github",
+    "email": "github@folk.de"
+  },
+  "4a96141bfb62b3723c9959023a7e9aff@c.com": {
+    "username": "nikolas.falco",
+    "email": "nikolas.falco@finantix.com"
+  },
+  "9063e87d9d2cb9653f4e7cdde01dd73f@c.com": {
+    "username": "amaurymedeiros",
+    "email": "amaurymedeiros@gmail.com"
+  },
+  "3aae9579517bea2ae2de838d92b275dc@c.com": {
+    "username": "s.sogabe",
+    "email": "s.sogabe@gmail.com"
+  },
+  "5015a95954038a66fed0ba870ec759c8@c.com": {
+    "username": "mindless",
+    "email": "mindless@@dev.java.net"
+  },
+  "753adaec30da5d2d65984dea995b18f5@c.com": {
+    "username": "VERNAT-E",
+    "email": "VERNAT-E@B017117.fr.ad.bull.net"
+  },
+  "fc94d9499d00003bcc6f37d0cc4e854c@c.com": {
+    "username": "johnathan.crawford",
+    "email": "johnathan.crawford@sulake.com"
+  },
+  "0dbff7aadc9d17ac92624bfe702f9432@c.com": {
+    "username": "yoda",
+    "email": "yoda@schli.ch"
+  },
+  "26828f09cf0e036c732aa963b7eb9b2c@c.com": {
+    "username": "nathan.mcdonald",
+    "email": "nathan.mcdonald@practicallaw.com"
+  },
+  "1ddd1738f4ff38c03e81d91543c29b1b@c.com": {
+    "username": "tom",
+    "email": "tom@trantor.(none)"
+  },
+  "bd12d450af042bb75ce2f15c5d389e0a@c.com": {
+    "username": "dvpdiner2",
+    "email": "dvpdiner2@gmail.com"
+  },
+  "9d75a43cfceb7603f0bfb2e55777995d@c.com": {
+    "username": "ian",
+    "email": "ian@checkout51.com"
+  },
+  "b7fb4d7384b6b5bd938d7b04ce7a4ae5@c.com": {
+    "username": "erik.lindblad",
+    "email": "erik.lindblad@polopoly.com"
+  },
+  "52ad86244aa8d7c7f53461fdc9c44f55@c.com": {
+    "username": "kbeal",
+    "email": "kbeal@debian-fs.normans.com"
+  },
+  "671a0dd8e2871fe9913254a9b8382c54@c.com": {
+    "username": "rmurfitt",
+    "email": "rmurfitt@gmail.com"
+  },
+  "d565139dbbafc06e7daf4826ca0f0228@c.com": {
+    "username": "tyler",
+    "email": "tyler@monkeypox.org"
+  },
+  "7b7ae92b93309079cb8bfbbf3361480e@c.com": {
+    "username": "lschoelens",
+    "email": "lschoelens@sopragroup.com"
+  },
+  "09698c2e46bb564bd3af84c826bfc609@c.com": {
+    "username": "olivier.dagenais",
+    "email": "olivier.dagenais@gmail.com"
+  },
+  "affa41330b38325fcf4d42671349d8fd@c.com": {
+    "username": "yoann.dubreuil",
+    "email": "yoann.dubreuil@gmail.com"
+  },
+  "fcc697c630e00f9e4213aac60edd3941@c.com": {
+    "username": "justin",
+    "email": "justin@justinedelson.com"
+  },
+  "b7de0150d7f8ef31d7a54bde2cc750f3@c.com": {
+    "username": "muhammedeminakbulut",
+    "email": "muhammedeminakbulut@users.noreply.github.com"
+  },
+  "5e8c2245539a522bf203b113dd471231@c.com": {
+    "username": "shinodkm",
+    "email": "shinodkm@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "105e56de7181f0e34e92a3a85a7e3092@c.com": {
+    "username": "km",
+    "email": "km@@dev.java.net"
+  },
+  "bc11fb97a15cb6b4c40e29a1f86a5f45@c.com": {
+    "username": "tom_rini",
+    "email": "tom_rini@mentor.com"
+  },
+  "cf5c99e4227ac690bd542b3b47c67dcb@c.com": {
+    "username": "knupouls",
+    "email": "knupouls@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "febe75258f5cb74cde1261f5676155dd@c.com": {
+    "username": "mattmoor",
+    "email": "mattmoor@google.com"
+  },
+  "d4db8f2aae07d7179a1d515fbe444404@c.com": {
+    "username": "mikko.peltonen",
+    "email": "mikko.peltonen@reaktor.fi"
+  },
+  "cd253043886564de533dc02bfe1a5b9b@c.com": {
+    "username": "lpetre",
+    "email": "lpetre@gmail.com"
+  },
+  "d69759a052f3f989f3a42977ba583479@c.com": {
+    "username": "abayer",
+    "email": "abayer@@dev.java.net"
+  },
+  "6cb4a915f44b9f523265b52bcb441346@c.com": {
+    "username": "cjbarker",
+    "email": "cjbarker@gmail.com"
+  },
+  "c5a0e449d80356f005c3a849c4a85cbe@c.com": {
+    "username": "qwertyface",
+    "email": "qwertyface@gmail.com"
+  },
+  "e559e2d9084c3178b769b2b80a86405b@c.com": {
+    "username": "sjtikka",
+    "email": "sjtikka@gmail.com"
+  },
+  "ac8d8a602463df82eb793a237c9b21d3@c.com": {
+    "username": "myatlyuk",
+    "email": "myatlyuk@gmail.com"
+  },
+  "fcb72b4755ac679e58a09d8040fe6ff6@c.com": {
+    "username": "intelradoux",
+    "email": "intelradoux@users.noreply.github.com"
+  },
+  "5fb6eb998ee46aa417486536795ad354@c.com": {
+    "username": "m.lehnort",
+    "email": "m.lehnort@meditec.zeiss.com"
+  },
+  "f387fdcea812ebe59a8881a1735c8210@c.com": {
+    "username": "gboucherie",
+    "email": "gboucherie@mediametrie.fr"
+  },
+  "6b8d28637d8a57c9a329df52478c0a55@c.com": {
+    "username": "joshua.keroes",
+    "email": "joshua.keroes@integratelecom.com"
+  },
+  "1299b89b8b3f683a581bcf502fd0205a@c.com": {
+    "username": "peter",
+    "email": "peter@eisentraut.org"
+  },
+  "d51aa90dc9ff2c60a07551ab9dfa9e70@c.com": {
+    "username": "kallan",
+    "email": "kallan@riotgames.com"
+  },
+  "926b7451f94489bb57c59d8f69192b80@c.com": {
+    "username": "nnachi",
+    "email": "nnachi@sighapply.corp.ne1.yahoo.com"
+  },
+  "96ffe4315cd482ad5bc1d0f4437a6819@c.com": {
+    "username": "github",
+    "email": "github@gcummings.com"
+  },
+  "9f2b9b4a3f342cb757e37160b0389827@c.com": {
+    "username": "kbertelson",
+    "email": "kbertelson@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "1ec93d310204e8b4e2562ec656d94568@c.com": {
+    "username": "johnbojaen",
+    "email": "johnbojaen@gmail.com"
+  },
+  "11f692672fcd2750829d25abe920b765@c.com": {
+    "username": "stigkj",
+    "email": "stigkj@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "425fa324109675a6f5025abaa80f9311@c.com": {
+    "username": "daniel-beck",
+    "email": "daniel-beck@github.com"
+  },
+  "bbf5d6736384d11cc8a326f627634bc5@c.com": {
+    "username": "eric.weikl",
+    "email": "eric.weikl@tngtech.com"
+  },
+  "e509dcb9852f237fe0412caccc335ac9@c.com": {
+    "username": "chris",
+    "email": "chris@orr.me.uk"
+  },
+  "b77d10a80b5e70dfa3872be32bcc947f@c.com": {
+    "username": "github",
+    "email": "github@voormann.de"
+  },
+  "656e0c8dbb940bd88e37a684900f9210@c.com": {
+    "username": "anglorvaroa",
+    "email": "anglorvaroa@gmail.com"
+  },
+  "b2e70a45db9821ff425d76e34636f48a@c.com": {
+    "username": "teilo",
+    "email": "teilo@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "bb7618d9dbfe0d76057acabf4fe82bc3@c.com": {
+    "username": "o.lemasle",
+    "email": "o.lemasle@gmail.com"
+  },
+  "04fa472348620441ad0a054f4d135236@c.com": {
+    "username": "sorokh",
+    "email": "sorokh@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "5cc574d2cc9fdc74747622f668f34ae1@c.com": {
+    "username": "mleinartas",
+    "email": "mleinartas@gmail.com"
+  },
+  "b2e85e2dc300d44d9ecb624fdf7e8eac@c.com": {
+    "username": "ben",
+    "email": "ben@benmccann.com"
+  },
+  "680c81bf189f3b0dedb5ba8b814e3e99@c.com": {
+    "username": "radek.antoniuk",
+    "email": "radek.antoniuk@quiddia.com"
+  },
+  "c8c31138045abd812fcf28cee493692e@c.com": {
+    "username": "jabbrwcky",
+    "email": "jabbrwcky@gmail.com"
+  },
+  "c6ac115deb3c3ed6929dc93cfc7e0858@c.com": {
+    "username": "gentoo.integer",
+    "email": "gentoo.integer@gmail.com"
+  },
+  "5a89e44fd4d9a4ef1c9361af575587a8@c.com": {
+    "username": "blalor",
+    "email": "blalor@bravo5.org"
+  },
+  "c0de98ae17fa45d01407fcd0e77c6841@c.com": {
+    "username": "stephen.alan.connolly",
+    "email": "stephen.alan.connolly@gmail.com"
+  },
+  "4d38904eb1be24fd9cd752316a53c5e9@c.com": {
+    "username": "giulio79",
+    "email": "giulio79@gmail.com"
+  },
+  "36072945a7644fc82d1f3c2f0e502054@c.com": {
+    "username": "mrobinet",
+    "email": "mrobinet@ptc.com"
+  },
+  "928f1333ed9f3a33eb8f5109e7e75332@c.com": {
+    "username": "henryju",
+    "email": "henryju@yahoo.fr"
+  },
+  "65d5c9194cd0d5345b7f51afddf0eadf@c.com": {
+    "username": "nolan.lawson",
+    "email": "nolan.lawson@gmail.com"
+  },
+  "3257f8100c92ed0b064aeb73f1512add@c.com": {
+    "username": "pjanouse",
+    "email": "pjanouse@redhat.com"
+  },
+  "9607830980e43e9a4872bfd8d3c28809@c.com": {
+    "username": "stephan",
+    "email": "stephan@eucodos.de"
+  },
+  "85d0087bec3b637b7c431196d0805d82@c.com": {
+    "username": "wang_limin",
+    "email": "wang_limin@hotmail.com"
+  },
+  "8e10ec0db04998d5a57a25b93eaae150@c.com": {
+    "username": "kai.inkinen",
+    "email": "kai.inkinen@gmail.com"
+  },
+  "8cb0f567a739d132b6b0247255683476@c.com": {
+    "username": "donny.nadolny",
+    "email": "donny.nadolny@garnercorp.com"
+  },
+  "9076bb220ace27f4a20cef3898234a28@c.com": {
+    "username": "joeljohnson",
+    "email": "joeljohnson@attask.com"
+  },
+  "9980f1979f719036ba652e091ce669b8@c.com": {
+    "username": "adamwolf",
+    "email": "adamwolf@feelslikeburning.com"
+  },
+  "fed8e9b080bb5362e6d68ec9d6d0308a@c.com": {
+    "username": "mikhail.kalkov",
+    "email": "mikhail.kalkov@purplescout.se"
+  },
+  "48afb1c448cde7f7b875eec5f6e95684@c.com": {
+    "username": "tarul",
+    "email": "tarul@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "b55e53621091ed6db19100f854c94853@c.com": {
+    "username": "willemv",
+    "email": "willemv@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "460ee5375ae93a14c65602fd8e1d5d07@c.com": {
+    "username": "cliffano",
+    "email": "cliffano@gmail.com"
+  },
+  "80fceb44c9188ae0bca6c32a7edd822b@c.com": {
+    "username": "rseguy",
+    "email": "rseguy@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "352562269baa83b3e390f8f29f5e01ad@c.com": {
+    "username": "thomas.suckow",
+    "email": "thomas.suckow@pnnl.gov"
+  },
+  "679b591fdee82b647e7c3ae4acc0284a@c.com": {
+    "username": "lshatzer",
+    "email": "lshatzer@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "8d24f8f09fe99c0ef23c83a18571cbf8@c.com": {
+    "username": "gmjck",
+    "email": "gmjck@users.noreply.github.com"
+  },
+  "5aaf918544b0c5b3c4da3382a0e85ed6@c.com": {
+    "username": "ndrsbngtssn",
+    "email": "ndrsbngtssn@yahoo.se"
+  },
+  "6b1ddbbd68356af130cd7d28ee5ba2d2@c.com": {
+    "username": "kutzi",
+    "email": "kutzi@gmx.de"
+  },
+  "6143e610274ff22ee89751b02ff296d7@c.com": {
+    "username": "kamranm1200",
+    "email": "kamranm1200@gmail.com"
+  },
+  "4307c4c43032628aede02fd4e954bf1b@c.com": {
+    "username": "phoenix384",
+    "email": "phoenix384@gmx.de"
+  },
+  "0832dc1494fe37d82f7f3e79f6cbc296@c.com": {
+    "username": "redsolo",
+    "email": "redsolo@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "527217ae38c2599c289e56a688d87968@c.com": {
+    "username": "wolfs",
+    "email": "wolfs@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "43991cd694e322a3f47c3b922d105701@c.com": {
+    "username": "alzola.aitor",
+    "email": "alzola.aitor@gmail.com"
+  },
+  "e9a17103d882181466ef9f6792325fac@c.com": {
+    "username": "schristou88",
+    "email": "schristou88@gmail.com"
+  },
+  "53492af9f06ba8856602537e8a05c61c@c.com": {
+    "username": "fredg02",
+    "email": "fredg02@hotmail.com"
+  },
+  "018dc5ea1b12750bbc3f4ab87888d2b6@c.com": {
+    "username": "jpederzolli",
+    "email": "jpederzolli@gmail.com"
+  },
+  "e6aca39dae1bf0a9b43f0410afc8cf44@c.com": {
+    "username": "rpetti",
+    "email": "rpetti@autonomy.com"
+  },
+  "b29e9f6484aeff4176801952faa1dace@c.com": {
+    "username": "nobody",
+    "email": "nobody@cloudbees.com"
+  },
+  "fd7f71e089adc1b1fd672ef53bb0aabf@c.com": {
+    "username": "cosbyc",
+    "email": "cosbyc@cisco.com"
+  },
+  "af76f69b7e6731e09df9d90470090ecc@c.com": {
+    "username": "lnorth",
+    "email": "lnorth@swnorth.com"
+  },
+  "fb511dc0bdbf13bd0a4f64b651aec174@c.com": {
+    "username": "cta",
+    "email": "cta@softwire.com"
+  },
+  "07600cf212038ea9db54129d66caf13c@c.com": {
+    "username": "thomas",
+    "email": "thomas@katalisindonesia.com"
+  },
+  "f00eb95f4459b7ef2c4cb20c11edaefa@c.com": {
+    "username": "kohsuke",
+    "email": "kohsuke@281f4120-3fa0-11df-aa16-63b581e3290d"
+  },
+  "3b2e00a3023cea4f40fcb928dd0d424c@c.com": {
+    "username": "jbr",
+    "email": "jbr@praqma.net"
+  },
+  "41e1a59f1258c50e7e821563517a4cb0@c.com": {
+    "username": "ramapulavarthi",
+    "email": "ramapulavarthi@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "bab29f762bea8e578505424443d8cd41@c.com": {
+    "username": "olamy",
+    "email": "olamy@apache.org"
+  },
+  "675029b0bfe0afe66364b314801afcdd@c.com": {
+    "username": "javadude",
+    "email": "javadude@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "367d6662fec5e92ee55db7d7d260bd86@c.com": {
+    "username": "againjj",
+    "email": "againjj@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "48c192e7b73cf763980754677ef08fd6@c.com": {
+    "username": "ryan.campbell",
+    "email": "ryan.campbell@gmail.com"
+  },
+  "145be9d7f2c669264fbb91dd8634e64a@c.com": {
+    "username": "ialbors",
+    "email": "ialbors@meiwes2.localdomain"
+  },
+  "ab9f78841c1f6d76ed368c1cee57f47d@c.com": {
+    "username": "klk",
+    "email": "klk@mmw.ag"
+  },
+  "92c2ef51d40d31d021f1a46675fbc618@c.com": {
+    "username": "dpahl",
+    "email": "dpahl@vz.net"
+  },
+  "63ca994d7ad34ed64f961518bd808851@c.com": {
+    "username": "rbair",
+    "email": "rbair@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "56c6e0b41aa3bec8997c338775e30207@c.com": {
+    "username": "richard",
+    "email": "richard@byh2o.com"
+  },
+  "ee25ca01081e478e4fbadaae46e061d4@c.com": {
+    "username": "km",
+    "email": "km@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "6e39b6ea48a3a79b5af9f89ca5550778@c.com": {
+    "username": "324706",
+    "email": "324706@mail.muni.cz"
+  },
+  "1a425d744df94198d68dfffbf7ae51cf@c.com": {
+    "username": "scsibug",
+    "email": "scsibug@imap.cc"
+  },
+  "d38f5ae546d603895c2761e95acbefac@c.com": {
+    "username": "cactusman",
+    "email": "cactusman@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "fac5157d929a8ab31f75cff642626d75@c.com": {
+    "username": "jacob_robertson",
+    "email": "jacob_robertson@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "4fea5a5a52a5815928923e5395f3b46f@c.com": {
+    "username": "markwaite",
+    "email": "markwaite@yahoo.com"
+  },
+  "0e4c04a6969a4767e58da6d3b5d22c06@c.com": {
+    "username": "skomatsu.comutt",
+    "email": "skomatsu.comutt@gmail.com"
+  },
+  "473d64923646c542881dfd7905849641@c.com": {
+    "username": "f_cavarretta",
+    "email": "f_cavarretta@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "4d56dc8724cf2f1424459ff47a49c56e@c.com": {
+    "username": "kristian.rosenvold",
+    "email": "kristian.rosenvold@gmail.com"
+  },
+  "a2018ea21dceaeb8bcf9d175e3be9211@c.com": {
+    "username": "mcs",
+    "email": "mcs@hanabi.se"
+  },
+  "4c35b50485a17f3365fabf3ee7545ff8@c.com": {
+    "username": "lvotypko",
+    "email": "lvotypko@redhat.com"
+  },
+  "06dca9150520477e416444a2badfcb55@c.com": {
+    "username": "ertanden",
+    "email": "ertanden@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "82f061c8b1e54a6eff04275e54bef162@c.com": {
+    "username": "michael.neale",
+    "email": "michael.neale@gmail.com"
+  },
+  "c6b62e8457dbdd18bd3c578c769497ae@c.com": {
+    "username": "fredrik.appelberg",
+    "email": "fredrik.appelberg@gmail.com"
+  },
+  "b24f82e32050569e0a037deaebd858d0@c.com": {
+    "username": "jazzjack",
+    "email": "jazzjack@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "ce01b86fc26f84302361db90c797f2b0@c.com": {
+    "username": "jieryn",
+    "email": "jieryn@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "be1e7ef6ee96f64e1b60d947df30bac0@c.com": {
+    "username": "werner",
+    "email": "werner@beroux.com"
+  },
+  "588814199a2094fd67494b23effe1254@c.com": {
+    "username": "devld",
+    "email": "devld@ikedam.jp"
+  },
+  "30ca1222e55209339822b167896cc246@c.com": {
+    "username": "achim.abeling",
+    "email": "achim.abeling@freenet-ag.de"
+  },
+  "1491b11fe484af03f7beff7f1c39bf8a@c.com": {
+    "username": "jglick",
+    "email": "jglick@cloudbees.com"
+  },
+  "44ccd8451cb3e139032894c99dd39c5e@c.com": {
+    "username": "kinow",
+    "email": "kinow@users.noreply.github.com"
+  },
+  "e49cc2a09fd803f460c484b5ff914b54@c.com": {
+    "username": "saschpe",
+    "email": "saschpe@suse.de"
+  },
+  "202e5576f882787d0c99138a68e511d3@c.com": {
+    "username": "stephenconnolly",
+    "email": "stephenconnolly@@dev.java.net"
+  },
+  "08083844374af0ee9adf90dfefc2e3b9@c.com": {
+    "username": "aitoralzola",
+    "email": "aitoralzola@MacBook-Pro-de-aitor-alzola.local"
+  },
+  "dbbddb832902ac6c29e838d7da878e6b@c.com": {
+    "username": "nigel.magnay",
+    "email": "nigel.magnay@gmail.com"
+  },
+  "5f51b8ae470639d83efc7e81f5cc27fe@c.com": {
+    "username": "atwupack",
+    "email": "atwupack@aol.com"
+  },
+  "54772cf407c760bf0fd15a3a032d5a00@c.com": {
+    "username": "trimbybj",
+    "email": "trimbybj@gmail.com"
+  },
+  "46469b417d8806b13b56b5c0a95119d0@c.com": {
+    "username": "szymon.bilinski",
+    "email": "szymon.bilinski@gmail.com"
+  },
+  "9d8d03cd2eb315ae5b87cad4178286c2@c.com": {
+    "username": "jglick",
+    "email": "jglick@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "fb5dbf0a663444855a035ec806ca45d4@c.com": {
+    "username": "alex.c.earl",
+    "email": "alex.c.earl@gmail.com"
+  },
+  "8e6f5f031f70158ffffb654354189928@c.com": {
+    "username": "btosabre",
+    "email": "btosabre@@dev.java.net"
+  },
+  "f019bf6d35f7bf712ef3154125fe37d8@c.com": {
+    "username": "simon.wiest",
+    "email": "simon.wiest@simonwiest.de"
+  },
+  "36644ca397de0f36c97dc8268e780570@c.com": {
+    "username": "jbrejner",
+    "email": "jbrejner@praqma.net"
+  },
+  "2598628c7d71a14b3856323c531bfe77@c.com": {
+    "username": "tblack",
+    "email": "tblack@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "77727af1cef316b241d106cf4d9fbd96@c.com": {
+    "username": "dom",
+    "email": "dom@happygiraffe.net"
+  },
+  "0d1905a72f6450ef026fd73531082698@c.com": {
+    "username": "dustin.welden",
+    "email": "dustin.welden@cox.com"
+  },
+  "da41894a3b7f4d5bb5e25aad4944b4be@c.com": {
+    "username": "kevin",
+    "email": "kevin@twilio.com"
+  },
+  "7a85827755720aa823b2f5c39abe28b8@c.com": {
+    "username": "jonathansternberg",
+    "email": "jonathansternberg@gmail.com"
+  },
+  "364e7526157359221b59845bd67b8e06@c.com": {
+    "username": "jyrkiput",
+    "email": "jyrkiput@gmail.com"
+  },
+  "9dc9023094b9cf490f7a7774344ff75a@c.com": {
+    "username": "andrew.bayer",
+    "email": "andrew.bayer@gmail.com"
+  },
+  "26ee4422f45b860bd733dbbce168559c@c.com": {
+    "username": "donny.nadolny",
+    "email": "donny.nadolny@hotmail.com"
+  },
+  "11186e6ffc7bca9e2563ce7620de66e8@c.com": {
+    "username": "dvrzalik",
+    "email": "dvrzalik@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "0874bffd1fc16a07faa3e93bc45ad21d@c.com": {
+    "username": "vojtechhabarta",
+    "email": "vojtechhabarta@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "e8abe05ca8a0f7b79a838b1716d1552b@c.com": {
+    "username": "lifeless",
+    "email": "lifeless@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "0ea0b53aba2fd846b01e95649a42ec72@c.com": {
+    "username": "basti",
+    "email": "basti@redtoad.de"
+  },
+  "b8e158ed9809ee4d9ce330b8752c26e9@c.com": {
+    "username": "mcculls",
+    "email": "mcculls@gmail.com"
+  },
+  "48080ca3a87e1b4dfb57854da8d90fdc@c.com": {
+    "username": "tomerc",
+    "email": "tomerc@jfrog.org"
+  },
+  "526449c9ee1c630f3871dfa87bc25fa0@c.com": {
+    "username": "andrew",
+    "email": "andrew@clovar.com"
+  },
+  "d76766c8122c8977c89f1359cc5f97a1@c.com": {
+    "username": "devmail",
+    "email": "devmail@hispeed.ch"
+  },
+  "3b653b94fd24bb2236eb951d4e8647a0@c.com": {
+    "username": "froque",
+    "email": "froque@premium-minds.com"
+  },
+  "a812eb4806f3192e31e78530a5e3c021@c.com": {
+    "username": "bagrehc",
+    "email": "bagrehc@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "cf5f7e703dbd62fdb28e8ac7194e916f@c.com": {
+    "username": "bmoyles",
+    "email": "bmoyles@netflix.com"
+  },
+  "d84d4a5aeec2ec3889aa2ff52effedc2@c.com": {
+    "username": "Mark.Waite",
+    "email": "Mark.Waite@ca.com"
+  },
+  "24baff057d4746473e0e477f6c76a3b3@c.com": {
+    "username": "martinficker",
+    "email": "martinficker@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "9c000d58e71e4ffabb6a493481d137f5@c.com": {
+    "username": "loganjohngorence",
+    "email": "loganjohngorence@gmail.com"
+  },
+  "acf044439b4c2f6c97490f5afc321e8d@c.com": {
+    "username": "steven.post",
+    "email": "steven.post@archimiddle.com"
+  },
+  "2983ff4b1cfdd190e9a42e1e6c6e7327@c.com": {
+    "username": "nicolas.deloof",
+    "email": "nicolas.deloof@gmail.com"
+  },
+  "b300fdab5918b489bd78ae8b488e3ecc@c.com": {
+    "username": "roostrum",
+    "email": "roostrum@kobo.com"
+  },
+  "58dd02045fcc3ec78c267fe3785908ec@c.com": {
+    "username": "rbierman",
+    "email": "rbierman@home.nl"
+  },
+  "0977c9e62fbafb46ffcd69e9515b4f5a@c.com": {
+    "username": "tspengler",
+    "email": "tspengler@@dev.java.net"
+  },
+  "a02cbc8012785aee2e0a8fab5fa5402d@c.com": {
+    "username": "mcnallysetc",
+    "email": "mcnallysetc@gmail.com"
+  },
+  "6c365385b6d0fd8b3489349038c9746c@c.com": {
+    "username": "dan",
+    "email": "dan@uncommons.org"
+  },
+  "8d05b3af1197c55d1adf4c3b7e8ff8c0@c.com": {
+    "username": "o_kuhnen",
+    "email": "o_kuhnen@yahoo.com.br"
+  },
+  "568e3391c8b528f2b255443e4cca27ca@c.com": {
+    "username": "o.v.nenashev",
+    "email": "o.v.nenashev@gmail.com"
+  },
+  "8e9f9ca176ce46f48f8d8c064dd62a0e@c.com": {
+    "username": "davidseymore",
+    "email": "davidseymore@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "955fd033a0583419b2e2b7d2515e2e92@c.com": {
+    "username": "tom.huybrechts",
+    "email": "tom.huybrechts@gmail.com"
+  },
+  "e17870f16308754ea7c167f3fbe98101@c.com": {
+    "username": "mstarzyk",
+    "email": "mstarzyk@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "72bdbeb074ca4651cfd68c5b46c2aec8@c.com": {
+    "username": "jieryn",
+    "email": "jieryn@@dev.java.net"
+  },
+  "d51d97608ff5a8b1339cbec2ee469253@c.com": {
+    "username": "petehayes",
+    "email": "petehayes@gmail.com"
+  },
+  "3f72aaa083af84254c11248943f8a5c3@c.com": {
+    "username": "stefan.brausch",
+    "email": "stefan.brausch@1und1.de"
+  },
+  "54771a451caae81fafcf48069d26865a@c.com": {
+    "username": "dkhodaparast",
+    "email": "dkhodaparast@gmail.com"
+  },
+  "6c4248fa60fad989ce9abd5f64353f4c@c.com": {
+    "username": "david",
+    "email": "david@carrclan.us"
+  },
+  "201eccd5b9135c6a417ff78e246944e8@c.com": {
+    "username": "info",
+    "email": "info@rotscher.ch"
+  },
+  "6ba1bdfa6ba08225903a74383be42b06@c.com": {
+    "username": "andrew.stucki",
+    "email": "andrew.stucki@gmail.com"
+  },
+  "59dc275f942db883f5ae92364ccb48f1@c.com": {
+    "username": "pailloncy.m",
+    "email": "pailloncy.m@mipih.fr"
+  },
+  "c7db6c3a0c7f7169514b04fa177cbfcb@c.com": {
+    "username": "GLundh",
+    "email": "GLundh@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "80a7128b641e370c1ee0bceeaca9e764@c.com": {
+    "username": "olamy",
+    "email": "olamy@@dev.java.net"
+  },
+  "112739b2554d922d7b51a42e882b83dc@c.com": {
+    "username": "me",
+    "email": "me@matthewblair.net"
+  },
+  "17b0891d92bcec2b139aa195be934c1a@c.com": {
+    "username": "jzjzjzj.fwd",
+    "email": "jzjzjzj.fwd@gmail.com"
+  },
+  "2c2437972e514eea526875a50ae0c479@c.com": {
+    "username": "ben",
+    "email": "ben@gogii.net"
+  },
+  "4ce35b34a268f8061e804950cfa6bd0f@c.com": {
+    "username": "david_beutel",
+    "email": "david_beutel@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "28a14465d20e25d972bc2f7020f426d5@c.com": {
+    "username": "c.schoell",
+    "email": "c.schoell@external.telekom.de"
+  },
+  "1a8b27a12aaec553317750aeb1ac01df@c.com": {
+    "username": "kutzi",
+    "email": "kutzi@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "ef5caac323b967f2bd4b473f714aa00f@c.com": {
+    "username": "jason.stiefel",
+    "email": "jason.stiefel@gmail.com"
+  },
+  "7053a86a672a25b81da7c647e3b038f4@c.com": {
+    "username": "andrew",
+    "email": "andrew@twitter.com"
+  },
+  "57cbc902d1a5cbac0c793f87f4da753d@c.com": {
+    "username": "erwan.deferrieres",
+    "email": "erwan.deferrieres@gmail.com"
+  },
+  "b73ac14a0d0a242ba76284f8b4e094de@c.com": {
+    "username": "commana",
+    "email": "commana@gmx.de"
+  },
+  "42bb8f344daf8ff323795ef83b42e112@c.com": {
+    "username": "sa.scholz",
+    "email": "sa.scholz@sap.com"
+  },
+  "e36b8ec529d53f310cb0955d8e12f7fa@c.com": {
+    "username": "sogabe",
+    "email": "sogabe@@dev.java.net"
+  },
+  "2c62b381f7ecc953764a28f59d6939ff@c.com": {
+    "username": "mguenther",
+    "email": "mguenther@ebay.com"
+  },
+  "bfa6b99cd3586f3743df358503de1c77@c.com": {
+    "username": "simon.wiest",
+    "email": "simon.wiest@web.de"
+  },
+  "b90eed757f331bae2ca4a360f5f81eb9@c.com": {
+    "username": "jsiirola",
+    "email": "jsiirola@gmail.com"
+  },
+  "c4735e49bab042ff6ab85439a239f424@c.com": {
+    "username": "jbq",
+    "email": "jbq@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "3a1d8c04b09639acb45e9dab4bd35ccb@c.com": {
+    "username": "montbailey",
+    "email": "montbailey@gmail.com"
+  },
+  "0951767b3377d9497a70b22b76f8a2b0@c.com": {
+    "username": "github",
+    "email": "github@albersweb.de"
+  },
+  "08bcceaa635ffc66b0ba94e28b8ec569@c.com": {
+    "username": "jhm",
+    "email": "jhm@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "b3d868d71c09ce1240b04146e32e3f2d@c.com": {
+    "username": "rmuhic",
+    "email": "rmuhic@routeone.com"
+  },
+  "bdac3ef17a630cf9f5b9fac871838549@c.com": {
+    "username": "fujibee",
+    "email": "fujibee@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "228b8715fbc9e77ad23b20bcee03c71b@c.com": {
+    "username": "bap-git",
+    "email": "bap-git@a1.org.uk"
+  },
+  "d7324592ca1d5477f9d8c67456a1f1ad@c.com": {
+    "username": "lucamilanesio",
+    "email": "lucamilanesio@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "b03464f3f92630131ff85ee8ce7d6718@c.com": {
+    "username": "emanuelez",
+    "email": "emanuelez@gmail.com"
+  },
+  "15e1cc4564267baad2f19ac5774b3700@c.com": {
+    "username": "vincent.latombe",
+    "email": "vincent.latombe@amadeus.com"
+  },
+  "2600871f043d58dfe34c3b34879d9ac6@c.com": {
+    "username": "david.ruhmann",
+    "email": "david.ruhmann@cerner.com"
+  },
+  "5de24433322fe884e6859c1c759d7697@c.com": {
+    "username": "j.graumann",
+    "email": "j.graumann@web.de"
+  },
+  "db16c948776326adc41cdb06f52d76af@c.com": {
+    "username": "george",
+    "email": "george@shakhnazaryan.com"
+  },
+  "6ff021800637b88cbe17d1330cbcc1a5@c.com": {
+    "username": "kannan",
+    "email": "kannan@rightscale.com"
+  },
+  "81d67dd6f5efd6eacc7bfab7b8de88f3@c.com": {
+    "username": "pmarcoen",
+    "email": "pmarcoen@gmail.com"
+  },
+  "7f83b48eb50152bf9deb263580cf44a0@c.com": {
+    "username": "gba",
+    "email": "gba@onbeep.com"
+  },
+  "4fca794da0cf08804f99048d3c8b39c1@c.com": {
+    "username": "you",
+    "email": "you@example.com"
+  },
+  "070b41d5b1f1ad7a5f9e40ae4d65a295@c.com": {
+    "username": "cheepeero",
+    "email": "cheepeero@gmx.net"
+  },
+  "62ec843d9ce8678da1fabae09b4f442c@c.com": {
+    "username": "lucaspanjer",
+    "email": "lucaspanjer@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "ddc29b74efd1ffcb7de83a73effa8ba1@c.com": {
+    "username": "masanobuimai",
+    "email": "masanobuimai@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "5b6f686c73655cf9aea3fb011c4343fb@c.com": {
+    "username": "ronald",
+    "email": "ronald@innovation.ch"
+  },
+  "ffeccc0bf6020a4c7cfb2f014e02de35@c.com": {
+    "username": "cowwoc",
+    "email": "cowwoc@bbs.darktech.org"
+  },
+  "31b6e9c570760dd85584db0db3835ebf@c.com": {
+    "username": "richm",
+    "email": "richm@oldelvet.org.uk"
+  },
+  "8764a49b5276eacbed5b162cd121a782@c.com": {
+    "username": "dwdyer",
+    "email": "dwdyer@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "486ea9e7b4e46dc31f829b8536335c9d@c.com": {
+    "username": "jtsweet",
+    "email": "jtsweet@cloudbees.com"
+  },
+  "a293c202d594b0e963ebc527bb8e64ad@c.com": {
+    "username": "dty",
+    "email": "dty@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "ed2fbd49081abcc562d3ebffc87d54b0@c.com": {
+    "username": "Matt.Kraai",
+    "email": "Matt.Kraai@amo.abbott.com"
+  },
+  "c3d0faaf20754cf89eb7760fa69088f2@c.com": {
+    "username": "cliff.maury",
+    "email": "cliff.maury@gmail.com"
+  },
+  "bafcf9936d7a880c1992d732219209be@c.com": {
+    "username": "mfriedenhagen",
+    "email": "mfriedenhagen@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "d41be31e008c34feb22540791f6d79df@c.com": {
+    "username": "mauricio",
+    "email": "mauricio@mauricio-alarcons-macbook-pro.local"
+  },
+  "6ad5adb6c8b03a37334bdd27bcafce74@c.com": {
+    "username": "nenashev",
+    "email": "nenashev@synopsys.com"
+  },
+  "6039056ee3124511ce938847a66b56b9@c.com": {
+    "username": "erik.lindblad",
+    "email": "erik.lindblad@gmail.com"
+  },
+  "70046f765dfa1f330e61066dda4351bb@c.com": {
+    "username": "mordred",
+    "email": "mordred@inaugust.com"
+  },
+  "38eceb689edab92013f4c8624bfb9ab0@c.com": {
+    "username": "erik.molekamp",
+    "email": "erik.molekamp@gmail.com"
+  },
+  "3beea937ea4cc3017325d006a52bfa9f@c.com": {
+    "username": "alexlehm",
+    "email": "alexlehm@gmail.com"
+  },
+  "72d3c40c24c1c3dcef09b9217211bf1a@c.com": {
+    "username": "marco.miller",
+    "email": "marco.miller@ericsson.com"
+  },
+  "44f19f6204c2b29d3d430d91c389c6ea@c.com": {
+    "username": "ikikko+github",
+    "email": "ikikko+github@gmail.com"
+  },
+  "ade24be4d4795c289d641ed9d9c2b114@c.com": {
+    "username": "alan.harder",
+    "email": "alan.harder@gmail.com"
+  },
+  "29cdc70986ef9f8c916c2a2a1bc2b96a@c.com": {
+    "username": "a.mann.goog+github",
+    "email": "a.mann.goog+github@gmail.com"
+  },
+  "994a32dbf1950011c682dfbe05ba076d@c.com": {
+    "username": "tim.lantz",
+    "email": "tim.lantz@gmail.com"
+  },
+  "bac731f33a7968978906ac91eaea37af@c.com": {
+    "username": "reynald.borer",
+    "email": "reynald.borer@gmail.com"
+  },
+  "e17dd4efa63a4400b8e23d61e390be00@c.com": {
+    "username": "laurence-h",
+    "email": "laurence-h@users.noreply.github.com"
+  },
+  "9f17af532034436db336d6740d4779e3@c.com": {
+    "username": "slavomir.hustaty",
+    "email": "slavomir.hustaty@gmail.com"
+  },
+  "c5c8a4d2f6f2de00b1a2e9d528f1b6e4@c.com": {
+    "username": "lars",
+    "email": "lars@hulte.net"
+  },
+  "ddac94812106aa4b64c9452018b63525@c.com": {
+    "username": "damien.finck67",
+    "email": "damien.finck67@gmail.com"
+  },
+  "391d54169db01795024be20eaabc76a2@c.com": {
+    "username": "mindless",
+    "email": "mindless@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "33f165dafc6cc784e9cf497226555892@c.com": {
+    "username": "sgaddipati",
+    "email": "sgaddipati@groupon.com"
+  },
+  "ee0a19843a99ab50e1cabdadf9fc9bce@c.com": {
+    "username": "manuel.blechschmidt",
+    "email": "manuel.blechschmidt@gmx.de"
+  },
+  "cf0ce44e342943d56f115165b7d78bdd@c.com": {
+    "username": "mandrikov",
+    "email": "mandrikov@gmail.com"
+  },
+  "866556f30ea717b15405680bcc66882b@c.com": {
+    "username": "lrobertson39",
+    "email": "lrobertson39@hotmail.com"
+  },
+  "4a8d7384e3fea70d63f31189d938c390@c.com": {
+    "username": "ullrich.hafner",
+    "email": "ullrich.hafner@gmail.com"
+  },
+  "cd19dede5b710c5d0ddbace909a2cae4@c.com": {
+    "username": "alexkoon",
+    "email": "alexkoon"
+  },
+  "a520aa4bf4a315c8f07f02043d0c8e4d@c.com": {
+    "username": "vsizikov",
+    "email": "vsizikov@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "2f41e52e198420a619147bd024ea9090@c.com": {
+    "username": "esa",
+    "email": "esa@indoles.com"
+  },
+  "fcbf35896c6df3a715fe98ed08728e79@c.com": {
+    "username": "laencode22",
+    "email": "laencode22@gmail.com"
+  },
+  "6befdf134a897b1b56069bf75ba12b3b@c.com": {
+    "username": "gliptak",
+    "email": "gliptak@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "c77e3f72e0ff25c4887a84165e92fbfb@c.com": {
+    "username": "bparees",
+    "email": "bparees@redhat.com"
+  },
+  "dee8e4ac37a54f7bea9c336519e35e5d@c.com": {
+    "username": "alexkoon",
+    "email": "alexkoon@hotmail.com"
+  },
+  "17e2086883641c9357388d09d993c858@c.com": {
+    "username": "henrik",
+    "email": "henrik@meepo.se"
+  },
+  "492524bd69611f1c8b88cbc7e6187b0c@c.com": {
+    "username": "jgibbs",
+    "email": "jgibbs@box.com"
+  },
+  "22c1a5354113366e5f8aae246cea3207@c.com": {
+    "username": "ashlux",
+    "email": "ashlux@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "5110e66c22d5248dc94cbc48ee82510f@c.com": {
+    "username": "mika",
+    "email": "mika@grml.org"
+  },
+  "bfc9ac76e8149674dfa0549244440e31@c.com": {
+    "username": "ratchet.player",
+    "email": "ratchet.player@gmx.de"
+  },
+  "41f439c226528cd904e4aa1044813a0f@c.com": {
+    "username": "wolfgarnet",
+    "email": "wolfgarnet@gmail.com"
+  },
+  "0019267ebf70433e21cbb263f737d5c1@c.com": {
+    "username": "ohtake.tomohiro",
+    "email": "ohtake.tomohiro@jp.fujitsu.com"
+  },
+  "ad18c67e3cc7dbc656f4849d8ba5c03f@c.com": {
+    "username": "peter.kutak",
+    "email": "peter.kutak@gmail.com"
+  },
+  "cb9ee6f122ed14a1fab924126cc330d7@c.com": {
+    "username": "redsolo",
+    "email": "redsolo@@dev.java.net"
+  },
+  "9ca2fc198bb34fee2029abbea46399b8@c.com": {
+    "username": "gosimek",
+    "email": "gosimek@gmail.com"
+  },
+  "f19ee48992b61858def5f33deb8da54b@c.com": {
+    "username": "julien.carisque",
+    "email": "julien.carisque@gmail.com"
+  },
+  "888d288797606fb2fc2dbb7199da567d@c.com": {
+    "username": "tbingaman",
+    "email": "tbingaman@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "f8c88561bbcacf7dee5217e403be4bbb@c.com": {
+    "username": "xlv",
+    "email": "xlv@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "a4caf8cfac0b2cd82fbb2f79ba71cc78@c.com": {
+    "username": "samuel.moritz",
+    "email": "samuel.moritz@gmail.com"
+  },
+  "a1a8d580a8586617e105d02606fca1ba@c.com": {
+    "username": "pamdirac",
+    "email": "pamdirac@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "a187460cf9c0e6ec7d7bfe59b8c5cba5@c.com": {
+    "username": "wjprakash",
+    "email": "wjprakash@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "3e656b7ac050c9abeaac71ba25df62b3@c.com": {
+    "username": "mindless",
+    "email": "mindless@281f4120-3fa0-11df-aa16-63b581e3290d"
+  },
+  "d5b55980ad4899b429e5e02ea5ee3826@c.com": {
+    "username": "stephen.e.ware",
+    "email": "stephen.e.ware@intel.com"
+  },
+  "cf832689258ad059ce569f425fbca85e@c.com": {
+    "username": "digerata",
+    "email": "digerata@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "bc3a9ed654830b9a86542cc785fac4e6@c.com": {
+    "username": "pwielgolaski",
+    "email": "pwielgolaski@gmail.com"
+  },
+  "5faa8f7f53d3ac658c4dfa4bd04a2ee3@c.com": {
+    "username": "marius",
+    "email": "marius@gedmin.as"
+  },
+  "aac7d37b267775579bd783dd763718df@c.com": {
+    "username": "ryan.maki",
+    "email": "ryan.maki@gmail.com"
+  },
+  "0ab7ebf8a5deee594b0adc8a7ab45dbd@c.com": {
+    "username": "pkilgo",
+    "email": "pkilgo@clemson.edu"
+  },
+  "75aca74fdf1248ea06b8ac4e00729a74@c.com": {
+    "username": "rodrigc",
+    "email": "rodrigc@FreeBSD.org"
+  },
+  "1f45e4b3f6dd09649623b3c732090c3c@c.com": {
+    "username": "rowan.hill",
+    "email": "rowan.hill@gmail.com"
+  },
+  "ce7b14ba375a3b0cad139ffe1bd1a1e0@c.com": {
+    "username": "vincent",
+    "email": "vincent@vincentkok.nl"
+  },
+  "2045a900494914929159ceae1766d70c@c.com": {
+    "username": "drulli",
+    "email": "drulli@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "ecd5702995ae4e0b1bf622b1d9447776@c.com": {
+    "username": "eugeniy.baranov",
+    "email": "eugeniy.baranov@gmail.com"
+  },
+  "0d46004d8bd8971c2cb357f0aadfe6b4@c.com": {
+    "username": "mcupak",
+    "email": "mcupak@redhat.com"
+  },
+  "3869575b762cb798fa26e7f09caf8322@c.com": {
+    "username": "mwaite",
+    "email": "mwaite@ptc.com"
+  },
+  "c93eca5664146205c26f8cb31f53dd93@c.com": {
+    "username": "fbelzuncearcos",
+    "email": "fbelzuncearcos@cloudbees.com"
+  },
+  "7202668342cdcc884219aa94dd8810f4@c.com": {
+    "username": "lucien",
+    "email": "lucien@wellernet.ch"
+  },
+  "7c60c8096dc852aae69271d15fcd3682@c.com": {
+    "username": "ian.kemp",
+    "email": "ian.kemp@gmail.com"
+  },
+  "afbf0de35880d680634c678d9cb1422f@c.com": {
+    "username": "bernie.schelberg",
+    "email": "bernie.schelberg@zoak.solutions"
+  },
+  "7c53e37c05817d6c45e97ca2beec772d@c.com": {
+    "username": "flavio.cdc",
+    "email": "flavio.cdc@gmail.com"
+  },
+  "d9d6e29d2a60f03744a2f83f6df50d23@c.com": {
+    "username": "dalcouffe",
+    "email": "dalcouffe@rallydev.com"
+  },
+  "4336173fda622daef325af4bf86c8506@c.com": {
+    "username": "mdonohue",
+    "email": "mdonohue@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "ea6740b3276bb0452a2e1cea1d07cd6b@c.com": {
+    "username": "adriengallou",
+    "email": "adriengallou@gmail.com"
+  },
+  "137b4970e2bf7678d20c66ee1b4b36cb@c.com": {
+    "username": "huybrechts",
+    "email": "huybrechts@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "b0108a28eb039e733572523f5f0152c1@c.com": {
+    "username": "hwellmann",
+    "email": "hwellmann@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "ad8f9c02be2ad2ea3ff9aa8fb2d8d842@c.com": {
+    "username": "daniel.spilker",
+    "email": "daniel.spilker@coremedia.com"
+  },
+  "46262bdd7cf07479e22a52d194c7e270@c.com": {
+    "username": "swiest",
+    "email": "swiest@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "afe9d6f5dc0bd7361fd9a819d681d79f@c.com": {
+    "username": "msmith",
+    "email": "msmith@cbnco.com"
+  },
+  "b834282ca95da211c1eb47eed46deec8@c.com": {
+    "username": "mdonohue",
+    "email": "mdonohue@@dev.java.net"
+  },
+  "f5aecd8c1e48359949e75a4b6c29160d@c.com": {
+    "username": "jheymans",
+    "email": "jheymans@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "638ec95154b67b961860c3fecfeeb58a@c.com": {
+    "username": "ajpurkiss",
+    "email": "ajpurkiss@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "1dabc0dd142ecdf498402bb4911b267b@c.com": {
+    "username": "quiesagua",
+    "email": "quiesagua@gmail.com"
+  },
+  "64a2d8e5328dcf3fc4df327eea04153a@c.com": {
+    "username": "bjoern",
+    "email": "bjoern@kasteleiner.net"
+  },
+  "eb1c7c5467852a3b7b0f995ba325dc92@c.com": {
+    "username": "r.antoniuk",
+    "email": "r.antoniuk@oberthur.com"
+  },
+  "f474668bb659f341edf9bbf682946422@c.com": {
+    "username": "manolo",
+    "email": "manolo@apache.org"
+  },
+  "3f18e8496bdd20582b452330c30122df@c.com": {
+    "username": "jnord+github",
+    "email": "jnord+github@cloudbees.com"
+  },
+  "1078934637c0393c84a2aa1792d9858e@c.com": {
+    "username": "diverKon+github",
+    "email": "diverKon+github@gmail.com"
+  },
+  "c1d5a49b51f1aa3df7aa8ee8fad45aca@c.com": {
+    "username": "slide.o.mix",
+    "email": "slide.o.mix@gmail.com"
+  },
+  "7f73df517fdea1028d28f39980edf441@c.com": {
+    "username": "dbaeli",
+    "email": "dbaeli@gmail.com"
+  },
+  "92f599a9c611ada5cceea5fe21b99fb5@c.com": {
+    "username": "man",
+    "email": "man@praqma.net"
+  },
+  "6bbe8793b28e60ea9893fcdd7e5bf978@c.com": {
+    "username": "tom.fennelly",
+    "email": "tom.fennelly@gmail.com"
+  },
+  "cdbe99fe3d6af6a18dd8c35b0687a50b@c.com": {
+    "username": "aheritier",
+    "email": "aheritier@apache.org"
+  },
+  "94780f8df830079a6113b490c17b0549@c.com": {
+    "username": "boaglio",
+    "email": "boaglio@gmail.com"
+  },
+  "609f2991aaff44f89078495beae9b8c7@c.com": {
+    "username": "jtjerno",
+    "email": "jtjerno@mylookout.com"
+  },
+  "d752a6db9e46612bfd980d02a84cd145@c.com": {
+    "username": "toomas",
+    "email": "toomas@zeroturnaround.com"
+  },
+  "3880838c904b9dfee41134c1c463085b@c.com": {
+    "username": "mail",
+    "email": "mail@renemoser.net"
+  },
+  "a1d6067ce2491ac3fb9551fd637de960@c.com": {
+    "username": "jerome.lacoste",
+    "email": "jerome.lacoste@gmail.com"
+  },
+  "1168a39989678705e8d3478ae5ba7b8e@c.com": {
+    "username": "jukka.lehtniemi",
+    "email": "jukka.lehtniemi@gmail.com"
+  },
+  "fb0fd07485efdfc05e02987075fdbab0@c.com": {
+    "username": "sylvestre",
+    "email": "sylvestre@debian.org"
+  },
+  "71acb517d48e8cac7f73ff19851677a9@c.com": {
+    "username": "david_calavera",
+    "email": "david_calavera@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "02cc44d7a9ed0e5b2279f3cde11c39ac@c.com": {
+    "username": "timp",
+    "email": "timp@paneris.org"
+  },
+  "31fe29fb91e0cf4d14a5d5d8eba6c7b8@c.com": {
+    "username": "david",
+    "email": "david@davidstrauss.net"
+  },
+  "a1adc096932a9259637e9e496f17ca89@c.com": {
+    "username": "bshine",
+    "email": "bshine@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "6817a4687344ead94fe26f1758491f74@c.com": {
+    "username": "mathieu.pousse",
+    "email": "mathieu.pousse@zenika.com"
+  },
+  "f66af4f6554a5aa2519781d152a8a62d@c.com": {
+    "username": "tfheen",
+    "email": "tfheen@err.no"
+  },
+  "b096853a836d2fe89c1525894649772c@c.com": {
+    "username": "stephenconnolly",
+    "email": "stephenconnolly@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "4128030b2d004bbc7aa8800d283b058f@c.com": {
+    "username": "tlantz",
+    "email": "tlantz@xbologai03.(none)"
+  },
+  "d8ef175bbf328992569c5cec395f9245@c.com": {
+    "username": "n8felton",
+    "email": "n8felton@gmail.com"
+  },
+  "86c8f30309591929d8a3ef5a309fa334@c.com": {
+    "username": "mode",
+    "email": "mode@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "6944d36d3b29f3ba2e60aab7b044c2dd@c.com": {
+    "username": "olenz",
+    "email": "olenz@icp.uni-stuttgart.de"
+  },
+  "dbcdeab8ab553f349692c2988b4bde25@c.com": {
+    "username": "p",
+    "email": "p@rdus.de"
+  },
+  "0e78664882115b0c86876def96f4ae2c@c.com": {
+    "username": "aklochkov",
+    "email": "aklochkov@griddynamics.com"
+  },
+  "433a9d1c755be23e7d8215f3bf9135cf@c.com": {
+    "username": "mathus.b",
+    "email": "mathus.b@mipih.fr"
+  },
+  "ff398a40cec1a7306709c82442ceb1fd@c.com": {
+    "username": "github",
+    "email": "github@thorzten.de"
+  },
+  "6ebd436ec5a986d1d19d5f436f90aa4e@c.com": {
+    "username": "jean",
+    "email": "jean@jblanchard.fr"
+  },
+  "26bf5a02583eaf63d1f8063bb3a6bc00@c.com": {
+    "username": "kpfleming",
+    "email": "kpfleming@bloomberg.net"
+  },
+  "8d1e0eddeed0a04565499c2f8429fb17@c.com": {
+    "username": "user57",
+    "email": "user57@@dev.java.net"
+  },
+  "f2c64fa2bf4b4135417b2efd58162645@c.com": {
+    "username": "vincent",
+    "email": "vincent@latombe.net"
+  },
+  "6888870502aa1971b4b5361ccf689913@c.com": {
+    "username": "thomas.vandoren",
+    "email": "thomas.vandoren@gmail.com"
+  },
+  "9d9df5b33ad540df08a81271fc32b020@c.com": {
+    "username": "rtorre",
+    "email": "rtorre@tuenti.com"
+  },
+  "32dfd50498f580fdc4b435b6a1b58dca@c.com": {
+    "username": "davidmc24",
+    "email": "davidmc24@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "91f96f53ddca4d5ca3305976ccb8d1a4@c.com": {
+    "username": "ogondza",
+    "email": "ogondza@redhat.com"
+  },
+  "2e24070df1f75385525243150f2c4981@c.com": {
+    "username": "MMLEGRA",
+    "email": "MMLEGRA@MICRON.COM"
+  },
+  "1e22e63a68883ad2de90dd541b6e2b32@c.com": {
+    "username": "vjuranek",
+    "email": "vjuranek@redhat.com"
+  },
+  "42db70d8c1bcc74d7cac5f9ce5e4e7fb@c.com": {
+    "username": "eric.dalquist",
+    "email": "eric.dalquist@gmail.com"
+  },
+  "e1bf47f64ba0ab97e836ff76f23770ba@c.com": {
+    "username": "johan",
+    "email": "johan@lubcke.se"
+  },
+  "53500be0f4df0c33956f3c4c726901d6@c.com": {
+    "username": "jesse.glick",
+    "email": "jesse.glick@oracle.com"
+  },
+  "6df63b7496e1d1671f7e26ea129e5c8e@c.com": {
+    "username": "eidottermihi",
+    "email": "eidottermihi@gmail.com"
+  },
+  "841b66fc69fd1d0fe830d99437200453@c.com": {
+    "username": "nparry",
+    "email": "nparry@gmail.com"
+  },
+  "3a95b7085e2afed39bb18daa09cef42a@c.com": {
+    "username": "msrb",
+    "email": "msrb@redhat.com"
+  },
+  "8984ef6d12ee96008c8e4b5afb53da85@c.com": {
+    "username": "wolfs",
+    "email": "wolfs@fs.tum.de"
+  },
+  "04386dc882a6f23c2d8dfa5d5d401690@c.com": {
+    "username": "paul",
+    "email": "paul@weiss.name"
+  },
+  "b1a2222be4d227a6a39a2762999b4765@c.com": {
+    "username": "anders.kindberg",
+    "email": "anders.kindberg@valtech.se"
+  },
+  "8e840fa8a190ec4efecaab3142938dfc@c.com": {
+    "username": "marco",
+    "email": "marco@morca.de"
+  },
+  "86f91bb40e04e7c94812a384ccc76f0f@c.com": {
+    "username": "dnozay",
+    "email": "dnozay@users.noreply.github.com"
+  },
+  "540d9ca5d7395729a31c0476a23b5b1b@c.com": {
+    "username": "wedge.jarrad",
+    "email": "wedge.jarrad@gmail.com"
+  },
+  "7a55f018e0ded9cc71d305810fa03c37@c.com": {
+    "username": "huybrechts",
+    "email": "huybrechts@@dev.java.net"
+  },
+  "2ef86ecd83daed554e4114c8679d6846@c.com": {
+    "username": "mpower.lists",
+    "email": "mpower.lists@dodtsair.com"
+  },
+  "a4719ddcccea5c8ac0d53ee5c8d0f8eb@c.com": {
+    "username": "dominiquebrice",
+    "email": "dominiquebrice@users.noreply.github.com"
+  },
+  "f58af8c7979661dfb9c9d7cc1490d967@c.com": {
+    "username": "vlatombe",
+    "email": "vlatombe@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "5d115f6b84610fa2f63d8f008e2e9cb9@c.com": {
+    "username": "jn.avila",
+    "email": "jn.avila@free.fr"
+  },
+  "0e43b9fb7f676118b329d9b83c9a76ff@c.com": {
+    "username": "olivier.lemasle",
+    "email": "olivier.lemasle@apalia.net"
+  },
+  "fb3071613eed5e6e39f389307932b122@c.com": {
+    "username": "ndimiduk",
+    "email": "ndimiduk@gmail.com"
+  },
+  "54170a2d884e01ced7e05f61a1631bb4@c.com": {
+    "username": "ignacio",
+    "email": "ignacio@albors.ws"
+  },
+  "1b42d100589ea585ce9a1f359b8d4496@c.com": {
+    "username": "michael.pailloncy",
+    "email": "michael.pailloncy@gmail.com"
+  },
+  "02dbbb6f91bad9a634513450d65f586c@c.com": {
+    "username": "michael.m.clarke",
+    "email": "michael.m.clarke@gmail.com"
+  },
+  "0778a74d11dfa53f8e8a63d3786815ec@c.com": {
+    "username": "Freddie-V4",
+    "email": "Freddie-V4@users.noreply.github.com"
+  },
+  "22e8fc8a067717db8a2adbe3309f48f9@c.com": {
+    "username": "andreldm1989",
+    "email": "andreldm1989@gmail.com"
+  },
+  "1e8897cc542e2172e6eb3cf652cd8adc@c.com": {
+    "username": "vincent.latombe",
+    "email": "vincent.latombe@gmail.com"
+  },
+  "e4f2a22109b82c081c356f3a33ead03c@c.com": {
+    "username": "jbyers",
+    "email": "jbyers@gmail.com"
+  },
+  "77b6297de00815e50256051af7a5dae8@c.com": {
+    "username": "rtyler",
+    "email": "rtyler@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "4738f7639fcf4323011d608cc7358be1@c.com": {
+    "username": "Bernard.Leach",
+    "email": "Bernard.Leach@monitise.com"
+  },
+  "2fb7d5f5a2ddf9b35d8bfe9d4c4a49fd@c.com": {
+    "username": "cmotlin",
+    "email": "cmotlin@gmail.com"
+  },
+  "e8c31efcf5e524041e5afe43063fe4b4@c.com": {
+    "username": "dodok1",
+    "email": "dodok1@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "728635d671155fdec5ce6c4e9be445de@c.com": {
+    "username": "laurenhy",
+    "email": "laurenhy@tomato.(none)"
+  },
+  "6cad3d76e19f6a06d68f148de5dfe0aa@c.com": {
+    "username": "bwestrich",
+    "email": "bwestrich@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "fa4a013b8f2070fa0f59570ce62f9dc7@c.com": {
+    "username": "drew.repasky",
+    "email": "drew.repasky@gmail.com"
+  },
+  "e41ff4cfc34537c872adaa19d5db5d1d@c.com": {
+    "username": "manuel_carrasco",
+    "email": "manuel_carrasco@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "fd74178aadc963ffc6397ad1e22d8ce7@c.com": {
+    "username": "dave.hunt",
+    "email": "dave.hunt@gmail.com"
+  },
+  "380511472d55a0e66738d0e4b1a4967c@c.com": {
+    "username": "kaxelson",
+    "email": "kaxelson@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "1d2db911a8b72eaebceb79c6c27183af@c.com": {
+    "username": "basil3whitehouse",
+    "email": "basil3whitehouse@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "d8a8e8cad6cf9add40e008c73b9867e4@c.com": {
+    "username": "vbatz",
+    "email": "vbatz@linetco.com"
+  },
+  "5c516e1812b785d36691f9e506bdee0e@c.com": {
+    "username": "albgra",
+    "email": "albgra@gmail.com"
+  },
+  "38dc0da1a12ec155e6e3301b86a5bb5f@c.com": {
+    "username": "petehayes",
+    "email": "petehayes@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "c61b120bdaedf42832ad4c9e391b3929@c.com": {
+    "username": "jenkinsadmin-github",
+    "email": "jenkinsadmin-github@kohsuke.org"
+  },
+  "547fe5ba05b7c526083e494e9087bce4@c.com": {
+    "username": "nairb774",
+    "email": "nairb774@gmail.com"
+  },
+  "f5d8fbeba867fc4e62dc8ba1fc3ce833@c.com": {
+    "username": "peter.hayes",
+    "email": "peter.hayes@fmr.com"
+  },
+  "b9a28694e19e5932ca30af4214f0fdff@c.com": {
+    "username": "peter.liljenberg",
+    "email": "peter.liljenberg@pagero.com"
+  },
+  "d85e1e622e1672b349c528bff3fbb3ae@c.com": {
+    "username": "jakstiller",
+    "email": "jakstiller@atlas.cz"
+  },
+  "a623bfa8dccad0e775ddea54a55e919c@c.com": {
+    "username": "hiroshi3110",
+    "email": "hiroshi3110@gmail.com"
+  },
+  "7b282e257e695d1886428553d9a34e71@c.com": {
+    "username": "hendrik.millner",
+    "email": "hendrik.millner@symeo.com"
+  },
+  "b6c41031987c3e44947dd8051e632d51@c.com": {
+    "username": "samngms",
+    "email": "samngms@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "0e30f7ac050ed720cf7272fbbed6fb58@c.com": {
+    "username": "cjo.johnson",
+    "email": "cjo.johnson@gmail.com"
+  },
+  "c35777e0d2751654391d03ccdf67edc4@c.com": {
+    "username": "dbrosius",
+    "email": "dbrosius@mebigfatguy.com"
+  },
+  "97e53a26554d22bf258e287ecbf28657@c.com": {
+    "username": "vova.kravets",
+    "email": "vova.kravets@gmail.com"
+  },
+  "36c1958eb4f7d79bf10c03e98de747fb@c.com": {
+    "username": "stefan.wolf",
+    "email": "stefan.wolf@tngtech.com"
+  },
+  "cb96fbd0df4ba77f3cb9306cf510af9f@c.com": {
+    "username": "martijn.baay",
+    "email": "martijn.baay@gmail.com"
+  },
+  "db64afc675874fc05b27942f45579421@c.com": {
+    "username": "tivv00",
+    "email": "tivv00@gmail.com"
+  },
+  "989835256acefc4a5f286184c0e1337b@c.com": {
+    "username": "alex",
+    "email": "alex@bedatadriven.com"
+  },
+  "c65cb5c29d1e730d5aaab0eebfced372@c.com": {
+    "username": "haya10.ito",
+    "email": "haya10.ito@gmail.com"
+  },
+  "883183e42d55efd5a3acaf9a1993c661@c.com": {
+    "username": "carl.quinn",
+    "email": "carl.quinn@gmail.com"
+  },
+  "abf7b1125d0be244972753887820c153@c.com": {
+    "username": "mfriedenhagen",
+    "email": "mfriedenhagen@gmail.com"
+  },
+  "b92c83ce207fefa77f5a73d687abca01@c.com": {
+    "username": "joshua.kolash",
+    "email": "joshua.kolash@gmail.com"
+  },
+  "51dc144ae65265959e842ca801cc7afb@c.com": {
+    "username": "znz",
+    "email": "znz@users.noreply.github.com"
+  },
+  "d4c07c38de99a1a6551d20d7b31e3b45@c.com": {
+    "username": "dustin.welden",
+    "email": "dustin.welden@gmail.com"
+  },
+  "f682eb874cf15a089cc27b43f4db7d01@c.com": {
+    "username": "dillona",
+    "email": "dillona@dillona.com"
+  },
+  "139b7e66a99111adb5d996c8f8e67ec7@c.com": {
+    "username": "domi",
+    "email": "domi@fortysix.ch"
+  },
+  "8ef45acabe82a50fbab3e7b48e906fe4@c.com": {
+    "username": "kiy0taka333+github",
+    "email": "kiy0taka333+github@gmail.com"
+  },
+  "95b752226026c56a1d41d63346ba9f75@c.com": {
+    "username": "hunkim",
+    "email": "hunkim@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "d52dfcacb41172a716bcab6404717f5c@c.com": {
+    "username": "aje",
+    "email": "aje@cloudscaling.com"
+  },
+  "5a52648523d2248e022753e924125dfb@c.com": {
+    "username": "soid.exe",
+    "email": "soid.exe@gmail.com"
+  },
+  "63793730f42a75732073852fde8f1655@c.com": {
+    "username": "appr",
+    "email": "appr@appr.me"
+  },
+  "8ff16a258cc614d8e8eeac872d334962@c.com": {
+    "username": "joe",
+    "email": "joe@sondow.com"
+  },
+  "2eed6b845bcc1adf03d573e1323ce8be@c.com": {
+    "username": "akiellor",
+    "email": "akiellor@gmail.com"
+  },
+  "4804a4a5fb94ede3f08d2b4122ca2d24@c.com": {
+    "username": "dreiss",
+    "email": "dreiss@fb.com"
+  },
+  "fd83e4fbdb11f925603ef60d25efcbb4@c.com": {
+    "username": "cyrille",
+    "email": "cyrille@cyrilleleclerc.com"
+  },
+  "104adcfb15e43fdb03608cebd7a20728@c.com": {
+    "username": "qxodream",
+    "email": "qxodream@gmail.com"
+  },
+  "c06e2846a9915e106aa50f836a0e73d8@c.com": {
+    "username": "ju.schmidt",
+    "email": "ju.schmidt@gmx.de"
+  },
+  "568d5aaff01a94c3cad47d8099b71cab@c.com": {
+    "username": "d.olausson",
+    "email": "d.olausson@gmail.com"
+  },
+  "58e0f44b2ff9d8ccac43e1f72570cfb0@c.com": {
+    "username": "lacostej",
+    "email": "lacostej@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "3fe23ff82e7920b5941e18515adf9bba@c.com": {
+    "username": "nicolas",
+    "email": "nicolas@apache.org"
+  },
+  "e86314a281a9f4deddf3d101f930f8ad@c.com": {
+    "username": "teilo",
+    "email": "teilo@teilo.net"
+  },
+  "1732e9cebe69c09dc51726a0434cadc8@c.com": {
+    "username": "jasonchaffee",
+    "email": "jasonchaffee@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "40319425cee670c28b3be252ed2f1f24@c.com": {
+    "username": "pgweiss",
+    "email": "pgweiss@71c3de6d-444a-0410-be80-ed276b4c234a"
+  },
+  "71d81970eabae0eafceb91d1dd843531@c.com": {
+    "username": "git",
+    "email": "git@thequod.de"
+  },
+  "4ab70244285e20ad68a1d260f3308623@c.com": {
+    "username": "pjrodriguezt",
+    "email": "pjrodriguezt@gmail.com"
+  },
+  "248b0ebabaf672d07d70410d024e6c97@c.com": {
+    "username": "Kanstantsin_Shautsou",
+    "email": "Kanstantsin_Shautsou@epam.com"
+  },
+  "d30de8ca60eb1ac4484d24ff198d261e@c.com": {
+    "username": "johnson.joel.86",
+    "email": "johnson.joel.86@gmail.com"
+  },
+  "bf262feb22e7064ae1bc4837529edf9f@c.com": {
+    "username": "tomerc",
+    "email": "tomerc@jfrog.com"
+  },
+  "524a416258f2989ae0b16f4845d4a3aa@c.com": {
+    "username": "dty",
+    "email": "dty@yahoo-inc.com"
+  },
+  "488766b4fb4dc4b2d5822268a2a8d369@c.com": {
+    "username": "jamescmartinez",
+    "email": "jamescmartinez@gmail.com"
+  }
+}
