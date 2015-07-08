@@ -50,8 +50,10 @@ def get_project(rd, project_id):
             'id': int(git_project.get('owner').split(":")[1]),
         }
         git_project['id'] = int(git_project.get('id'))
-        git_project['tags'] = eval(git_project.get('tags'))
-        git_project['contributors'] = eval(git_project.get('contributors'))
+        if git_project.get('tags'):
+            git_project['tags'] = eval(git_project.get('tags'))
+        if git_project.get('contributors'):
+            git_project['contributors'] = eval(git_project.get('contributors'))
         convert_time_keys(git_project)
         git_project['default_branch_name'] = git_project['default_branch']
         git_project['default_branch'] = base64.b16encode(git_project['default_branch'])
@@ -410,10 +412,10 @@ def get_entity_projects(rd, entity_id, relation_type, user_type, t_window):
 def get_contributors_projects(rd, project_id, branch_name, t_window):
 
     ret_users = {}
-    branch_name = base64.b16decode(branch_name)
 
     # Search and Filter by time
     if branch_name is not None:
+        branch_name = base64.b16decode(branch_name)
         git_commits = rd.zrange("projects:" + str(project_id) + ":branches:" + branch_name + ":commits:",
                                 t_window.get('st_time'), t_window.get('en_time'))
     else:

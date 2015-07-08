@@ -112,7 +112,6 @@ def get_project_branches(gl, project_id, default_flag):
     :param gl: GitLab Object Instance
     :param project_id: Project Identifier (int)
     :param default_flag: Filter by type (bool)
-    :param details: Project details (bool)
     :return: Branches (List)
     """
     if default_flag == 'false':
@@ -179,8 +178,7 @@ def get_project_branch_commits(gl, project_id, branch_name, user_id, t_window):
             return False
         else:
             user = user.get('email')
-    branch_name = base64.b16decode(branch_name)
-    if gl.getbranch(project_id, branch_name) is False:
+    if gl.getbranch(project_id, base64.b16decode(branch_name)) is False:
         return False
     ci = get_project_commits_information(gl, project_id, branch_name)
     ci_commits = ci.get('commits')
@@ -528,6 +526,9 @@ def parse_info_project(o):
             o[k] = 'false'
         elif o[k] is True:
             o[k] = 'true'
+        elif isinstance(o[k], list):
+            if len(o[k] == 0):
+                del o[k]
         else:
             pass
 
@@ -543,6 +544,7 @@ def get_entity_projects(gl, entity_id, relation_type, user_type, t_window):
     git_projects = get_projects(gl)
 
     git_ret = []
+    g_m = None
     if user_type == 'groups':
         g_m = get_group(gl, entity_id).get('members')
     if relation_type == 'owner':
@@ -607,6 +609,7 @@ def get_project_commits_information(gl, project_id, branch_name):
     if git_project is False:
         return False
     if branch_name is not None:
+        branch_name = base64.b16decode(branch_name)
         if gl.getbranch(project_id, branch_name) is False:
             return False
         git_branches = [branch_name]
