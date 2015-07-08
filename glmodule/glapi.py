@@ -555,6 +555,9 @@ def parse_info_project(o):
             o[k] = 'false'
         elif o[k] is True:
             o[k] = 'true'
+        elif isinstance(o[k], list):
+            if len(o[k] == 0):
+                del o[k]
         else:
             pass
 

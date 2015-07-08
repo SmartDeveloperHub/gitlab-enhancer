@@ -30,7 +30,7 @@ def read(fname):
 
 setup(
     name="gl-enhancer",
-    version="0.3.0.dev7",
+    version="0.3.0.dev8",
     author="Alejandro F. Carrera",
     author_email="alejandro.fernandez.carrera@centeropenmiddleware.com",
     description="A project for Gitlab Enhancer Service",

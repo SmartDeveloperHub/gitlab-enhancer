@@ -61,8 +61,10 @@ def get_project(rd, project_id):
             'id': int(git_project.get('owner').split(":")[1]),
         }
         git_project['id'] = int(git_project.get('id'))
-        git_project['tags'] = eval(git_project.get('tags'))
-        git_project['contributors'] = eval(git_project.get('contributors'))
+        if git_project.get('tags'):
+            git_project['tags'] = eval(git_project.get('tags'))
+        if git_project.get('contributors'):
+            git_project['contributors'] = eval(git_project.get('contributors'))
         convert_time_keys(git_project)
         git_project['default_branch_name'] = git_project['default_branch']
         git_project['default_branch'] = base64.b16encode(git_project['default_branch'])
