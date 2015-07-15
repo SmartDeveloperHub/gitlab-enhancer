@@ -145,8 +145,7 @@ def get_project_branch(gl, project_id, branch_name):
     :param branch_name: Branch Identifier (string)
     :return: Branch (Object)
     """
-    branch_name = base64.b16decode(branch_name)
-    gl_branch = gl.getbranch(project_id, branch_name)
+    gl_branch = gl.getbranch(project_id, base64.b16decode(branch_name))
     if gl_branch is False:
         return False
     else:
