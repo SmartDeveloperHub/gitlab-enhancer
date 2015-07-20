@@ -97,16 +97,8 @@ def populate_redis_commits(gl_drainer, gl_redis):
             comm_project_score.append(j.get('created_at'))
             if comm.get('author') is not comm_project_user:
                 comm_project_user[comm.get('author')] = []
-            if comm.get('author') is not list_users:
-                list_users[comm.get('author')] = {
-                    'last': comm.get('created_at'),
-                    'first': comm.get('created_at')
-                }
-            if list_users[comm.get('author')]['first'] > comm.get('created_at'):
-                list_users[comm.get('author')]['first'] = comm.get('created_at')
-            if list_users[comm.get('author')]['last'] < comm.get('created_at'):
-                list_users[comm.get('author')]['last'] = comm.get('created_at')
-            comm_project_user[comm.get('author')].append(comm)
+            else:
+                comm_project_user[comm.get('author')].append(comm)
         inject_project_commits(gl_redis, str(i), comm_project_score)
 
         # Insert commits by project's branch
@@ -137,12 +129,9 @@ def populate_redis_commits(gl_drainer, gl_redis):
             for j in comm_project_user[w]:
                 comm_un_project_user.append("projects:" + str(i) + ":commits:" + j.get('id'))
                 comm_un_project_user.append(j.get('created_at'))
+            gl_redis.hset("users:" + str(i) + ":", 'first_commit_at', comm_project_user[w][0].get('created_at'))
+            gl_redis.hset("users:" + str(i) + ":", 'last_commit_at', comm_project_user[w][-1].get('created_at'))
             inject_user_commits(gl_redis, i, w, comm_un_project_user)
-
-    # Insert user's information
-    for i in list_users.keys():
-        gl_redis.hset("users:" + str(i) + ":", 'first_commit_at', list_users[i]['first'])
-        gl_redis.hset("users:" + str(i) + ":", 'last_commit_at', list_users[i]['last'])
 
     print ""
 
