@@ -22,13 +22,14 @@
 __author__ = 'Alejandro F. Carrera'
 
 import json
+import logging
 
 # Web Hooks (glmodule-ce)
 
 
 def hook_specific(event):
-    print("hook_specific from glhook (repository)")
+    logging.info(("hook_specific from glhook (repository)")
 
 
 def hook_system(event):
-    print("hook_specific from glhook (system)")
+    logging.info(("hook_specific from glhook (system)")

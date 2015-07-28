@@ -25,11 +25,11 @@ from glmodule import glhook, glapi, glredis, glredispop
 import gitlab
 import redis
 import time
+import logging
 
 
 class GlDrainer(object):
     def __init__(self, config):
-        print " * Drainer Started"
         self.cfg = config
         self.git = None
         self.redis = None
@@ -114,7 +114,7 @@ class GlDrainer(object):
 
     def populate_redis(self):
         localtime = time.asctime(time.localtime(time.time()))
-        print " * [REDIS] Start time :", localtime
+        logging.info(" * [REDIS] Start time :", localtime)
         glredispop.populate_redis_users(self, self.redis)
         glredispop.populate_redis_groups(self, self.redis)
         glredispop.populate_redis_projects(self, self.redis)
@@ -122,7 +122,7 @@ class GlDrainer(object):
         glredispop.populate_redis_commits(self, self.redis)
         localtime = time.asctime(time.localtime(time.time()))
         self.redis_status = True
-        print " * [REDIS] End time :", localtime
+        logging.info(" * [REDIS] End time :", localtime)
 
     def connect_redis(self):
 
@@ -143,14 +143,14 @@ class GlDrainer(object):
         # Check database is empty
         if __available:
             if self.redis.dbsize() == 0:
-                print " * [REDIS] Database empty detected!"
-                print " * [REDIS] Cold Init - Started."
+                logging.info(" * [REDIS] Database empty detected!")
+                logging.info(" * [REDIS] Cold Init - Started.")
                 if self.git is None:
-                    print " * [REDIS] Cold Init - Stopped."
+                    logging.info(" * [REDIS] Cold Init - Stopped.")
                     self.redis = "non populated"
                 else:
                     self.populate_redis()
-                    print " * [REDIS] Cold Init - Finished."
+                    logging.info(" * [REDIS] Cold Init - Finished.")
             else:
                 self.redis_status = True
 

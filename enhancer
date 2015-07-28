@@ -26,26 +26,29 @@
 __author__ = 'Alejandro F. Carrera'
 
 from drainer.drainer import app, drainer
+import logging
 
 # Main
 
 if __name__ == '__main__':
+    logging.info(" * Drainer Started")
+    redis_string = " * [LINK] Redis is "
     if drainer.redis is None:
-        print " * [REDIS] Redis is not available at http://%s:%d" % (
-            app.config.get('REDIS_IP', '127.0.0.1'),
-            app.config.get('REDIS_PORT', 6379)
-        )
+        redis_string += "not available"
     else:
-        print " * [REDIS] Status: online"
+        redis_string += "online"
+    logging.info(redis_string + " at http://%s:%d" % (
+        app.config.get('REDIS_IP', '127.0.0.1'),
+        app.config.get('REDIS_PORT', 6379)
+    ))
+    git_string = " * [LINK] Gitlab is "
     if drainer.git is None:
-        print " * [SCM] Gitlab is not available at %s://%s:%d" % (
-            app.config.get('GITLAB_PROT', 'http'),
-            app.config.get('GITLAB_IP', '127.0.0.1'),
-            app.config.get('GITLAB_PORT', 8080)
-        )
+        git_string += "not available"
     else:
-        print " * [SCM] Status: online"
-    if drainer.git is not None or (drainer.redis is not None and drainer.redis_status is True):
-        app.run(app.config.get('DRAINER_LISTEN_IP', '0.0.0.0'), app.config.get('DRAINER_PORT', 5000))
-    else:
-        print " * Drainer finished"
+        git_string += "online"
+    logging.info(git_string + " at %s://%s:%d" % (
+        app.config.get('GITLAB_PROT', 'http'),
+        app.config.get('GITLAB_IP', '127.0.0.1'),
+        app.config.get('GITLAB_PORT', 8080)
+    ))
+    app.run(app.config.get('DRAINER_LISTEN_IP', '0.0.0.0'), app.config.get('DRAINER_PORT', 5000))

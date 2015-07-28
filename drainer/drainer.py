@@ -26,6 +26,7 @@ from flask_negotiate import consumes, produces
 import glmodule
 import datetime
 import json
+import logging
 
 app = Flask(__name__)
 
@@ -37,11 +38,12 @@ drainer = glmodule.GlDrainer(app.config)
 
 # GitLab Hook Mapping
 
+
 @app.route('/system', methods=['POST'])
 @consumes('application/json')
 def hook_system():
     if app.config.get('DEBUGGER', True):
-        print('System event: %s' % request.data)
+        logging.info('System event: %s' % request.data)
     drainer.hook_system(request.json)
     resp = make_response('', 200)
     return resp
@@ -51,7 +53,7 @@ def hook_system():
 @consumes('application/json')
 def hook_specific():
     if app.config.get('DEBUGGER', True):
-        print('Hook event: %s' % request.data)
+        logging.info('Hook event: %s' % request.data)
     drainer.hook_specific(request.json)
     resp = make_response('', 200)
     return resp
