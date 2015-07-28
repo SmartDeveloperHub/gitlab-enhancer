@@ -28,21 +28,21 @@ import time
 import logging
 
 
-class GlDrainer(object):
+class GlEnhancer(object):
     def __init__(self, config):
         self.cfg = config
         self.git = None
         self.redis = None
         self.redis_status = False
-        self.drainerHost = "%s://%s:%d/system" % (
-            self.cfg.get('DRAINER_PROT', 'http'),
-            self.cfg.get('DRAINER_IP', '127.0.0.1'),
-            self.cfg.get('DRAINER_PORT', 8080)
+        self.enhancerHost = "%s://%s:%d/system" % (
+            self.cfg.get('enhancer_PROT', 'http'),
+            self.cfg.get('enhancer_IP', '127.0.0.1'),
+            self.cfg.get('enhancer_PORT', 8080)
         )
         self.hookHost = "%s://%s:%d/hook" % (
-            self.cfg.get('DRAINER_PROT', 'http'),
-            self.cfg.get('DRAINER_IP', '127.0.0.1'),
-            self.cfg.get('DRAINER_PORT', 8080)
+            self.cfg.get('enhancer_PROT', 'http'),
+            self.cfg.get('enhancer_IP', '127.0.0.1'),
+            self.cfg.get('enhancer_PORT', 8080)
         )
         self.gitHost = "%s://%s:%d" % (
             self.cfg.get('GITLAB_PROT', 'http'),
@@ -67,7 +67,7 @@ class GlDrainer(object):
 # GITLAB CONNECTION
 
     def link_gitlab(self):
-        self.git.addsystemhook(url=self.drainerHost)
+        self.git.addsystemhook(url=self.enhancerHost)
 
     def link_repositories(self):
 
@@ -102,7 +102,7 @@ class GlDrainer(object):
         if __available:
             __hooks = self.git.getsystemhooks()
             for e in __hooks:
-                if e['url'] == self.drainerHost:
+                if e['url'] == self.enhancerHost:
                     __linked = True
             if not __linked:
                 self.link_gitlab()

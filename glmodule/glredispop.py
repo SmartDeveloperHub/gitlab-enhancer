@@ -29,8 +29,8 @@ projects = []
 # REDIS DATABASE CREATION AND POPULATION
 
 
-def populate_redis_projects(gl_drainer, gl_redis):
-    p = gl_drainer.git.getprojectsall()
+def populate_redis_projects(gl_enhancer, gl_redis):
+    p = gl_enhancer.git.getprojectsall()
     p_number = 1
     print_progress("    Projects", 0)
     for i in p:
@@ -42,7 +42,7 @@ def populate_redis_projects(gl_drainer, gl_redis):
 
         convert_time_keys(i)
         i['tags'] = map(lambda x: x.get('name').encode('ascii','ignore'),
-                        gl_drainer.git.getrepositorytags(i.get('id')))
+                        gl_enhancer.git.getrepositorytags(i.get('id')))
         parse_info_project(i)
         gl_redis.hmset("projects:" + str(i.get('id')) + ":", i)
         print_progress("    Projects", float(p_number) / len(p))
@@ -50,11 +50,11 @@ def populate_redis_projects(gl_drainer, gl_redis):
     print ""
 
 
-def populate_redis_branches(gl_drainer, gl_redis):
+def populate_redis_branches(gl_enhancer, gl_redis):
     p_number = 1
     print_progress("    Branches (0/" + str(len(projects)) + ")", 0)
     for i in projects:
-        b = gl_drainer.git.getbranches(i)
+        b = gl_enhancer.git.getbranches(i)
         b_length = len(b)
         b_number = 1
         for j in b:
@@ -71,13 +71,13 @@ def populate_redis_branches(gl_drainer, gl_redis):
     print ""
 
 
-def populate_redis_commits(gl_drainer, gl_redis):
+def populate_redis_commits(gl_enhancer, gl_redis):
     p_number = 0
     list_users = {}
     for i in projects:
         print_progress("    Commits (" + str(p_number) + "/" + str(len(projects)) + ")", 0)
         p_number += 1
-        ci = gl_drainer.api_project_commits_information(i, None)
+        ci = gl_enhancer.api_project_commits_information(i, None)
         gl_redis.hset("projects:" + str(i) + ":", 'contributors',
                       ci.get('collaborators'))
         gl_redis.hset("projects:" + str(i) + ":", 'first_commit_at',
@@ -90,7 +90,7 @@ def populate_redis_commits(gl_drainer, gl_redis):
         comm_project_user = {}
         ci_commits = ci.get('commits')
         for j in ci_commits:
-            comm = gl_drainer.api_project_commit(i, j.get('id'))
+            comm = gl_enhancer.api_project_commit(i, j.get('id'))
             comm['parent_ids'] = map(lambda x: x.encode('ascii','ignore'), comm.get('parent_ids'))
             gl_redis.hmset("projects:" + str(i) + ":commits:" + j.get('id'), comm)
             comm_project_score.append("projects:" + str(i) + ":commits:" + j.get('id'))
@@ -136,13 +136,13 @@ def populate_redis_commits(gl_drainer, gl_redis):
     print ""
 
 
-def populate_redis_users(gl_drainer, gl_redis):
+def populate_redis_users(gl_enhancer, gl_redis):
     pag = 0
     number_page = 50
     git_users_len = -1
     u = {}
     while git_users_len is not 0:
-        git_users = gl_drainer.git.getusers(page=pag, per_page=number_page)
+        git_users = gl_enhancer.git.getusers(page=pag, per_page=number_page)
         git_users_len = len(git_users)
         for i in git_users:
             if i.get('id') not in u:
@@ -159,8 +159,8 @@ def populate_redis_users(gl_drainer, gl_redis):
     print ""
 
 
-def populate_redis_groups(gl_drainer, gl_redis):
-    g = gl_drainer.git.getgroups()
+def populate_redis_groups(gl_enhancer, gl_redis):
+    g = gl_enhancer.git.getgroups()
     g_number = 1
     print_progress("    Groups", 0)
     for j in g:
@@ -168,7 +168,7 @@ def populate_redis_groups(gl_drainer, gl_redis):
             del j['projects']
         convert_time_keys(j)
         j['members'] = []
-        [j['members'].append(x.get('id')) for x in gl_drainer.git.getgroupmembers(j.get('id'))]
+        [j['members'].append(x.get('id')) for x in gl_enhancer.git.getgroupmembers(j.get('id'))]
         gl_redis.hmset("groups:" + str(j.get('id')) + ":", j)
         print_progress("    Groups", float(g_number) / len(g))
         g_number += 1

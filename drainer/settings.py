@@ -25,10 +25,10 @@ import os
 
 DEBUGGER = True
 
-DRAINER_PROT = 'http'
-DRAINER_IP = os.environ.get("DRAINER_IP", "10.0.2.2")
-DRAINER_PORT = int(os.environ.get("DRAINER_PORT", 5000))
-DRAINER_LISTEN_IP = os.environ.get("DRAINER_LISTEN_IP", "0.0.0.0")
+ENHANCER_PROT = 'http'
+ENHANCER_IP = os.environ.get("enhancer_IP", "10.0.2.2")
+ENHANCER_PORT = int(os.environ.get("enhancer_PORT", 5000))
+ENHANCER_LISTEN_IP = os.environ.get("enhancer_LISTEN_IP", "0.0.0.0")
 
 GITLAB_PROT = 'http'
 GITLAB_IP = os.environ.get("ENH_GITLAB_IP", "127.0.0.1")
