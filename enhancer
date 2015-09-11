@@ -23,10 +23,10 @@
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=#
 """
 
-__author__ = 'Alejandro F. Carrera'
-
 from drainer.enhancer import app
 import logging
+
+__author__ = 'Alejandro F. Carrera'
 
 # Main
 
