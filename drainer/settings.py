@@ -19,25 +19,28 @@
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=#
 """
 
-__author__ = 'Alejandro F. Carrera'
-
 import os
+
+__author__ = 'Alejandro F. Carrera'
 
 DEBUGGER = True
 
-ENHANCER_PROT = 'http'
-ENHANCER_IP = os.environ.get("enhancer_IP", "10.0.2.2")
-ENHANCER_PORT = int(os.environ.get("enhancer_PORT", 5000))
-ENHANCER_LISTEN_IP = os.environ.get("enhancer_LISTEN_IP", "0.0.0.0")
+ENHANCER_WEBHOOK_PROT = os.environ.get("ENH_WEBHOOK_PROT", "http")
+ENHANCER_WEBHOOK_IP = os.environ.get("ENH_WEBHOOK_IP", "10.0.2.2")
 
-GITLAB_PROT = 'http'
+ENHANCER_LISTEN_PORT = int(os.environ.get("ENH_LISTEN_PORT", 5000))
+ENHANCER_LISTEN_IP = os.environ.get("ENH_LISTEN_IP", "0.0.0.0")
+
+GITLAB_PROT = os.environ.get("ENH_GITLAB_PROT", "http")
 GITLAB_IP = os.environ.get("ENH_GITLAB_IP", "127.0.0.1")
 GITLAB_PORT = int(os.environ.get("ENH_GITLAB_PORT", 8000))
 GITLAB_USER = os.environ.get("ENH_GITLAB_USER", "root")
 GITLAB_PASS = os.environ.get("ENH_GITLAB_PASS", "12345678")
+GITLAB_VER_SSL = bool(os.environ.get("ENH_GITLAB_VERIFY_SSL", False))
 
 # GITLAB_PASS = '5iveL!fe'
 
 REDIS_IP = os.environ.get("ENH_REDIS_IP", "127.0.0.1")
 REDIS_PORT = int(os.environ.get("ENH_REDIS_PORT", 6379))
+REDIS_PASS = os.environ.get("ENH_REDIS_PASS", None)
 REDIS_DB = int(os.environ.get("ENH_REDIS_DB", 0))

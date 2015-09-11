@@ -27,9 +27,12 @@ import logging
 # Web Hooks (glmodule-ce)
 
 
-def hook_specific(event):
-    logging.info(("hook_specific from glhook (repository)")
-
-
 def hook_system(event):
-    logging.info(("hook_specific from glhook (system)")
+    logging.info('System event received from hook_system function')
+
+
+def hook_repository(repo_id, event):
+    logging.info('Repository event received from hook_system function')
+
+
+
