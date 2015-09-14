@@ -25,9 +25,9 @@ __author__ = 'Alejandro F. Carrera'
 
 DEBUGGER = True
 
-ENHANCER_WEBHOOK_PROT = os.environ.get("ENH_WEBHOOK_PROT", "http")
 ENHANCER_WEBHOOK_IP = os.environ.get("ENH_WEBHOOK_IP", "10.0.2.2")
 
+ENHANCER_LISTEN_PROT = os.environ.get("ENH_LISTEN_PROT", "http")
 ENHANCER_LISTEN_PORT = int(os.environ.get("ENH_LISTEN_PORT", 5000))
 ENHANCER_LISTEN_IP = os.environ.get("ENH_LISTEN_IP", "0.0.0.0")
 

@@ -28,6 +28,7 @@ import logging
 __author__ = 'Alejandro F. Carrera'
 
 
+
 class GlEnhancer(object):
 
     """GitLab Enhancer Class
@@ -51,15 +52,17 @@ class GlEnhancer(object):
         self.redis = None
         self.redis_status = False
         self.system_hook = "%s://%s:%d/hooks/system" % (
-            self.cfg.get("ENHANCER_WEBHOOK_PROT"),
+            self.cfg.get("ENHANCER_LISTEN_PROT"),
             self.cfg.get("ENHANCER_WEBHOOK_IP"),
             self.cfg.get("ENHANCER_LISTEN_PORT")
         )
+        self.system_hook_state = False
         self.project_hook = "%s://%s:%d/hooks/repository" % (
-            self.cfg.get("ENHANCER_WEBHOOK_PROT"),
+            self.cfg.get("ENHANCER_LISTEN_PROT"),
             self.cfg.get("ENHANCER_WEBHOOK_IP"),
             self.cfg.get("ENHANCER_LISTEN_PORT")
         )
+        self.project_hook_states = []
         self.gl_host = "%s://%s:%d" % (
             self.cfg.get("GITLAB_PROT"),
             self.cfg.get("GITLAB_IP"),
@@ -88,28 +91,31 @@ class GlEnhancer(object):
 
     def verify_web_hooks(self):
 
-        if self.test_connection_gitlab() is False:
-            return
+        # Check and connect System Hook
+        if not self.system_hook_state:
+            __hooks = self.git.getsystemhooks()
+            for e in __hooks:
+                if e['url'] == self.system_hook:
+                    self.system_hook_state = True
+            if not self.system_hook_state:
+                logging.info(" * Hook added to gitlab: " + self.gl_host)
+                self.git.addsystemhook(url=self.system_hook)
+                self.system_hook_state = True
 
-        # System Hook
-        __hooks = self.git.getsystemhooks()
-        for e in __hooks:
-            if e['url'] == self.system_hook:
-                __linked = True
-        if not __linked:
-            self.git.addsystemhook(url=self.system_hook)
-
-        # Repositories Hooks
+        # Check and connect Repositories Hooks
         __projects = self.git.getprojects()
         for e in __projects:
-            __hooks = self.git.getprojecthooks(project_id=e['id'])
             __hook_url = self.project_hook + "/" + e['id']
-            __linked = False
-            for j in __hooks:
-                if j['url'] == __hook_url:
-                    __linked = True
-            if not __linked:
-                self.git.addprojecthook(project_id=e['id'], url=__hook_url)
+            if __hook_url not in self.system_hook_state:
+                __hooks = self.git.getprojecthooks(project_id=e['id'])
+                __linked = False
+                for j in __hooks:
+                    if j['url'] == __hook_url:
+                        __linked = True
+                if not __linked:
+                    logging.info(" * Hook added to project: " + str(e['id']))
+                    self.git.addprojecthook(project_id=e['id'], url=__hook_url)
+                    self.system_hook_state.append(__hook_url)
 
     def test_connection_gitlab(self):
 
@@ -127,7 +133,7 @@ class GlEnhancer(object):
     def connect_gitlab(self):
 
         # Create git object and connect
-        self.git = gitlab.Gitlab(host=self.gitHost, verify_ssl=self.cfg.get("GITLAB_VER_SSL"))
+        self.git = gitlab.Gitlab(host=self.gl_host, verify_ssl=self.cfg.get("GITLAB_VER_SSL"))
         self.test_connection_gitlab()
 
 # REDIS CONNECTION

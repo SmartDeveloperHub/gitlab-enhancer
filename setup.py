@@ -19,18 +19,18 @@
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=#
 """
 
-__author__ = 'Alejandro F. Carrera'
-
 import os
 from setuptools import setup, find_packages
 
+__author__ = 'Alejandro F. Carrera'
 
-def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+
+def read(name):
+    return open(os.path.join(os.path.dirname(__file__), name)).read()
 
 setup(
     name="gl-enhancer",
-    version="0.3.1",
+    version="0.4.0",
     author="Alejandro F. Carrera",
     author_email="alejandro.fernandez.carrera@centeropenmiddleware.com",
     description="A project for Gitlab Enhancer Service",
@@ -38,7 +38,7 @@ setup(
     keywords="inner-source drainer enhancer",
     url="https://github.com/SmartDeveloperHub/gitlab-enhancer",
     packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
-    install_requires=['pyapi-gitlab', 'flask', 'flask_negotiate', 'python-dateutil', 'redis'],
+    install_requires=['pyapi-gitlab', 'flask', 'flask_negotiate', 'GitPython', 'python-dateutil', 'redis'],
     classifiers=[],
     scripts=['enhancer']
 )
