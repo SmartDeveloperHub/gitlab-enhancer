@@ -74,6 +74,12 @@ class GlEnhancer(object):
 
 # GITLAB ENHANCER API REST
 
+    def api_ping(self):
+        return {
+            "api": "ok",
+            "gitlab": 'ok' if self.test_connection_gitlab() is True else 'Not connected'
+        }
+
     def api_projects(self):
         if self.test_connection_gitlab():
             return glapi.get_projects(self.git)
