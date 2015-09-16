@@ -19,9 +19,10 @@
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=#
 """
 
+import base64
+
 __author__ = 'Alejandro F. Carrera'
 
-import base64
 
 def get_projects(rd):
     """ Get Projects
@@ -371,11 +372,6 @@ def convert_time_keys(o):
                     if o[k].find(".", 0, len(o[k])) > 0:
                         o[k] = o[k].split(".")[0]
                     o[k] = long(o[k])
-
-
-# TODO: Source Code - Language (Language Mapping)
-def get_language_by_extension(ext):
-    return "code"
 
 
 def get_entity_projects(rd, entity_id, relation_type, user_type, t_window):

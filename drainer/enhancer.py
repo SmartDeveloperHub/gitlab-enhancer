@@ -208,25 +208,6 @@ def api_project_request_changes(pid, mrid):
     return make_response(json.dumps(enhancer.api_project_request_changes(pid, mrid)))
 
 
-# /api/projects/:pid/file_tree[?string:view][?string:path][?string:branch]
-# # view = [simple, full]
-# # path = optional path
-# # branch = optional branch
-# Get file tree about specific gitlab project
-# It is possible only get a simple or full representation
-# It is possible start from a specific path
-# It is possible filter by branch or get default branch
-@app.route('/api/projects/<int:pid>/file_tree', methods=['GET'])
-@produces('application/json')
-def api_project_file_tree(pid):
-    view = request.args.get('view', 'full')
-    if view != 'full' and view != 'simple':
-        return make_response("400: view parameter is not a valid view (full|simple)", 400)
-    path = request.args.get('path', None)
-    branch = request.args.get('branch', None)
-    return make_response(json.dumps(enhancer.api_project_file_tree(pid, view, branch, path)))
-
-
 # /api/projects/:pid/contributors
 # # start_time = time (start) filter
 # # end_time = time (end) filter
