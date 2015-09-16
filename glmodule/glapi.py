@@ -46,6 +46,10 @@ def get_project(gl, project_id):
     if git_project is False:
         return False
     else:
+
+        ci = get_project_information(gl, project_id, None)
+
+        # Owner
         if git_project.get('owner') is None:
             git_owner = {
                 'type': 'groups',
@@ -59,12 +63,19 @@ def get_project(gl, project_id):
             }
             git_project['owner'] = git_owner
         convert_time_keys(git_project)
+
+        # Tags
         git_project['tags'] = map(lambda x: x.get('name'), gl.getrepositorytags(project_id))
-        ci = get_project_commits_information(gl, project_id, None)
-        git_project['contributors'] = ci.get('collaborators')
+
+        # First and last commits
         if len(ci.get('commits')) > 0:
             git_project['first_commit_at'] = ci.get('commits')[0].get('created_at')
-            git_project['last_commit_at'] = ci.get('commits')[len(ci.get('commits'))-1].get('created_at')
+            git_project['last_commit_at'] = ci.get('commits')[-1].get('created_at')
+
+        # Contributors
+        git_project['contributors'] = ci.get('collaborators')
+
+        # Remove and transform fields
         parse_info_project(git_project)
         git_project['default_branch_name'] = git_project['default_branch']
         git_project['default_branch'] = base64.b16encode(git_project['default_branch'])
@@ -140,9 +151,9 @@ def get_project_branch(gl, project_id, branch_name):
     if gl_branch is False:
         return False
     else:
-        cm = get_project_commits_information(gl, project_id, branch_name)
+        cm = get_project_information(gl, project_id, branch_name)
         gl_branch['created_at'] = cm.get('commits')[0].get('created_at')
-        gl_branch['last_commit'] = cm.get('commits')[len(cm.get('commits'))-1].get('id')
+        gl_branch['last_commit'] = cm.get('commits')[-1].get('id')
         gl_branch['contributors'] = cm.get('collaborators')
         if gl_branch.get('protected') is False:
             gl_branch['protected'] = 'false'
@@ -181,7 +192,7 @@ def get_project_branch_commits(gl, project_id, branch_name, user_id, t_window):
             user = user.get('email')
     if gl.getbranch(project_id, base64.b16decode(branch_name)) is False:
         return False
-    ci = get_project_commits_information(gl, project_id, branch_name)
+    ci = get_project_information(gl, project_id, branch_name)
     ci_commits = ci.get('commits')
     git_commits_time = []
 
@@ -217,7 +228,7 @@ def get_project_commits(gl, project_id, user_id, t_window):
         else:
             user = user.get('email')
 
-    ci = get_project_commits_information(gl, project_id, None)
+    ci = get_project_information(gl, project_id, None)
     ci_commits = ci.get('commits')
     git_commits_time = []
 
@@ -393,7 +404,7 @@ def get_user(gl, user_id):
     f_commit = -1
     l_commit = -1
     for i in git_projects:
-        gpc = get_project_commits_information(gl, i, None)
+        gpc = get_project_information(gl, i, None)
         if gl_user.get('id') in gpc.get('collaborators'):
             for j in gpc.get('commits'):
                 if f_commit == -1 and \
@@ -534,11 +545,6 @@ def parse_info_project(o):
             pass
 
 
-# TODO: Source Code - Language (Language Mapping)
-def get_language_by_extension(ext):
-    return "code"
-
-
 def get_entity_projects(gl, entity_id, relation_type, user_type, t_window):
 
     # Get Entity's projects
@@ -576,7 +582,7 @@ def get_contributors_projects(gl, project_id, branch_name, t_window):
     ret_users = {}
 
     # Get Commits
-    ci = get_project_commits_information(gl, project_id, branch_name)
+    ci = get_project_information(gl, project_id, branch_name)
     ci_commits = []
     [ci_commits.append(w) for w in ci.get('commits') if
         t_window.get('st_time') <= w.get('created_at') <= t_window.get('en_time')]
@@ -603,7 +609,7 @@ def get_contributors_projects(gl, project_id, branch_name, t_window):
     return ret_users
 
 
-def get_project_commits_information(gl, project_id, branch_name):
+def get_project_information(gl, project_id, branch_name):
 
     # Detect possible failures
     git_project = gl.getproject(project_id)

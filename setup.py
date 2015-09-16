@@ -38,7 +38,7 @@ setup(
     keywords="inner-source drainer enhancer",
     url="https://github.com/SmartDeveloperHub/gitlab-enhancer",
     packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
-    install_requires=['pyapi-gitlab', 'flask', 'flask_negotiate', 'GitPython', 'python-dateutil', 'redis'],
+    install_requires=['pyapi-gitlab', 'flask', 'flask_negotiate', 'GitPython', 'python-dateutil'],
     classifiers=[],
     scripts=['enhancer']
 )
