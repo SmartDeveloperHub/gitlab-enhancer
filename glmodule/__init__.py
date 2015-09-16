@@ -77,6 +77,12 @@ class GlEnhancer(object):
 
 # GITLAB (REDIS) ENHANCER API REST
 
+    def api_ping(self):
+        return {
+            "api": "ok",
+            "redis": 'ok' if self.test_connection_redis() is True else 'Not connected'
+        }
+
     def api_projects(self):
         if self.test_connection_redis():
             return glredis.get_projects(self.redis)

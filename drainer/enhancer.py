@@ -39,6 +39,14 @@ enhancer = glmodule.GlEnhancer(app.config)
 # GitLab API Mapping
 
 
+# /api
+# Get gitlab
+@app.route('/api', methods=['GET'])
+@produces('application/json')
+def api():
+    return make_response(json.dumps(enhancer.api_ping()))
+
+
 # /api/projects
 # Get gitlab projects
 @app.route('/api/projects', methods=['GET'])
