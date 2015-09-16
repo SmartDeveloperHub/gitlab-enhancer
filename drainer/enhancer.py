@@ -20,11 +20,10 @@
 """
 
 from flask import request, make_response, Flask
-from flask_negotiate import consumes, produces
+from flask_negotiate import produces
 import glmodule
 import datetime
 import json
-import logging
 
 __author__ = 'Alejandro F. Carrera'
 
@@ -37,30 +36,8 @@ app.config.from_pyfile('settings.py')
 # GitLab Specific Enhancer
 enhancer = glmodule.GlEnhancer(app.config)
 
-# GitLab Hook Mapping
-
-
-@app.route('/hooks/system', methods=['POST'])
-@consumes('application/json')
-def hook_system():
-    if app.config.get('DEBUGGER', True):
-        logging.info('System event: %s' % request.data)
-    enhancer.hook_system(request.json)
-    resp = make_response('', 200)
-    return resp
-
-
-@app.route('/hooks/repository/<int:pid>', methods=['POST'])
-@consumes('application/json')
-def hook_repository(pid):
-    if app.config.get('DEBUGGER', True):
-        logging.info('Repository event (%d): %s' % pid, request.data)
-    enhancer.hook_repository(pid, request.json)
-    resp = make_response('', 200)
-    return resp
-
-
 # GitLab API Mapping
+
 
 # /api/projects
 # Get gitlab projects

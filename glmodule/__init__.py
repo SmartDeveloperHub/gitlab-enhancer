@@ -19,14 +19,12 @@
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=#
 """
 
-from glmodule import glhook, glapi, glredis
+from glmodule import glapi, glredis
 import gitlab
 import redis
-import time
 import logging
 
 __author__ = 'Alejandro F. Carrera'
-
 
 
 class GlEnhancer(object):
@@ -40,8 +38,6 @@ class GlEnhancer(object):
         cfg (dict): same as config arg
         git (GitLab): GitLab object from pyapi-gitlab module
         redis (Redis): Redis object from redis module
-        system_hook (string): url for GitLab System Hooks
-        project_hook (string): url for GitLab System Projects
         gl_host (string): url for GitLab Host
         rd_host (string): url for Redis Host
     """
@@ -50,19 +46,6 @@ class GlEnhancer(object):
         self.cfg = config
         self.git = None
         self.redis = None
-        self.redis_status = False
-        self.system_hook = "%s://%s:%d/hooks/system" % (
-            self.cfg.get("ENHANCER_LISTEN_PROT"),
-            self.cfg.get("ENHANCER_WEBHOOK_IP"),
-            self.cfg.get("ENHANCER_LISTEN_PORT")
-        )
-        self.system_hook_state = False
-        self.project_hook = "%s://%s:%d/hooks/repository" % (
-            self.cfg.get("ENHANCER_LISTEN_PROT"),
-            self.cfg.get("ENHANCER_WEBHOOK_IP"),
-            self.cfg.get("ENHANCER_LISTEN_PORT")
-        )
-        self.project_hook_states = []
         self.gl_host = "%s://%s:%d" % (
             self.cfg.get("GITLAB_PROT"),
             self.cfg.get("GITLAB_IP"),
@@ -79,43 +62,7 @@ class GlEnhancer(object):
     def config(self):
         return self.cfg
 
-# GITLAB HOOKS
-
-    def hook_system(self, response_hook):
-        glhook.hook_system(response_hook)
-
-    def hook_repository(self, project_id, response_hook):
-        glhook.hook_repository(project_id, response_hook)
-
 # GITLAB CONNECTION
-
-    def verify_web_hooks(self):
-
-        # Check and connect System Hook
-        if not self.system_hook_state:
-            __hooks = self.git.getsystemhooks()
-            for e in __hooks:
-                if e['url'] == self.system_hook:
-                    self.system_hook_state = True
-            if not self.system_hook_state:
-                logging.info(" * Hook added to gitlab: " + self.gl_host)
-                self.git.addsystemhook(url=self.system_hook)
-                self.system_hook_state = True
-
-        # Check and connect Repositories Hooks
-        __projects = self.git.getprojects()
-        for e in __projects:
-            __hook_url = self.project_hook + "/" + e['id']
-            if __hook_url not in self.system_hook_state:
-                __hooks = self.git.getprojecthooks(project_id=e['id'])
-                __linked = False
-                for j in __hooks:
-                    if j['url'] == __hook_url:
-                        __linked = True
-                if not __linked:
-                    logging.info(" * Hook added to project: " + str(e['id']))
-                    self.git.addprojecthook(project_id=e['id'], url=__hook_url)
-                    self.system_hook_state.append(__hook_url)
 
     def test_connection_gitlab(self):
 
@@ -125,7 +72,6 @@ class GlEnhancer(object):
                     user=self.cfg.get("GITLAB_USER"),
                     password=self.cfg.get("GITLAB_PASS")
                 )
-                self.verify_web_hooks()
                 return True
             except Exception as e:
                 return False

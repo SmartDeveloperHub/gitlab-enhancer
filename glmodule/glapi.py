@@ -19,10 +19,11 @@
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=#
 """
 
-__author__ = 'Alejandro F. Carrera'
-
 from dateutil import parser
 import base64
+
+__author__ = 'Alejandro F. Carrera'
+
 
 def get_projects(gl):
     """ Get Projects
