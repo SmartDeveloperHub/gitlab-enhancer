@@ -338,6 +338,7 @@ def get_project_file_tree(gl, project_id, view, branch_name, path):
             return git_project
         else:
             branch_name = git_project.get('default_branch')
+            branch_name = base64.b16decode(branch_name)
     first_step = gl.getrepositorytree(project_id, ref_name=branch_name, path=path)
     if view == 'simple' or first_step is False:
         return first_step
@@ -539,7 +540,7 @@ def parse_info_project(o):
         elif o[k] is True:
             o[k] = 'true'
         elif isinstance(o[k], list):
-            if len(o[k] == 0):
+            if len(o[k]) == 0:
                 del o[k]
         else:
             pass
@@ -616,7 +617,10 @@ def get_project_information(gl, project_id, branch_name):
     if git_project is False:
         return False
     if branch_name is not None:
-        branch_name = base64.b16decode(branch_name)
+        try:
+            branch_name = base64.b16decode(branch_name)
+        except Exception as e:
+            pass
         if gl.getbranch(project_id, branch_name) is False:
             return False
         git_branches = [branch_name]

@@ -260,6 +260,7 @@ def api_project_contributors(pid):
 def api_users():
     return make_response(json.dumps(enhancer.api_users()))
 
+
 # /api/users/:uid
 # Get specific gitlab user
 @app.route('/api/users/<int:uid>', methods=['GET'])
