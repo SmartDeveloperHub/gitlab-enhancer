@@ -23,14 +23,17 @@
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=#
 """
 
-from drainer.enhancer import app
-import logging
+import datetime
+import time
+
+from glenhancer.enhancer import app
+from glenhancer import settings as config
 
 __author__ = 'Alejandro F. Carrera'
 
 # Main
 
 if __name__ == '__main__':
-    logging.info(" * Enhancer Started")
+    st = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+    config.print_message("* %s (%s) Started - %s" % (config.LONGNAME, config.VERSION, st))
     app.run(app.config.get("ENHANCER_LISTEN_IP"), app.config.get("ENHANCER_PORT"))
-    logging.info(" * Enhancer Finished")
