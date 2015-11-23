@@ -21,6 +21,7 @@
 
 import os
 from setuptools import setup, find_packages
+from glenhancer import settings as config
 
 __author__ = 'Alejandro F. Carrera'
 
@@ -29,8 +30,8 @@ def read(name):
     return open(os.path.join(os.path.dirname(__file__), name)).read()
 
 setup(
-    name="gl-enhancer",
-    version="1.0.0",
+    name=config.NAME,
+    version=config.VERSION,
     author="Alejandro F. Carrera",
     author_email="alejandro.fernandez.carrera@centeropenmiddleware.com",
     description="A project for Gitlab Enhancer Service (Redis)",
