@@ -21,12 +21,44 @@
 
 from flask import request, make_response, Flask
 from flask_negotiate import produces
-import glmodule
+import settings as config
+import glredis
 import datetime
+import redis
 import json
 
 __author__ = 'Alejandro F. Carrera'
 
+
+# Redis Help Functions
+def redis_create_pool(db):
+    __redis_db = redis.ConnectionPool(
+        host=config.REDIS_IP,
+        port=config.REDIS_PORT,
+        db=db,
+        password=config.REDIS_PASS
+    )
+    __redis_db = redis.Redis(connection_pool=__redis_db)
+    try:
+        __redis_db.client_list()
+        return __redis_db
+    except Exception as e:
+        raise EnvironmentError("- Configuration is not valid or Redis is not online")
+
+# Create Redis Connections
+rd_connection = {}
+
+
+def rd_connect():
+    try:
+        rd_connection["rd_instance_pr"] = redis_create_pool(config.REDIS_DB_PR)
+        rd_connection["rd_instance_br"] = redis_create_pool(config.REDIS_DB_BR)
+        rd_connection["rd_instance_co"] = redis_create_pool(config.REDIS_DB_CO)
+        rd_connection["rd_instance_us"] = redis_create_pool(config.REDIS_DB_US)
+        rd_connection["rd_instance_br_co"] = redis_create_pool(config.REDIS_DB_BR_CO)
+        rd_connection["rd_instance_us_co"] = redis_create_pool(config.REDIS_DB_US_CO)
+    except EnvironmentError as e:
+        raise e
 
 app = Flask(__name__)
 
@@ -34,9 +66,10 @@ app = Flask(__name__)
 app.config.from_pyfile('settings.py')
 
 # GitLab Specific Enhancer
-enhancer = glmodule.GlEnhancer(app.config)
+enhancer = glredis
 
-# GitLab API Mapping
+# Call to create Redis connections
+rd_connect()
 
 
 # /api
@@ -44,7 +77,11 @@ enhancer = glmodule.GlEnhancer(app.config)
 @app.route('/api', methods=['GET'])
 @produces('application/json')
 def api():
-    return make_response(json.dumps(enhancer.api_ping()))
+    return make_response(json.dumps({
+        "Name": config.LONGNAME,
+        "Version": config.VERSION,
+        "Status": "OK"
+    }), 200)
 
 
 # /api/projects
@@ -52,7 +89,9 @@ def api():
 @app.route('/api/projects', methods=['GET'])
 @produces('application/json')
 def api_projects():
-    return make_response(json.dumps(enhancer.api_projects()))
+    return make_response(json.dumps(
+        enhancer.get_projects(rd_connection)
+    ))
 
 
 # /api/projects/:pid
@@ -60,7 +99,9 @@ def api_projects():
 @app.route('/api/projects/<int:pid>', methods=['GET'])
 @produces('application/json')
 def api_project(pid):
-    return make_response(json.dumps(enhancer.api_project(pid)))
+    return make_response(json.dumps(
+        enhancer.get_project(rd_connection, pid)
+    ))
 
 
 # /api/projects/:pid/owner
@@ -68,7 +109,9 @@ def api_project(pid):
 @app.route('/api/projects/<int:pid>/owner', methods=['GET'])
 @produces('application/json')
 def api_project_owner(pid):
-    return make_response(json.dumps(enhancer.api_project_owner(pid)))
+    return make_response(json.dumps(
+        enhancer.get_project_owner(rd_connection, pid)
+    ))
 
 
 # /api/projects/:pid/milestones
@@ -76,7 +119,9 @@ def api_project_owner(pid):
 @app.route('/api/projects/<int:pid>/milestones', methods=['GET'])
 @produces('application/json')
 def api_project_milestones(pid):
-    return make_response(json.dumps(enhancer.api_project_milestones(pid)))
+    return make_response(json.dumps(
+        enhancer.get_project_milestones(rd_connection, pid)
+    ))
 
 
 # /api/projects/:pid/milestones/:mid
@@ -84,7 +129,9 @@ def api_project_milestones(pid):
 @app.route('/api/projects/<int:pid>/milestones/<int:mid>', methods=['GET'])
 @produces('application/json')
 def api_project_milestone(pid, mid):
-    return make_response(json.dumps(enhancer.api_project_milestone(pid, mid)))
+    return make_response(json.dumps(
+        enhancer.get_project_milestone(rd_connection, pid, mid)
+    ))
 
 
 # /api/projects/:pid/branches[?bool:default]
@@ -97,7 +144,9 @@ def api_project_branches(pid):
     default = request.args.get('default', 'false')
     if default != 'false' and default != 'true':
         return make_response("400: default parameter must be true or false", 400)
-    return make_response(json.dumps(enhancer.api_project_branches(pid, default)))
+    return make_response(json.dumps(
+        enhancer.get_project_branches(rd_connection, pid, default)
+    ))
 
 
 # /api/projects/:pid/branches/:bid
@@ -105,7 +154,9 @@ def api_project_branches(pid):
 @app.route('/api/projects/<int:pid>/branches/<string:bid>', methods=['GET'])
 @produces('application/json')
 def api_project_branch(pid, bid):
-    return make_response(json.dumps(enhancer.api_project_branch(pid, bid)))
+    return make_response(json.dumps(
+        enhancer.get_project_branch(rd_connection, pid, bid)
+    ))
 
 
 # /api/projects/:pid/branches/:bid/contributors[?long:start_time][?long:end_time]
@@ -119,11 +170,9 @@ def api_project_branch_contributors(pid, bid):
     t_window = check_time_window(request.args)
     if t_window['st_time'] == 'Error' or t_window['en_time'] == 'Error':
         return make_response("400: start_time or end_time is bad format", 400)
-    return make_response(
-        json.dumps(
-            enhancer.api_project_branch_contributors(pid, bid, t_window)
-        )
-    )
+    return make_response(json.dumps(
+        enhancer.get_project_contributors(rd_connection, pid, bid, t_window)
+    ))
 
 
 # /api/projects/:pid/branches/:bid/commits[?int:uid][?long:start_time][?long:end_time]
@@ -145,11 +194,9 @@ def api_project_branch_commits(pid, bid):
     t_window = check_time_window(request.args)
     if t_window['st_time'] == 'Error' or t_window['en_time'] == 'Error':
         return make_response("400: start_time or end_time is bad format", 400)
-    return make_response(
-        json.dumps(
-            enhancer.api_project_branch_commits(pid, bid, user, t_window)
-        )
-    )
+    return make_response(json.dumps(
+        enhancer.get_project_branch_commits(rd_connection, pid, bid, user, t_window)
+    ))
 
 
 # /api/projects/:pid/commits[?int:uid][?long:start_time][?long:end_time]
@@ -171,11 +218,9 @@ def api_project_commits(pid):
     t_window = check_time_window(request.args)
     if t_window['st_time'] == 'Error' or t_window['en_time'] == 'Error':
         return make_response("400: start_time or end_time is bad format", 400)
-    return make_response(
-        json.dumps(
-            enhancer.api_project_commits(pid, user, t_window)
-        )
-    )
+    return make_response(json.dumps(
+        enhancer.get_project_commits(rd_connection, pid, user, t_window)
+    ))
 
 
 # /api/projects/:pid/commits/:cid
@@ -183,7 +228,9 @@ def api_project_commits(pid):
 @app.route('/api/projects/<int:pid>/commits/<string:cid>', methods=['GET'])
 @produces('application/json')
 def api_project_commit(pid, cid):
-    return make_response(json.dumps(enhancer.api_project_commit(pid, cid)))
+    return make_response(json.dumps(
+        enhancer.get_project_commit(rd_connection, pid, cid)
+    ))
 
 
 # /api/projects/:pid/merge_requests[?string:state]
@@ -197,7 +244,9 @@ def api_project_requests(pid):
     if mrstate is not 'all':
         if mrstate is not 'opened' and mrstate is not 'closed' and mrstate is not 'merged':
             return make_response("400: state parameter is not a valid state (opened|closed|merged|all)", 400)
-    return make_response(json.dumps(enhancer.api_project_requests(pid, mrstate)))
+    return make_response(json.dumps(
+        enhancer.get_project_requests(rd_connection, pid, mrstate)
+    ))
 
 
 # /api/projects/:pid/merge_requests/:mrid
@@ -205,7 +254,9 @@ def api_project_requests(pid):
 @app.route('/api/projects/<int:pid>/merge_requests/<int:mrid>', methods=['GET'])
 @produces('application/json')
 def api_project_request(pid, mrid):
-    return make_response(json.dumps(enhancer.api_project_request(pid, mrid)))
+    return make_response(json.dumps(
+        enhancer.get_project_request(rd_connection, pid, mrid)
+    ))
 
 
 # /api/projects/:pid/merge_requests/:mrid/changes
@@ -213,7 +264,9 @@ def api_project_request(pid, mrid):
 @app.route('/api/projects/<int:pid>/merge_requests/<int:mrid>/changes', methods=['GET'])
 @produces('application/json')
 def api_project_request_changes(pid, mrid):
-    return make_response(json.dumps(enhancer.api_project_request_changes(pid, mrid)))
+    return make_response(json.dumps(
+        enhancer.get_project_request_changes(rd_connection, pid, mrid)
+    ))
 
 
 # /api/projects/:pid/contributors
@@ -227,11 +280,9 @@ def api_project_contributors(pid):
     t_window = check_time_window(request.args)
     if t_window['st_time'] == 'Error' or t_window['en_time'] == 'Error':
         return make_response("400: start_time or end_time is bad format", 400)
-    return make_response(
-        json.dumps(
-            enhancer.api_project_contributors(pid, t_window)
-        )
-    )
+    return make_response(json.dumps(
+        enhancer.get_project_contributors(rd_connection, pid, t_window)
+    ))
 
 
 # /api/users
@@ -239,14 +290,19 @@ def api_project_contributors(pid):
 @app.route('/api/users', methods=['GET'])
 @produces('application/json')
 def api_users():
-    return make_response(json.dumps(enhancer.api_users()))
+    return make_response(json.dumps(
+        enhancer.get_users(rd_connection)
+    ))
+
 
 # /api/users/:uid
 # Get specific gitlab user
 @app.route('/api/users/<int:uid>', methods=['GET'])
 @produces('application/json')
 def api_user(uid):
-    return make_response(json.dumps(enhancer.api_user(uid)))
+    return make_response(json.dumps(
+        enhancer.get_user(uid)
+    ))
 
 
 # /api/users/:uid/projects[?string:relation]
@@ -264,7 +320,9 @@ def api_user_projects(uid):
     relation = request.args.get('relation', 'contributor')
     if relation != 'contributor' and relation != 'owner':
         return make_response("400: relation parameter is not a valid relation (contributor|owner)", 400)
-    return make_response(json.dumps(enhancer.api_user_projects(uid, relation, t_window)))
+    return make_response(json.dumps(
+        enhancer.get_user_projects(rd_connection, uid, relation, t_window)
+    ))
 
 
 # /api/groups
@@ -272,7 +330,9 @@ def api_user_projects(uid):
 @app.route('/api/groups', methods=['GET'])
 @produces('application/json')
 def api_groups():
-    return make_response(json.dumps(enhancer.api_groups()))
+    return make_response(json.dumps(
+        enhancer.get_groups(rd_connection)
+    ))
 
 
 # /api/groups/:gid
@@ -280,7 +340,9 @@ def api_groups():
 @app.route('/api/groups/<int:gid>', methods=['GET'])
 @produces('application/json')
 def api_group(gid):
-    return make_response(json.dumps(enhancer.api_group(gid)))
+    return make_response(json.dumps(
+        enhancer.get_group(rd_connection, gid)
+    ))
 
 
 # /api/groups/:gid/projects[?string:relation]
@@ -298,7 +360,9 @@ def api_group_projects(gid):
     relation = request.args.get('relation', 'contributor')
     if relation != 'contributor' and relation != 'owner':
         return make_response("400: relation parameter is not a valid relation (contributor|owner)", 400)
-    return make_response(json.dumps(enhancer.api_group_projects(gid, relation, t_window)))
+    return make_response(json.dumps(
+        enhancer.get_group_projects(rd_connection, gid, relation, t_window)
+    ))
 
 
 # Functions to help another functions
