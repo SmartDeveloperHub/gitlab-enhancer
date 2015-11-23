@@ -19,26 +19,23 @@
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=#
 """
 
-import os
-from setuptools import setup, find_packages
-
 __author__ = 'Alejandro F. Carrera'
 
+# keys for transform date to long
+str_time_keys = [
+    'created_at', 'updated_at', 'last_activity_at',
+    'due_date', 'authored_date', 'committed_date',
+    'first_commit_at', 'last_commit_at', 'current_sign_in_at'
+]
 
-def read(name):
-    return open(os.path.join(os.path.dirname(__file__), name)).read()
 
-setup(
-    name="gl-enhancer",
-    version="0.5.0.r",
-    author="Alejandro F. Carrera",
-    author_email="alejandro.fernandez.carrera@centeropenmiddleware.com",
-    description="A project for Gitlab Enhancer Service",
-    license="Apache 2",
-    keywords="inner-source drainer enhancer",
-    url="https://github.com/SmartDeveloperHub/gitlab-enhancer",
-    packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
-    install_requires=['flask', 'flask_negotiate', 'GitPython', 'python-dateutil', 'redis'],
-    classifiers=[],
-    scripts=['enhancer']
-)
+# function to convert time key to long
+def convert_time_keys(o):
+    for k in o.keys():
+        if isinstance(o[k], dict):
+            convert_time_keys(o[k])
+        else:
+            if k in str_time_keys and o[k] != "null":
+                if o[k].find(".", 0, len(o[k])) > 0:
+                    o[k] = o[k].split(".")[0]
+                o[k] = long(o[k])

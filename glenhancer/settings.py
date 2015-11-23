@@ -20,20 +20,45 @@
 """
 
 import os
+import logging
 
 __author__ = 'Alejandro F. Carrera'
 
+# Enhancer Package Configuration
+NAME = "gl-enhancer"
+VERSION = "1.0.0"
 DEBUGGER = True
+LONGNAME = "Gitlab Enhancer"
 
+# Enhancer Configuration to create Flask API
 ENHANCER_LISTEN_PROT = os.environ.get("ENH_LISTEN_PROT", "http")
 ENHANCER_LISTEN_PORT = int(os.environ.get("ENH_LISTEN_PORT", 5000))
 ENHANCER_LISTEN_IP = os.environ.get("ENH_LISTEN_IP", "0.0.0.0")
 
-GITLAB_PROT = os.environ.get("ENH_GITLAB_PROT", "http")
-GITLAB_IP = os.environ.get("ENH_GITLAB_IP", "127.0.0.1")
-GITLAB_PORT = int(os.environ.get("ENH_GITLAB_PORT", 8000))
-GITLAB_USER = os.environ.get("ENH_GITLAB_USER", "root")
-GITLAB_PASS = os.environ.get("ENH_GITLAB_PASS", "12345678")
-GITLAB_VER_SSL = bool(os.environ.get("ENH_GITLAB_VERIFY_SSL", False))
+# Redis Configuration to set data
+REDIS_IP = os.environ.get("ENH_REDIS_IP", "127.0.0.1")
+REDIS_PORT = int(os.environ.get("ENH_REDIS_PORT", 6379))
+REDIS_PASS = os.environ.get("ENH_REDIS_PASS", None)
 
-# GITLAB_PASS = '5iveL!fe'
+# Redis Configuration (Main Entities)
+REDIS_DB_PR = int(os.environ.get("COLL_REDIS_DB_PROJECT", 0))
+REDIS_DB_BR = int(os.environ.get("COLL_REDIS_DB_BRANCH", 1))
+REDIS_DB_CO = int(os.environ.get("COLL_REDIS_DB_COMMIT", 2))
+REDIS_DB_US = int(os.environ.get("COLL_REDIS_DB_USER", 3))
+
+# Redis Configuration (Relations)
+REDIS_DB_BR_CO = int(os.environ.get("COLL_REDIS_DB_BRANCH_COMMIT", 4))
+REDIS_DB_US_CO = int(os.environ.get("COLL_REDIS_DB_COMMITTER_COMMIT", 5))
+
+def print_message(msg):
+    if DEBUGGER:
+        logging.warn("[DEBUG] %s" % msg)
+    else:
+        logging.info("[INFO] %s" % msg)
+
+
+def print_error(msg):
+    if DEBUGGER:
+        logging.warn("[ERROR] %s" % msg)
+    else:
+        logging.info("[ERROR] %s" % msg)
