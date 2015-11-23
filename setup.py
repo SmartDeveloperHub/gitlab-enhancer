@@ -30,15 +30,15 @@ def read(name):
 
 setup(
     name="gl-enhancer",
-    version="0.5.0.r",
+    version="1.0.0",
     author="Alejandro F. Carrera",
     author_email="alejandro.fernandez.carrera@centeropenmiddleware.com",
-    description="A project for Gitlab Enhancer Service",
+    description="A project for Gitlab Enhancer Service (Redis)",
     license="Apache 2",
     keywords="inner-source drainer enhancer",
     url="https://github.com/SmartDeveloperHub/gitlab-enhancer",
     packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
-    install_requires=['flask', 'flask_negotiate', 'GitPython', 'python-dateutil', 'redis'],
+    install_requires=['flask', 'flask_negotiate', 'python-dateutil', 'redis'],
     classifiers=[],
     scripts=['enhancer']
 )
