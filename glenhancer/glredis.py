@@ -20,6 +20,7 @@
 """
 
 import base64
+import utils
 
 __author__ = 'Alejandro F. Carrera'
 
@@ -29,11 +30,9 @@ def get_projects(rd):
     :param rd: Redis Object Instance
     :return: Projects (List)
     """
-    red_p = map(lambda w: int(w.split(':')[1]), rd.keys("projects:*:"))
-    p = []
-    [p.append(x) for x in red_p if x not in p]
-    p.sort()
-    return p
+    red_p = map(lambda w: int(w.split('_')[1]), rd.get("rd_instance_pr").keys("*"))
+    red_p.sort()
+    return red_p
 
 
 def get_project(rd, project_id):
@@ -42,22 +41,30 @@ def get_project(rd, project_id):
     :param project_id: Project Identifier (int)
     :return: Project (Object)
     """
-    git_project = rd.hgetall("projects:" + str(project_id) + ":")
+
+    # Repository fields
+    # "first_commit_at", "archived", "last_activity_at", "name",
+    # "contributors", "tags", "created_at", "default_branch",
+    # "id", "http_url_to_repo", "web_url", "owner", "last_commit_at",
+    # "public", "avatar_url"
+
+    git_project = rd.get("rd_instance_pr").hgetall("p_" + str(project_id))
     if bool(git_project) is False:
         return False
     else:
         git_project['owner'] = {
-            'type': git_project.get('owner').split(":")[0],
-            'id': int(git_project.get('owner').split(":")[1]),
+            'type': "user" if str(git_project['owner']).startswith("u_") else "group" ,
+            'id': int(git_project.get('owner').split("_")[1]),
         }
         git_project['id'] = int(git_project.get('id'))
         if git_project.get('tags'):
             git_project['tags'] = eval(git_project.get('tags'))
-        if git_project.get('contributors'):
-            git_project['contributors'] = eval(git_project.get('contributors'))
-        convert_time_keys(git_project)
-        git_project['default_branch_name'] = git_project['default_branch']
+        git_project['contributors'] = utils.get_project_contributors(rd, project_id)
+        git_commit_at = utils.get_project_commit_at(rd, project_id)
+        git_project['first_commit_at'] = git_commit_at.get('first_commit_at')
+        git_project['last_commit_at'] = git_commit_at.get('last_commit_at')
         git_project['default_branch'] = base64.b16encode(git_project['default_branch'])
+        utils.convert_time_keys(git_project)
         return git_project
 
 
@@ -67,16 +74,18 @@ def get_project_owner(rd, project_id):
     :param project_id: Project Identifier (int)
     :return: Owner (User Object | Group Object)
     """
-    git_project = get_project(rd, project_id)
-    if git_project is False:
+    git_project = rd.get("rd_instance_pr").hgetall("p_" + str(project_id))
+    if bool(git_project) is False:
         return False
-    if git_project.get('owner').get('type') == 'groups':
-        u = get_group(rd, git_project.get('owner').get('id'))
-        u['type'] = 'group'
     else:
-        u = get_user(rd, git_project.get('owner').get('id'))
-        u['type'] = 'user'
-    return u
+        owner_id = int(git_project.get('owner').split("_")[1])
+        if str(git_project['owner']).startswith("u_"):
+            u = get_user(rd, owner_id)
+            u['type'] = 'user'
+        else:
+            u = get_group(rd, owner_id)
+            u['type'] = 'group'
+        return u
 
 
 def get_project_milestones(gl, project_id):
@@ -106,19 +115,17 @@ def get_project_branches(rd, project_id, default_flag):
     :return: Branches (List)
     """
     if default_flag == 'false':
-        gl_b = rd.keys("projects:" + str(project_id) + ":branches:*")
-        gl_b = map(lambda w: base64.b16encode(w.split(":")[3]), gl_b)
+        gl_b = rd.get("rd_instance_br").keys("p_" + str(project_id) + ":*")
+        gl_b = map(lambda w: w.split(":")[1], gl_b)
         if len(gl_b) == 0:
             return False
-        gl_b_un = []
-        [gl_b_un.append(x) for x in gl_b if x not in gl_b_un]
-        return gl_b_un
+        return gl_b
     else:
         git_project = get_project(rd, project_id)
         if git_project is False:
             return False
         else:
-            return [base64.b16encode(git_project.get('default_branch'))]
+            return [git_project.get('default_branch')]
 
 
 def get_project_branch(rd, project_id, branch_name):
@@ -128,25 +135,34 @@ def get_project_branch(rd, project_id, branch_name):
     :param branch_name: Branch Identifier (string)
     :return: Branch (Object)
     """
-    branch_name = base64.b16decode(branch_name)
-    git_branch = rd.hgetall("projects:" + str(project_id) + ":branches:" + branch_name)
+
+    # Branch fields
+    # "name", "created_at", "protected", "contributors",
+    # "last_commit"
+
+    git_branch = rd.get("rd_instance_br").hgetall("p_" + str(project_id) + ":" + branch_name)
     if bool(git_branch) is False:
         return False
     else:
-        convert_time_keys(git_branch)
+        git_commit_at = utils.get_branch_commit_at(rd, project_id, branch_name)
+        git_branch['last_commit_at'] = git_commit_at.get('last_commit_at')
         git_branch['contributors'] = eval(git_branch.get('contributors'))
+        utils.convert_time_keys(git_branch)
         return git_branch
 
 
-def get_project_branch_contributors(rd, project_id, branch_name, t_window):
+def get_project_branch_contributors(rd, project_id, branch_name):
     """ Get Branch's Contributors
     :param rd: Redis Object Instance
     :param project_id: Project Identifier (int)
     :param branch_name: Branch Identifier (string)
-    :param t_window: (Time Window) filter (Object)
     :return: Contributors (List)
     """
-    return get_contributors_projects(rd, project_id, branch_name, t_window)
+    git_branch = get_project_branch(rd, project_id, branch_name)
+    if git_branch is False:
+        return False
+    else:
+        return git_branch.get("contributors")
 
 
 def get_project_branch_commits(rd, project_id, branch_name, user_id, t_window):
@@ -166,21 +182,26 @@ def get_project_branch_commits(rd, project_id, branch_name, user_id, t_window):
     if get_project_branch(rd, project_id, branch_name) is False:
         return False
 
-    branch_name = base64.b16decode(branch_name)
     # Search and Filter by time
-    git_commits = rd.zrange("projects:" + str(project_id) + ":branches:" + branch_name + ":commits:",
-                            t_window.get('st_time'), t_window.get('en_time'))
-    git_commits = map(lambda w: rd.hgetall(w), git_commits)
+    git_commits = rd.get("rd_instance_br_co").zrange(
+        "p_" + str(project_id) + ":" + branch_name,
+        t_window.get('st_time'), t_window.get('en_time')
+    )
 
     # Filter by user
     if user is not None:
-        git_commits_user = []
-        for x in git_commits:
-            if x.get('author_email') == user.get('email'):
-                git_commits_user.append(x)
-        git_commits = git_commits_user
+        emails = user.get("emails")
+        emails = map(lambda w: base64.b16encode(w), emails)
+        git_commits_val = map(lambda w: rd.get("rd_instance_co").hgetall(w), git_commits)
+        git_commits_dict = dict(zip(git_commits, git_commits_val))
+        git_commits_user = set()
+        for x in git_commits_dict.keys():
+            if git_commits_dict[x].get('author') in emails:
+                git_commits_user.add(x)
+        git_commits = list(git_commits_user)
 
-    return map(lambda k: k.get('id'), git_commits)
+    # Clean commits' id
+    return map(lambda w: str(w).split(":")[1], git_commits)
 
 
 def get_project_commits(rd, project_id, user_id, t_window):
@@ -196,21 +217,18 @@ def get_project_commits(rd, project_id, user_id, t_window):
         user = get_user(rd, user_id)
         if user is False:
             return False
+    if get_project(rd, project_id) is False:
+        return False
 
     # Search and Filter by time
-    git_commits = rd.zrange("projects:" + str(project_id) + ":commits:",
-                            t_window.get('st_time'), t_window.get('en_time'))
-    git_commits = map(lambda w: rd.hgetall(w), git_commits)
-
-    # Filter by user
-    if user is not None:
-        git_commits_user = []
-        for x in git_commits:
-            if x.get('author_email') == user.get('email'):
-                git_commits_user.append(x)
-        git_commits = git_commits_user
-
-    return map(lambda k: k.get('id'), git_commits)
+    git_branches = get_project_branches(rd, project_id, False)
+    br_co = set()
+    for i in git_branches:
+        if len(br_co) == 0:
+            br_co = br_co.union(set(get_project_branch_commits(rd, project_id, i, user_id, t_window)))
+        else:
+            br_co = br_co.intersection(set(get_project_branch_commits(rd, project_id, i, user_id, t_window)))
+    return list(br_co)
 
 
 def get_project_commit(rd, project_id, commit_id):
@@ -220,15 +238,20 @@ def get_project_commit(rd, project_id, commit_id):
     :param commit_id: Commit Identifier (sha)
     :return: Commit (Object)
     """
-    git_commit = rd.hgetall("projects:" + str(project_id) + ":commits:" + commit_id)
+
+    # "lines_removed", "short_id", "author", "lines_added",
+    # "created_at", "title", "parent_ids", "committed_date",
+    # "message", "authored_date", "id"
+
+    git_commit = rd.get("rd_instance_co").hgetall("p_" + str(project_id) + ":" + commit_id)
     if bool(git_commit) is False:
         return False
     else:
         git_commit['lines_removed'] = int(git_commit.get('lines_removed'))
         git_commit['lines_added'] = int(git_commit.get('lines_added'))
-        git_commit['author'] = int(git_commit.get('author'))
-        git_commit['parent_ids'] = eval(git_commit.get('parent_ids'))
-        convert_time_keys(git_commit)
+        git_commit['files_changed'] = int(git_commit.get('files_changed'))
+        git_commit['author'] = str(utils.get_user_identifier(rd, git_commit['author']))
+        utils.convert_time_keys(git_commit)
         return git_commit
 
 
@@ -262,14 +285,13 @@ def get_project_request_changes(rd, project_id, request_id):
     return False
 
 
-def get_project_contributors(rd, project_id, t_window):
+def get_project_contributors(rd, project_id):
     """ Get Project's Contributors
     :param rd: Redis Object Instance
     :param project_id: Project Identifier (int)
-    :param t_window: (Time Window) filter (Object)
     :return: Contributors (List)
     """
-    return get_contributors_projects(rd, project_id, None, t_window)
+    return get_project(rd, project_id).get("contributors")
 
 
 def get_users(rd):
@@ -277,39 +299,84 @@ def get_users(rd):
     :param rd: Redis Object Instance
     :return: Users (List)
     """
-    red_u = map(lambda w: int(w.split(':')[1]), rd.keys("users:*:"))
-    u = []
-    [u.append(x) for x in red_u if x not in u]
-    u.sort()
-    return u
+    red_u = map(lambda w: int(w.split('_')[1]), rd.get("rd_instance_us").keys("u_*"))
+    red_u.sort()
+    return red_u
 
 
 def get_user(rd, user_id):
     """ Get User
     :param rd: Redis Object Instance
+    :param user_id: User or Committer identifier
     :return: User (Object)
     """
-    git_user = rd.hgetall("users:" + str(user_id) + ":")
+
+    # User fields
+    # "username", "first_commit_at", "name", "created_at",
+    # "email", "state", "avatar_url", "last_commit_at", "id",
+    # "external"
+
+    # Commiter fields
+    # "first_commit_at", "email", "last_commit_at", "id",
+    # "external"
+
+    git_user = rd.get("rd_instance_us").hgetall("u_" + str(user_id))
     if bool(git_user) is False:
-        return False
+        git_user = rd.get("rd_instance_us_co").keys(str(user_id))
+        if len(git_user) > 0:
+            git_user = {
+                'email': base64.b16decode(str(user_id)),
+                'emails': [base64.b16decode(str(user_id))],
+                'id': str(user_id),
+                'external': True
+            }
+            user_commit_at = utils.get_user_commit_at(rd, user_id, True, None)
+            git_user['first_commit_at'] = user_commit_at.get('first_commit_at')
+            git_user['last_commit_at'] = user_commit_at.get('last_commit_at')
+            utils.convert_time_keys(git_user)
+            return git_user
+        else:
+            return False
     else:
-        git_user['id'] = int(git_user.get('id'))
-        convert_time_keys(git_user)
+        git_user['email'] = str(git_user.get('primary_email'))
+        git_user['id'] = str(git_user.get('id'))
+        git_user['emails'] = eval(git_user['emails'])
+        git_user['external'] = False
+        user_commit_at = utils.get_user_commit_at(rd, None, False, git_user['emails'])
+        git_user['first_commit_at'] = user_commit_at.get('first_commit_at')
+        git_user['last_commit_at'] = user_commit_at.get('last_commit_at')
+        del git_user['primary_email']
+        utils.convert_time_keys(git_user)
         return git_user
 
 
-def get_user_projects(rd, user_id, relation_type, t_window):
+def get_user_projects(rd, user_id, relation_type):
     """ Get User's Projects
     :param rd: Redis Object Instance
     :param user_id: User Identifier (int)
     :param relation_type: Relation between User-Project
-    :param t_window: (Time Window) filter (Object)
     :return: Projects (List)
     """
-    git_user = rd.hgetall("users:" + str(user_id) + ":")
-    if bool(git_user) is False:
-        return False
-    return get_entity_projects(rd, user_id, relation_type, 'users', t_window)
+    if relation_type == 'contributor':
+        git_ret = set()
+        git_projects = get_projects(rd)
+        for k in git_projects:
+            o = get_project(rd, k)
+            if str(user_id) in o.get("contributors"):
+                git_ret.add(k)
+        return list(git_ret)
+    else:
+        git_user = rd.get("rd_instance_us").hgetall("u_" + str(user_id))
+        if bool(git_user) is False:
+            return False
+        else:
+            git_ret = set()
+            git_projects = get_projects(rd)
+            for k in git_projects:
+                o = get_project_owner(rd, k)
+                if str(user_id) == str(o.get("id")) and str(o.get('type')) == 'user':
+                    git_ret.add(k)
+            return list(git_ret)
 
 
 def get_groups(rd):
@@ -317,10 +384,9 @@ def get_groups(rd):
     :param rd: Redis Object Instance
     :return: Groups (List)
     """
-    red_g = map(lambda w: int(w.split(':')[1]), rd.keys("groups:*:"))
-    g = []
-    [g.append(x) for x in red_g if x not in g]
-    return g
+    red_g = map(lambda w: int(w.split('_')[1]), rd.get("rd_instance_us").keys("g_*"))
+    red_g.sort()
+    return red_g
 
 
 def get_group(rd, group_id):
@@ -329,104 +395,40 @@ def get_group(rd, group_id):
     :param group_id: Group Identifier (int)
     :return: Group (Object)
     """
-    git_group = rd.hgetall("groups:" + str(group_id) + ":")
+    git_group = rd.get("rd_instance_us").hgetall("g_" + str(group_id))
     if bool(git_group) is False:
         return False
     else:
         git_group['id'] = int(git_group.get('id'))
-        git_group['members'] = eval(git_group.get('members'))
+        m = eval(git_group.get('members'))
+        new_m = []
+        for i in m:
+            new_m.append(str(i).replace("u_", ""))
+        git_group['members'] = new_m
         return git_group
 
 
-def get_group_projects(rd, group_id, relation_type, t_window):
+def get_group_projects(rd, group_id, relation_type):
     """ Get Group's Projects
     :param rd: Redis Object Instance
     :param group_id: Group Identifier (int)
     :param relation_type: Relation between User-Project
-    :param t_window: (Time Window) filter (Object)
     :return: Projects (List)
     """
-    git_group = rd.hgetall("groups:" + str(group_id) + ":")
-    if bool(git_group) is False:
+    group = get_group(rd, group_id)
+    if group is False:
         return False
-    return get_entity_projects(rd, group_id, relation_type, 'groups', t_window)
-
-
-# Functions to help another functions
-
-
-time_keys = [
-    'created_at', 'updated_at', 'last_activity_at',
-    'due_date', 'authored_date', 'committed_date',
-    'first_commit_at', 'last_commit_at'
-]
-
-
-def convert_time_keys(o):
-    for k in o.keys():
-        if isinstance(o[k], dict):
-            convert_time_keys(o[k])
-        else:
-            if k in time_keys:
-                if o[k] != "null":
-                    if o[k].find(".", 0, len(o[k])) > 0:
-                        o[k] = o[k].split(".")[0]
-                    o[k] = long(o[k])
-
-
-def get_entity_projects(rd, entity_id, relation_type, user_type, t_window):
-
-    # Get Entity's projects
-    git_projects = get_projects(rd)
-
-    git_ret = []
-    if user_type == 'groups':
-        g_m = get_group(rd, entity_id).get('members')
-    if relation_type == 'owner':
-        user_type = user_type[:-1]
-
-    for k in git_projects:
-        if relation_type == 'owner':
-            o = get_project_owner(rd, k)
-            if o.get('type') == user_type and o.get('id') == entity_id:
-                git_ret.append(k)
-        else:
-            c = get_project_contributors(rd, k, t_window)
-            if user_type == 'groups':
-                [git_ret.append(k) for j in c if j in g_m]
-            else:
-                [git_ret.append(k) for j in c if j == entity_id]
-
-    if user_type == 'groups':
-        git_ret_un = []
-        [git_ret_un.append(x) for x in git_ret if x not in git_ret_un]
-        git_ret_un.sort()
-        git_ret = git_ret_un
-    return git_ret
-
-
-def get_contributors_projects(rd, project_id, branch_name, t_window):
-
-    ret_users = {}
-
-    # Search and Filter by time
-    if branch_name is not None:
-        branch_name = base64.b16decode(branch_name)
-        git_commits = rd.zrange("projects:" + str(project_id) + ":branches:" + branch_name + ":commits:",
-                                t_window.get('st_time'), t_window.get('en_time'))
+    if relation_type == 'contributor':
+        git_ret = set()
+        for i in group.get('members'):
+            g = get_user_projects(rd, i, 'contributor')
+            git_ret.union(set(g))
+        return list(git_ret)
     else:
-        git_commits = rd.zrange("projects:" + str(project_id) + ":commits:",
-                                t_window.get('st_time'), t_window.get('en_time'))
-    git_commits = map(lambda j: rd.hgetall(j), git_commits)
-
-    # Get Users emails and identifiers
-    git_users = get_users(rd)
-
-    for w in git_commits:
-        if int(w.get('author')) in git_users:
-            ret_users[w.get('author')] = '1'
-
-    ret_users = ret_users.keys()
-    ret_users = map(lambda x: int(x), ret_users)
-    ret_users.sort()
-    return ret_users
+        git_ret = set()
+        git_projects = get_projects(rd)
+        for k in git_projects:
+            o = get_project_owner(rd, k)
+            if str(group_id) == str(o.get("id")) and str(o.get('type')) == 'group':
+                git_ret.add(k)
+        return list(git_ret)

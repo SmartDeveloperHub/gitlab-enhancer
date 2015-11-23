@@ -159,19 +159,13 @@ def api_project_branch(pid, bid):
     ))
 
 
-# /api/projects/:pid/branches/:bid/contributors[?long:start_time][?long:end_time]
-# # start_time = time (start) filter
-# # end_time = time (end) filter
+# /api/projects/:pid/branches/:bid/contributors
 # Get contributors of specific branch about specific gitlab project
-# It is possible filter by range (time)
 @app.route('/api/projects/<int:pid>/branches/<string:bid>/contributors', methods=['GET'])
 @produces('application/json')
 def api_project_branch_contributors(pid, bid):
-    t_window = check_time_window(request.args)
-    if t_window['st_time'] == 'Error' or t_window['en_time'] == 'Error':
-        return make_response("400: start_time or end_time is bad format", 400)
     return make_response(json.dumps(
-        enhancer.get_project_contributors(rd_connection, pid, bid, t_window)
+        enhancer.get_project_branch_contributors(rd_connection, pid, bid)
     ))
 
 
@@ -270,18 +264,12 @@ def api_project_request_changes(pid, mrid):
 
 
 # /api/projects/:pid/contributors
-# # start_time = time (start) filter
-# # end_time = time (end) filter
 # Get contributors about specific gitlab project
-# It is possible filter by range (time)
 @app.route('/api/projects/<int:pid>/contributors', methods=['GET'])
 @produces('application/json')
 def api_project_contributors(pid):
-    t_window = check_time_window(request.args)
-    if t_window['st_time'] == 'Error' or t_window['en_time'] == 'Error':
-        return make_response("400: start_time or end_time is bad format", 400)
     return make_response(json.dumps(
-        enhancer.get_project_contributors(rd_connection, pid, t_window)
+        enhancer.get_project_contributors(rd_connection, pid)
     ))
 
 
@@ -295,34 +283,28 @@ def api_users():
     ))
 
 
-
 # /api/users/:uid
 # Get specific gitlab user
-@app.route('/api/users/<int:uid>', methods=['GET'])
+@app.route('/api/users/<string:uid>', methods=['GET'])
 @produces('application/json')
 def api_user(uid):
     return make_response(json.dumps(
-        enhancer.get_user(uid)
+        enhancer.get_user(rd_connection, uid)
     ))
 
 
 # /api/users/:uid/projects[?string:relation]
 # # relation = [contributor only in default branch, owner]
-# # start_time = time (start) filter
-# # end_time = time (end) filter
 # Get projects about specific gitlab user
 # It is possible filter by relation between user and project
-@app.route('/api/users/<int:uid>/projects', methods=['GET'])
+@app.route('/api/users/<string:uid>/projects', methods=['GET'])
 @produces('application/json')
 def api_user_projects(uid):
-    t_window = check_time_window(request.args)
-    if t_window['st_time'] == 'Error' or t_window['en_time'] == 'Error':
-        return make_response("400: start_time or end_time is bad format", 400)
     relation = request.args.get('relation', 'contributor')
     if relation != 'contributor' and relation != 'owner':
         return make_response("400: relation parameter is not a valid relation (contributor|owner)", 400)
     return make_response(json.dumps(
-        enhancer.get_user_projects(rd_connection, uid, relation, t_window)
+        enhancer.get_user_projects(rd_connection, uid, relation)
     ))
 
 
@@ -347,22 +329,17 @@ def api_group(gid):
 
 
 # /api/groups/:gid/projects[?string:relation]
-# # start_time = time (start) filter
-# # end_time = time (end) filter
 # # relation = [contributor only in default branch, owner]
 # Get projects about specific gitlab group
 # It is possible filter by relation between user and project
 @app.route('/api/groups/<int:gid>/projects', methods=['GET'])
 @produces('application/json')
 def api_group_projects(gid):
-    t_window = check_time_window(request.args)
-    if t_window['st_time'] == 'Error' or t_window['en_time'] == 'Error':
-        return make_response("400: start_time or end_time is bad format", 400)
     relation = request.args.get('relation', 'contributor')
     if relation != 'contributor' and relation != 'owner':
         return make_response("400: relation parameter is not a valid relation (contributor|owner)", 400)
     return make_response(json.dumps(
-        enhancer.get_group_projects(rd_connection, gid, relation, t_window)
+        enhancer.get_group_projects(rd_connection, gid, relation)
     ))
 
 
