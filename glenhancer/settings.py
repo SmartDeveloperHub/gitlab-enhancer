@@ -26,7 +26,7 @@ __author__ = 'Alejandro F. Carrera'
 
 # Enhancer Package Configuration
 NAME = "gl-enhancer"
-VERSION = "1.0.1"
+VERSION = "1.0.2"
 DEBUGGER = True
 LONGNAME = "Gitlab Enhancer"
 

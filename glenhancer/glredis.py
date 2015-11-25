@@ -145,6 +145,7 @@ def get_project_branch(rd, project_id, branch_name):
         return False
     else:
         git_commit_at = utils.get_branch_commit_at(rd, project_id, branch_name)
+        git_branch['created_at'] = git_commit_at.get('first_commit_at')
         git_branch['last_commit_at'] = git_commit_at.get('last_commit_at')
         git_branch['contributors'] = eval(git_branch.get('contributors'))
         utils.convert_time_keys(git_branch)
