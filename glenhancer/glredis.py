@@ -222,13 +222,10 @@ def get_project_commits(rd, project_id, user_id, t_window):
         return False
 
     # Search and Filter by time
-    git_branches = get_project_branches(rd, project_id, False)
+    git_branches = get_project_branches(rd, project_id, 'false')
     br_co = set()
     for i in git_branches:
-        if len(br_co) == 0:
-            br_co = br_co.union(set(get_project_branch_commits(rd, project_id, i, user_id, t_window)))
-        else:
-            br_co = br_co.intersection(set(get_project_branch_commits(rd, project_id, i, user_id, t_window)))
+        br_co = br_co.union(set(get_project_branch_commits(rd, project_id, i, user_id, t_window)))
     return list(br_co)
 
 
