@@ -1,20 +1,16 @@
-#!/usr/bin/env python
 """
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=#
   This file is part of the Smart Developer Hub Project:
     http://www.smartdeveloperhub.org
-
   Center for Open Middleware
         http://www.centeropenmiddleware.com/
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=#
-  Copyright (C) 2015 Center for Open Middleware.
+  Copyright (C) 2016 Center for Open Middleware.
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=#
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-
             http://www.apache.org/licenses/LICENSE-2.0
-
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,19 +19,4 @@
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=#
 """
 
-import datetime
-import time
-
-from glenhancer import enhancer
-from glenhancer import settings as config
-
-__author__ = 'Alejandro F. Carrera'
-
-# Main
-
-if __name__ == '__main__':
-    st = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
-    config.print_message("* %s (%s) Started - %s" % (config.LONGNAME, config.VERSION, st))
-    enhancer.app.run(config.ENHANCER_LISTEN_IP, config.ENHANCER_LISTEN_PORT)
-    st = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
-    config.print_message("* %s (%s) Finished - %s" % (config.LONGNAME, config.VERSION, st))
+__author__ = 'Ignacio Molina Cuquerella'

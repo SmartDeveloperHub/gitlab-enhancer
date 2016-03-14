@@ -5,7 +5,7 @@
   Center for Open Middleware
         http://www.centeropenmiddleware.com/
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=#
-  Copyright (C) 2015 Center for Open Middleware.
+  Copyright (C) 2016 Center for Open Middleware.
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=#
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -20,25 +20,23 @@
 """
 
 import os
-import logging
 
-__author__ = 'Alejandro F. Carrera'
+__author__ = 'Ignacio Molina Cuquerella'
 
 # Enhancer Package Configuration
-NAME = "gl-enhancer"
-VERSION = "1.0.3"
-DEBUGGER = True
-LONGNAME = "Gitlab Enhancer"
+GE_NAME = "git-enhancer"
+GE_VERSION = "1.0.0"
+GE_LONGNAME = "Git Enhancer"
 
 # Enhancer Configuration to create Flask API
-ENHANCER_LISTEN_PROT = os.environ.get("ENH_LISTEN_PROT", "http")
-ENHANCER_LISTEN_PORT = int(os.environ.get("ENH_LISTEN_PORT", 5000))
-ENHANCER_LISTEN_IP = os.environ.get("ENH_LISTEN_IP", "0.0.0.0")
+GE_LISTEN_PROT = os.environ.get("ENH_LISTEN_PROT", "http")
+GE_LISTEN_PORT = int(os.environ.get("ENH_LISTEN_PORT", 5000))
+GE_LISTEN_IP = os.environ.get("ENH_LISTEN_IP", "0.0.0.0")
 
 # Redis Configuration to set data
-REDIS_IP = os.environ.get("ENH_REDIS_IP", "127.0.0.1")
-REDIS_PORT = int(os.environ.get("ENH_REDIS_PORT", 6379))
-REDIS_PASS = os.environ.get("ENH_REDIS_PASS", None)
+REDIS_IP = os.environ.get("GE_REDIS_IP", "127.0.0.1")
+REDIS_PORT = int(os.environ.get("GE_REDIS_PORT", 6379))
+REDIS_PASS = os.environ.get("GE_REDIS_PASS", None)
 
 # Redis Configuration (Main Entities)
 REDIS_DB_PR = int(os.environ.get("COLL_REDIS_DB_PROJECT", 0))
@@ -49,16 +47,3 @@ REDIS_DB_US = int(os.environ.get("COLL_REDIS_DB_USER", 3))
 # Redis Configuration (Relations)
 REDIS_DB_BR_CO = int(os.environ.get("COLL_REDIS_DB_BRANCH_COMMIT", 4))
 REDIS_DB_US_CO = int(os.environ.get("COLL_REDIS_DB_COMMITTER_COMMIT", 5))
-
-def print_message(msg):
-    if DEBUGGER:
-        logging.warn("[DEBUG] %s" % msg)
-    else:
-        logging.info("[INFO] %s" % msg)
-
-
-def print_error(msg):
-    if DEBUGGER:
-        logging.warn("[ERROR] %s" % msg)
-    else:
-        logging.info("[ERROR] %s" % msg)

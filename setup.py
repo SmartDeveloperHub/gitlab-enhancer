@@ -21,20 +21,21 @@
 
 import os
 from setuptools import setup, find_packages
-from glenhancer import settings as config
 
-__author__ = 'Alejandro F. Carrera'
+from enhancer import settings as config
+
+__author__ = 'Ignacio Molina Cuquerella'
 
 
 def read(name):
     return open(os.path.join(os.path.dirname(__file__), name)).read()
 
 setup(
-    name=config.NAME,
-    version=config.VERSION,
-    author="Alejandro F. Carrera",
-    author_email="alejandro.fernandez.carrera@centeropenmiddleware.com",
-    description="A project for Gitlab Enhancer Service (Redis)",
+    name=config.GE_NAME,
+    version=config.GE_VERSION,
+    author="Ignacio Molina Cuquerella",
+    author_email="imolina@centeropenmiddleware.com",
+    description="A project for Git Enhancer Service",
     license="Apache 2",
     keywords="inner-source drainer enhancer",
     url="https://github.com/SmartDeveloperHub/gitlab-enhancer",
