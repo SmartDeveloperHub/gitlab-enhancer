@@ -63,7 +63,8 @@ def get_project(rd, project_id):
         git_commit_at = utils.get_project_commit_at(rd, project_id)
         git_project['first_commit_at'] = git_commit_at.get('first_commit_at')
         git_project['last_commit_at'] = git_commit_at.get('last_commit_at')
-        git_project['default_branch'] = base64.b16encode(git_project['default_branch'])
+        if 'default_branch' in git_project:
+            git_project['default_branch'] = base64.b16encode(git_project.get('default_branch'))
         utils.convert_time_keys(git_project)
         return git_project
 
