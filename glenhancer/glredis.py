@@ -224,6 +224,8 @@ def get_project_commits(rd, project_id, user_id, t_window):
 
     # Search and Filter by time
     git_branches = get_project_branches(rd, project_id, 'false')
+    if git_branches is False:
+        return []
     br_co = set()
     for i in git_branches:
         br_co = br_co.union(set(get_project_branch_commits(rd, project_id, i, user_id, t_window)))
