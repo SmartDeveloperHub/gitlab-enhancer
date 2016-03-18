@@ -7,7 +7,7 @@
   Center for Open Middleware
         http://www.centeropenmiddleware.com/
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=#
-  Copyright (C) 2015 Center for Open Middleware.
+  Copyright (C) 2016 Center for Open Middleware.
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=#
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -27,8 +27,9 @@ import datetime
 import logging
 import time
 
-from enhancer.git_enhancer import GitEnhancer
 from enhancer import settings as config
+from enhancer.enhancer import Enhancer
+from enhancer.enhancer_api import EnhancerService
 
 __author__ = 'Alejandro F. Carrera'
 
@@ -36,9 +37,16 @@ __author__ = 'Alejandro F. Carrera'
 
 if __name__ == '__main__':
 
-    st = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
-    logging.info("* %s (%s) Started - %s" % (config.GE_LONGNAME, config.GE_VERSION, st))
-    git_enhancer = GitEnhancer(config)
-    git_enhancer.app.run(config.GE_LISTEN_IP, config.GE_LISTEN_PORT)
-    st = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
-    logging.info("* %s (%s) Finished - %s" % (config.GE_LONGNAME, config.GE_VERSION, st))
+    logging.basicConfig(level=logging.DEBUG)
+    st = datetime.datetime.fromtimestamp(time.time())\
+        .strftime('%Y-%m-%d %H:%M:%S')
+    logging.info("* %s (%s) Started - %s" % (config.GE_LONGNAME,
+                                             config.GE_VERSION, st))
+
+    enhancer = Enhancer(config)
+    service = EnhancerService(config, enhancer).start()
+
+    st = datetime.datetime.fromtimestamp(time.time())\
+        .strftime('%Y-%m-%d %H:%M:%S')
+    logging.info("* %s (%s) Finished - %s" % (config.GE_LONGNAME,
+                                              config.GE_VERSION, st))
