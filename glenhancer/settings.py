@@ -26,7 +26,7 @@ __author__ = 'Alejandro F. Carrera'
 
 # Enhancer Package Configuration
 NAME = "gl-enhancer"
-VERSION = "1.0.3"
+VERSION = "1.0.4"
 DEBUGGER = True
 LONGNAME = "Gitlab Enhancer"
 
@@ -49,6 +49,7 @@ REDIS_DB_US = int(os.environ.get("COLL_REDIS_DB_USER", 3))
 # Redis Configuration (Relations)
 REDIS_DB_BR_CO = int(os.environ.get("COLL_REDIS_DB_BRANCH_COMMIT", 4))
 REDIS_DB_US_CO = int(os.environ.get("COLL_REDIS_DB_COMMITTER_COMMIT", 5))
+
 
 def print_message(msg):
     if DEBUGGER:
