@@ -18,12 +18,13 @@
   limitations under the License.
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=#
 """
-import json
+
 import logging
 from threading import Timer
 
 import redis
 
+from git_collectors import GitCollectorsManager
 from grm_collectors import GitLabCollector
 
 __author__ = 'Ignacio Molina Cuquerella'
@@ -43,10 +44,10 @@ class Enhancer:
 
     def __init__(self, config):
 
-        self.gc_url = 'http://%s:%s' % (config.GIT_IP, config.GIT_PORT)
         self.schedule = config.GE_SCHEDULE
-        self.redis_config = {'ip': config.REDIS_IP, 'port': config.REDIS_PORT,
-                            'password': config.REDIS_PASS}
+        self.redis_config = {'ip': config.REDIS_IP,
+                             'port': config.REDIS_PORT,
+                             'password': config.REDIS_PASS}
 
         # redis instances
         self.redis_instance = dict()
@@ -58,11 +59,13 @@ class Enhancer:
         # GitLab Collector instance
         collector_url = '%s://%s' % (config.GITLAB_PROT, config.GITLAB_IP)
         self.collector = GitLabCollector(url=collector_url,
-                                         r_servers= self.redis_instance,
+                                         r_servers=self.redis_instance,
                                          token=config.GITLAB_TOKEN,
                                          ssl=config.GITLAB_VER_SSL)
+        self.git_collectors = GitCollectorsManager(self.redis_instance['git'])
 
     def _redis_create_pool(self, database):
+
         """
             Method that creates a redis instance
 
@@ -82,9 +85,9 @@ class Enhancer:
         try:
             redis_pool.client_list()
             return redis_pool
-        except Exception as e:
-            raise EnvironmentError("- Configuration is not valid or Redis is not online")
-
+        except Exception:
+            raise EnvironmentError("- Configuration is not valid or Redis is "
+                                   "not online")
 
     def start(self):
 
@@ -102,21 +105,20 @@ class Enhancer:
         """ Get Projects
             :return: Projects (List)
         """
-
-        r_projects = self.redis_instance.get('projects')
-        projects_id = r_projects.keys('project:*')
-
         projects = list()
 
-        for id in projects_id:
-            projects.append(json.loads(r_projects.get(id)))
+        for repository in self.git_collectors.get_repositories():
+
+            project = self._get_project_from_repo(repository)
+            if project:
+                projects.append(project)
 
         return projects
 
-    def get_project(self, p_id):
+    def get_project(self, r_id):
 
         """ Get Project
-        :param p_id: Project Identifier (int)
+        :param r_id: repository identifier (int)
         :return: Project (Object)
         """
         # Repository fields
@@ -124,12 +126,82 @@ class Enhancer:
         # "contributors", "tags", "created_at", "default_branch",
         # "id", "http_url_to_repo", "web_url", "owner", "last_commit_at",
         # "public", "avatar_url"
-        pass
 
-    def get_project_owner(self, p_id):
+        repository = self.git_collectors.get_repository(r_id)
+
+        return self._get_project_from_repo(repository) if repository else None
+
+    def _get_project_from_repo(self, repository):
+
+        """ This method will search and find a project with the specified URL
+
+        :param repository: repository information of the project sought
+        :return: project information
+        """
+
+        r_projects = self.redis_instance.get('projects')
+
+        projects = filter(lambda x:
+                          x.get('http_url_to_repo') == repository.get('url'),
+                          [r_projects.hgetall(p_id)
+                           for p_id in r_projects.keys('project:*')])
+
+        if projects:
+
+            project = projects[0]
+            commits = self.git_collectors.get_commits(repository)
+            project['first_commit_at'] = commits[0].time
+            project['last_commit_at'] = commits[-1].time
+
+            project['contributors'] = self._get_contributors(repository)
+
+            return project
+
+        return None
+
+    def _get_contributors(self, repository):
+
+        """ This method will return a list of the repository contributors from
+        GitCollector enriched with redis information
+
+        :param repository: repository information
+        :return:
+        """
+
+        commiter_list = self.git_collectors.get_commiters(repository)
+        contributors = list()
+
+        for commiter in commiter_list:
+            contributors.append(self._get_contributor(commiter.email))
+
+        return contributors
+
+    def _get_contributor(self, email):
+
+        """ This method return a user from redis with the specified email
+        address.
+
+        :param email: email used by the user.
+        :return: user information from redis
+        """
+
+        r_users = self.redis_instance.get('users')
+
+        users_id = filter(
+            lambda x: email in r_users.smembers('emails:%s' % x),
+            [user_emails_id.split(':')[0]
+             for user_emails_id in r_users.keys('emails:*')])
+
+        if users_id:
+
+            return r_users.hgetall('user:%s' % users_id[0])
+
+        return None
+
+    def get_project_owner(self, r_id):
 
         """ Get Project's Owner
-        :param p_id: Project Identifier (int)
+        :param r_id: Project Identifier (int)
         :return: Owner (User Object | Group Object)
         """
 
@@ -140,7 +212,7 @@ class Enhancer:
         """ Get Users
         :return: Users (List)
         """
-
+        # TODO:
         return list()
 
     def get_user(self, u_id):
@@ -158,7 +230,7 @@ class Enhancer:
         # Commiter fields
         # "first_commit_at", "email", "last_commit_at", "id",
         # "external"
-
+        # TODO:
         return None
 
     def get_user_projects(self, u_id, relation):
@@ -168,23 +240,23 @@ class Enhancer:
         :param relation: Relation between User-Project
         :return: Projects (List)
         """
-
+        # TODO:
         return list()
 
-    def get_project_branches(self, p_id, default):
+    def get_project_branches(self, r_id, default):
 
         """ Get Project's Branches
-        :param p_id: Project Identifier (int)
+        :param r_id: Project Identifier (int)
         :param default: Filter by type (bool)
         :return: Branches (List)
         """
-
+        # TODO:
         return list()
 
-    def get_project_branch(self, p_id, b_id):
+    def get_project_branch(self, r_id, b_id):
 
         """ Get Project's Branch
-        :param p_id: Project Identifier (int)
+        :param r_id: Project Identifier (int)
         :param b_id: Branch Identifier (string)
         :return: Branch (Object)
         """
@@ -192,46 +264,46 @@ class Enhancer:
         # Branch fields
         # "name", "created_at", "protected", "contributors",
         # "last_commit"
-
+        # TODO:
         return None
 
-    def get_project_branch_contributors(self, p_id, b_id):
+    def get_project_branch_contributors(self, r_id, b_id):
 
         """ Get Branch's Contributors
-        :param p_id: Project Identifier (int)
+        :param r_id: Project Identifier (int)
         :param b_id: Branch Identifier (string)
         :return: Contributors (List)
         """
-
+        # TODO:
         return list()
 
-    def get_project_branch_commits(self, p_id, b_id, u_id, t_window):
+    def get_project_branch_commits(self, r_id, b_id, u_id, t_window):
 
         """ Get Branch's Commits
-        :param p_id: Project Identifier (int)
+        :param r_id: Project Identifier (int)
         :param b_id: Branch Identifier (string)
         :param u_id: Optional User Identifier (int)
         :param t_window: (Time Window) filter (Object)
         :return: Commits (List)
         """
-
+        # TODO:
         return list()
 
-    def get_project_commits(self, p_id, u_id, t_window):
+    def get_project_commits(self, r_id, u_id, t_window):
 
         """ Get Project's Commits
-        :param p_id: Project Identifier (int)
+        :param r_id: Project Identifier (int)
         :param u_id: Optional User Identifier (int)
         :param t_window: (Time Window) filter (Object)
         :return: Commits (List)
         """
-
+        # TODO:
         return list()
 
-    def get_project_commit(self, p_id, c_id):
+    def get_project_commit(self, r_id, c_id):
 
         """ Get Project's Commit
-        :param p_id: Project Identifier (int)
+        :param r_id: Project Identifier (int)
         :param c_id: Commit Identifier (sha)
         :return: Commit (Object)
         """
@@ -239,65 +311,65 @@ class Enhancer:
         # "lines_removed", "short_id", "author", "lines_added",
         # "created_at", "title", "parent_ids", "committed_date",
         # "message", "authored_date", "id"
-
+        # TODO:
         return None
 
-    def get_project_milestones(self, p_id):
+    def get_project_milestones(self, r_id):
 
         """ Get Project's Milestones
-        :param p_id: Project Identifier (int)
+        :param r_id: Project Identifier (int)
         :return: Milestones (List)
         """
-
+        # TODO:
         return list()
 
-    def get_project_milestone(self, p_id, m_id):
+    def get_project_milestone(self, r_id, m_id):
 
         """ Get Project's Milestone
-        :param p_id: Project Identifier (int)
+        :param r_id: Project Identifier (int)
         :param m_id: Milestone Identifier (int)
         :return: Milestone (Object)
         """
-
+        # TODO:
         return None
 
-    def get_project_requests(self, p_id, r_state):
+    def get_project_requests(self, r_id, r_state):
 
         """ Get Project's Merge Requests
-        :param p_id: Project Identifier (int)
+        :param r_id: Project Identifier (int)
         :param r_state: Optional Type Identifier (string)
         :return: Merge Requests (List)
         """
-
+        # TODO:
         return list()
 
-    def get_project_request(self, p_id, r_id):
+    def get_project_request(self, r_id, mr_id):
 
         """ Get Project's Merge Request
-        :param p_id: Project Identifier (int)
-        :param r_id: Merge Request Identifier (int)
+        :param r_id: Project Identifier (int)
+        :param mr_id: Merge Request Identifier (int)
         :return: Merge Request (Object)
         """
-
+        # TODO:
         return None
 
-    def get_project_request_changes(self, p_id, r_id):
+    def get_project_request_changes(self, r_id, mr_id):
 
         """ Get Merge Request's Changes
-        :param p_id: Project Identifier (int)
-        :param r_id: Merge Request Identifier (int)
+        :param r_id: Project Identifier (int)
+        :param mr_id: Merge Request Identifier (int)
         :return: Changes (List)
         """
-
+        # TODO:
         return list()
 
-    def get_project_contributors(self, p_id):
+    def get_project_contributors(self, r_id):
 
         """ Get Project's Contributors
-        :param p_id: Project Identifier (int)
+        :param r_id: Project Identifier (int)
         :return: Contributors (List)
         """
-
+        # TODO:
         return list()
 
     def get_groups(self):
@@ -305,16 +377,16 @@ class Enhancer:
         """ Get Groups
         :return: Groups (List)
         """
-
+        # TODO:
         return list()
 
     def get_group(self, g_id):
 
         """ Get Group
-        :param group_id: Group Identifier (int)
+        :param g_id: Group Identifier (int)
         :return: Group (Object)
         """
-
+        # TODO:
         return None
 
     def get_group_projects(self, g_id, relation):
@@ -324,5 +396,5 @@ class Enhancer:
         :param relation: Relation between User-Project
         :return: Projects (List)
         """
-
+        # TODO:
         return list()
