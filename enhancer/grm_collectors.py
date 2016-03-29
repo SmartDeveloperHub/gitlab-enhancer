@@ -18,8 +18,6 @@
   limitations under the License.
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=#
 """
-import json
-import redis
 
 from glapi import GlAPI
 
@@ -84,8 +82,10 @@ class GitLabCollector(GRMCollector):
         self.update_users()
         self.update_groups()
 
-        # TODO: Method not implemented on API
+        # TODO: Methods not implemented on API
         # self.update_requests()
+        # TODO: Methods not implemented
+        # self.update_milestones()
 
     def update_projects(self):
 
@@ -115,6 +115,7 @@ class GitLabCollector(GRMCollector):
         current_users = dict()
 
         for user in self.api.get_users():
+
             if user.get('id'):
                 current_users[str(user.get('id'))] = user
 
@@ -122,7 +123,7 @@ class GitLabCollector(GRMCollector):
                 emails.add(user.get('email'))
                 for email in self.api.get_users_emails_byUid(uid=user.get('id')):
                     emails.add(email.get('email'))
-                r_users.set('emails:%s' % user['id'], json.dumps(list(emails)))
+                r_users.sadd('emails:%s' % user['id'], *emails)
 
         delete_list = set(old_users).difference(set(current_users))
 
@@ -173,8 +174,7 @@ class GitLabCollector(GRMCollector):
     def _add_to_redis(self, r_server, key, list):
 
         for id in list:
-            r_server.set('%s:%s' % (key, id),
-                         json.dumps(list.get(id)))
+            r_server.hmset('%s:%s' % (key, id), list.get(id))
 
     def _remove_from_redis(self, r_server, key, list):
 
