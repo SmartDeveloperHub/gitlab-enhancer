@@ -22,7 +22,7 @@
 import os
 from setuptools import setup, find_packages
 
-from enhancer import settings as config
+from bin import settings as config
 
 __author__ = 'Ignacio Molina Cuquerella'
 

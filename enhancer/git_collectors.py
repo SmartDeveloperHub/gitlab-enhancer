@@ -46,6 +46,8 @@ class GitCollectorsManager(object):
         """
 
         collector = self.r_server.hgetall('collector:%s' % c_id)
+        if collector:
+            collector['id'] = c_id
 
         return collector
 
@@ -59,8 +61,11 @@ class GitCollectorsManager(object):
 
         collector_list = list()
 
-        for collector in self.r_server.keys('collector:*'):
-            collector_list.append(self.r_server.get(collector))
+        for key in self.r_server.keys('collector:*'):
+
+            collector = self.r_server.hgetall(key)
+            collector['id'] = key.split(':')[1]
+            collector_list.append(collector)
 
         return collector_list
 
@@ -69,7 +74,7 @@ class GitCollectorsManager(object):
         """ This method allow to add a GitCollector to the services.
 
         :param params: GitCollector access information
-        :return: return GitCollector id or None if params are not right.
+        :return: GitCollector id or None if params are not right.
         """
 
         if params.get('url'):
@@ -88,11 +93,11 @@ class GitCollectorsManager(object):
             self.r_server.hset('collector:%s' % c_id, 'security', security)
             self.r_server.hset('collector:%s' % c_id, 'password', password)
 
-            return id
+            return c_id
 
         return None
 
-    def delete_collector(self, c_id):
+    def remove_collector(self, c_id):
 
         """ This method remove the specified GitCollector from the services.
 
@@ -114,19 +119,12 @@ class GitCollectorsManager(object):
 
         repositories = list()
 
-        for collector_id in self.r_server.keys('collector:*'):
+        for key in self.r_server.keys('collector:*'):
 
-            collector = self.r_server.hgetall(collector_id)
-            headers = dict()
-            headers['Accept'] = 'application/json',
-            headers['Content-Type'] = 'application/json'
+            collector_id = key.split(':')[1]
+            for repository in self._request_to_collector('/api/repositories',
+                                                         collector_id):
 
-            if collector.get('security'):
-                headers['X-GC-PWD'] = '%s' % collector.get('password')
-
-            url = '%s/api/repositories' % collector.get('url')
-            for repository in requests.get(url,
-                                           headers=headers).json():
                 repository['collector'] = collector_id
                 repositories.append(repository)
 
@@ -154,7 +152,29 @@ class GitCollectorsManager(object):
         :return: list of the repository commits
         """
         # TODO:
-        pass
+
+        path = '/api/repositories/%s/commits' % repository.get('id')
+        collector_id = repository.get('collector')
+
+        commits = list()
+        for commit_id in self._request_to_collector(path, collector_id):
+
+            commits.append(self.get_commit(repository, commit_id))
+
+        return commits
+
+    def get_commit(self, repository, cid):
+
+        """ This method return an specific commit from a repository
+
+        :param repository: information relative to a repository
+        :param cid: commit identifier
+        :return: commit information from a repository
+        """
+
+        path = '/api/repositories/%s/commits/%s' % (repository.get('id'), cid)
+
+        return self._request_to_collector(path, repository.get('collector'))
 
     def get_commiters(self, repository):
 
@@ -164,8 +184,14 @@ class GitCollectorsManager(object):
         :param repository: information relative to a repository
         :return: commiters list of a repository.
         """
-        # TODO:
-        pass
+
+        path = '/api/repositories/%s/contributors' % repository.get('id')
+        commiters = list()
+
+        for id in self._request_to_collector(path, repository.get('collector')):
+            commiters.append(self._get_commiter(repository, id))
+
+        return commiters
 
     def _get_commiter(self, repository, commiter_id):
 
@@ -176,6 +202,90 @@ class GitCollectorsManager(object):
         :return: commiter information
         """
 
-        # "commits", "first_commit_at", "last_commit_at", "email",
-        # TODO:
+        path = '/api/contributors/%s' % commiter_id
+
+        return self._request_to_collector(path, repository.get('collector'))
+
+    def get_commiter(self, email):
+        """
+        Returns commiter information regardless its repository
+        :param commiter_id:
+        :return: commiter information
+        """
         pass
+
+    def get_branches(self, repository):
+
+        """
+        Returns a branches list of a repository
+        :param repository:  information relative to a repository
+        :return: branches list of a repository
+        """
+        # TODO:
+        path = '/api/repositories/%s/branches' % repository.get('id')
+        collector_id = repository.get('collector')
+        branches = list()
+        for id in self._request_to_collector(path, collector_id):
+
+            branch = self.get_branch(repository, id)
+            if branch:
+                branches.append(branch)
+
+        return branches
+
+    def get_branch(self, repository, b_id):
+
+        """
+        Returns branch information
+        :param repository: information relative to repository
+        :param b_id: branch identifier
+        :return: branch information from repository
+        """
+        # "Name", "contributors" = []
+        path = '/api/repositories/%s/branches/%s' % (repository.get('id'), b_id)
+        collector_id = repository.get('collector')
+
+        branch = self._request_to_collector(path, collector_id)
+
+        if branch and not branch.get('Error'):
+
+            contributors = list()
+            for contributor in eval(branch.pop('contributors')):
+
+                commiter = self._get_commiter(repository, contributor)
+                contributors.append(commiter.get('email'))
+            branch['contributors'] = contributors
+            branch['id'] = b_id
+
+            return branch
+        return None
+
+
+    def get_branches_commits(self, repository, b_id):
+
+        path = '/api/repositories/%s/branches/%s/commits' % (
+            repository.get('id'), b_id)
+        collector_id = repository.get('collector')
+
+        commits = list()
+        for commit_id in self._request_to_collector(path, collector_id):
+            commits.append(self.get_commit(repository, commit_id))
+
+        return commits
+
+    def _request_to_collector(self, path, collector_id):
+
+        collector = self.r_server.hgetall('collector:%s' %
+                                          collector_id)
+
+        if collector:
+            headers = dict()
+            headers['Accept'] = 'application/json'
+            headers['Content-Type'] = 'application/json'
+
+            if collector.get('security'):
+                headers['X-GC-PWD'] = '%s' % collector.get('password')
+
+            return requests.get('%s%s' % (collector.get('url'), path),
+                                headers=headers).json()
+        return None

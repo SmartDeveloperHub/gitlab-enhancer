@@ -27,7 +27,7 @@ import datetime
 import logging
 import time
 
-from enhancer import settings as config
+from bin import settings as config
 from enhancer.enhancer import Enhancer
 from enhancer.enhancer_api import EnhancerService
 

@@ -80,6 +80,8 @@ class GitLabCollector(GRMCollector):
 
         self.update_projects()
         self.update_users()
+        self.update_branches()
+        self.update_commits()
         self.update_groups()
 
         # TODO: Methods not implemented on API
@@ -151,6 +153,54 @@ class GitLabCollector(GRMCollector):
         self._add_to_redis(r_groups, 'group', current_groups)
         # Delete removed group from redis
         self._remove_from_redis(r_groups, 'group', delete_list)
+
+    def update_branches(self):
+
+        r_branches = self.r_servers.get('branches')
+
+        # Get redis projects list
+        old_branches = self._get_ids_list_from_redis(r_branches, 'branch')
+        current_branches = dict()
+
+        for project in self.api.get_projects():
+            project_id = project.get('id')
+            if project_id:
+                for branch in self.api\
+                        .get_projects_repository_branches_byId(id=project_id):
+
+                    if branch.get('name'):
+                        current_branches['%s:%s' %
+                                         (project_id,
+                                          branch.get('name'))] = branch
+
+        delete_list = set(old_branches).difference(set(current_branches))
+
+        self._add_to_redis(r_branches, 'branch', current_branches)
+        self._remove_from_redis(r_branches, 'branch', delete_list)
+
+    def update_commits(self):
+
+        r_commits = self.r_servers.get('commits')
+
+        # Get redis projects list
+        old_commits = self._get_ids_list_from_redis(r_commits, 'commit')
+        current_commits = dict()
+
+        for project in self.api.get_projects():
+            project_id = project.get('id')
+            if project_id:
+                for commits in self.api\
+                        .get_projects_repository_commits_byId(id=project_id):
+
+                    if commits.get('id'):
+                        current_commits['%s:%s' %
+                                         (project_id,
+                                          commits.get('id'))] = commits
+
+        delete_list = set(old_commits).difference(set(current_commits))
+
+        self._add_to_redis(r_commits, 'commit', current_commits)
+        self._remove_from_redis(r_commits, 'commit', delete_list)
 
     def update_requests(self):
 

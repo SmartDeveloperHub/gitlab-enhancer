@@ -20,6 +20,7 @@
 """
 
 import logging
+from datetime import datetime
 from threading import Timer
 
 import redis
@@ -51,10 +52,20 @@ class Enhancer:
 
         # redis instances
         self.redis_instance = dict()
-        self.redis_instance['projects'] = self._redis_create_pool(config.REDIS_DB_PROJ)
-        self.redis_instance['users'] = self._redis_create_pool(config.REDIS_DB_USER)
-        self.redis_instance['groups'] = self._redis_create_pool(config.REDIS_DB_GROUP)
-        self.redis_instance['merge_requests'] = self._redis_create_pool(config.REDIS_DB_MERGE)
+        self.redis_instance['git'] = \
+            self._redis_create_pool(config.REDIS_DB_GIT)
+        self.redis_instance['projects'] = \
+            self._redis_create_pool(config.REDIS_DB_PROJ)
+        self.redis_instance['users'] = \
+            self._redis_create_pool(config.REDIS_DB_USER)
+        self.redis_instance['groups'] = \
+            self._redis_create_pool(config.REDIS_DB_GROUP)
+        self.redis_instance['branches'] = \
+            self._redis_create_pool(config.REDIS_DB_BRANCH)
+        self.redis_instance['commits'] = \
+            self._redis_create_pool(config.REDIS_DB_COMMIT)
+        self.redis_instance['merge_requests'] = \
+            self._redis_create_pool(config.REDIS_DB_MERGE)
 
         # GitLab Collector instance
         collector_url = '%s://%s' % (config.GITLAB_PROT, config.GITLAB_IP)
@@ -103,8 +114,10 @@ class Enhancer:
     def get_projects(self):
 
         """ Get Projects
+
             :return: Projects (List)
         """
+
         projects = list()
 
         for repository in self.git_collectors.get_repositories():
@@ -118,6 +131,7 @@ class Enhancer:
     def get_project(self, r_id):
 
         """ Get Project
+
         :param r_id: repository identifier (int)
         :return: Project (Object)
         """
@@ -139,6 +153,32 @@ class Enhancer:
         :return: project information
         """
 
+        project = self._match_repo_with_project(repository)
+
+        if project:
+
+            commits = self.git_collectors.get_commits(repository)
+            if commits:
+                project['first_commit_at'] = \
+                    self._format_date(commits[0].get('time'))
+                project['last_commit_at'] = \
+                    self._format_date(commits[-1].get('time'))
+
+            project['contributors'] = self._get_contributors(repository)
+            project['id'] = repository.get('id')
+
+            return project
+
+        return None
+
+    def _match_repo_with_project(self, repository):
+
+        """ Method that combine information from two sources: Git and Redis
+
+        :param repository: information relative to repository
+        :return: project with information merged from git collector and redis
+        """
+
         r_projects = self.redis_instance.get('projects')
 
         projects = filter(lambda x:
@@ -149,11 +189,9 @@ class Enhancer:
         if projects:
 
             project = projects[0]
-            commits = self.git_collectors.get_commits(repository)
-            project['first_commit_at'] = commits[0].time
-            project['last_commit_at'] = commits[-1].time
-
-            project['contributors'] = self._get_contributors(repository)
+            # deserialize inner structs
+            project['owner'] = eval(project.get('owner'))
+            project['namespace'] = eval(project.get('namespace'))
 
             return project
 
@@ -172,7 +210,7 @@ class Enhancer:
         contributors = list()
 
         for commiter in commiter_list:
-            contributors.append(self._get_contributor(commiter.email))
+            contributors.append(self._get_contributor(commiter.get('email')))
 
         return contributors
 
@@ -184,40 +222,98 @@ class Enhancer:
         :param email: email used by the user.
         :return: user information from redis
         """
-
+        # TODO: Returns user, email or user id?
         r_users = self.redis_instance.get('users')
 
         users_id = filter(
             lambda x: email in r_users.smembers('emails:%s' % x),
-            [user_emails_id.split(':')[0]
+            [user_emails_id.split(':')[1]
              for user_emails_id in r_users.keys('emails:*')])
 
-        if users_id:
-
-            return r_users.hgetall('user:%s' % users_id[0])
-
-        return None
+        return int(users_id[0]) if users_id else None
 
     def get_project_owner(self, r_id):
 
         """ Get Project's Owner
+
         :param r_id: Project Identifier (int)
         :return: Owner (User Object | Group Object)
         """
+
+        repository = self.git_collectors.get_repository(r_id)
+        project = None
+
+        if repository:
+            project = self._match_repo_with_project(repository)
+
+        if project:
+
+            owner = project.get('owner')
+
+            return self.get_user(owner['id'])
+        return None
+
+    def get_project_contributors(self, r_id):
+
+        """ Get Project's Contributors
+
+        :param r_id: Project Identifier (int)
+        :return: Contributors (List)
+        """
+
+        project = self.get_project(r_id)
+
+        if project:
+            return project.get('contributors')
 
         return None
 
     def get_users(self):
 
         """ Get Users
+
         :return: Users (List)
         """
-        # TODO:
-        return list()
+
+        r_users = self.redis_instance.get('users')
+        users = list()
+
+        for user_id in r_users.keys('user:*'):
+            users.append(self.get_user(user_id.split(':')[1]))
+
+        return users
+
+    def _merge_user_information(self, user):
+
+        """ Combine the user information from Git and from Redis.
+
+        :param user: information from redis
+        :return: merged user information
+        """
+
+        new_user = user.copy()
+        first_commit = float('inf')
+        last_commit = 0
+
+        for email in user.get('emails'):
+
+            commiter = self.git_collectors.get_commiter(email)
+            if commiter:
+                first = commiter.get('first_commit_at')
+                last = commiter.get('last_commit_at')
+                first_commit = first if first_commit > first else first_commit
+                last_commit = last if last_commit < last else last_commit
+
+        if last_commit:
+            new_user['first_commit_at'] = first_commit
+            new_user['last_commit_at'] = last_commit
+
+        return new_user
 
     def get_user(self, u_id):
 
         """ Get User
+
         :param u_id: User or Committer identifier
         :return: User (Object)
         """
@@ -230,32 +326,93 @@ class Enhancer:
         # Commiter fields
         # "first_commit_at", "email", "last_commit_at", "id",
         # "external"
-        # TODO:
-        return None
+
+        r_users = self.redis_instance.get('users')
+        user = r_users.hgetall('user:%s' % u_id)
+
+        if user:
+            user['emails'] = list(r_users.smembers('emails:%s' % u_id))
+            user = self._merge_user_information(user)
+
+        else:  # if user does not exist in Gitlab
+            user = self.git_collectors.get_commiter(u_id)
+            # TODO: external
+
+        return user
 
     def get_user_projects(self, u_id, relation):
 
         """ Get User's Projects
+
         :param u_id: User Identifier (int)
         :param relation: Relation between User-Project
         :return: Projects (List)
         """
-        # TODO:
-        return list()
+
+        projects = list()
+
+        if relation is 'owner':
+            projects.extend(
+                filter(lambda x: x.get('owner').get('id') == u_id,
+                       self.get_projects()))
+        else:
+            # TODO: Add behaviour when relation is other than owner
+            len(projects)
+
+        return projects
+
+    def _merge_branch_information(self, p_id, branch):
+
+        """ Returns the branch information with additional fields
+
+        :param p_id: Redis project id
+        :param branch: branch information from Git protocol
+        :return: branch enhanced branch information
+        """
+        # TODO: Add contributors
+        r_branches = self.redis_instance.get('branches')
+        merged_branch = r_branches.hgetall('branch:%s:%s' % (p_id,
+                                                             branch.get('name'))
+                                           )
+
+        if merged_branch:
+
+            # Change name of key
+            merged_branch['last_commit'] = eval(merged_branch.pop('commit'))
+            contributors = list()
+            for contributor in branch.get('contributors'):
+                contributors.append(self._get_contributor(contributor))
+
+            merged_branch['contributors'] = contributors
+            merged_branch['id'] = branch.get('id')
+            return merged_branch
 
     def get_project_branches(self, r_id, default):
 
         """ Get Project's Branches
+
         :param r_id: Project Identifier (int)
         :param default: Filter by type (bool)
         :return: Branches (List)
         """
-        # TODO:
-        return list()
+        # TODO: use default param
+        branches = list()
+        repository = self.git_collectors.get_repository(r_id)
+
+        if repository:
+
+            p_id =  self._match_repo_with_project(repository).get('id')
+            for b in self.git_collectors.get_branches(repository):
+                branch = self._merge_branch_information(p_id, b)
+                if branch:
+                    branches.append(branch)
+
+        return branches
 
     def get_project_branch(self, r_id, b_id):
 
         """ Get Project's Branch
+
         :param r_id: Project Identifier (int)
         :param b_id: Branch Identifier (string)
         :return: Branch (Object)
@@ -264,18 +421,118 @@ class Enhancer:
         # Branch fields
         # "name", "created_at", "protected", "contributors",
         # "last_commit"
-        # TODO:
-        return None
+
+        branch = None
+        repository = self.git_collectors.get_repository(r_id)
+
+        if repository:
+            b = self.git_collectors.get_branch(repository, b_id)
+            p_id = self._match_repo_with_project(repository).get('id')
+
+            if b:
+                branch = self._merge_branch_information(p_id, b)
+
+        return branch
 
     def get_project_branch_contributors(self, r_id, b_id):
 
         """ Get Branch's Contributors
+
         :param r_id: Project Identifier (int)
         :param b_id: Branch Identifier (string)
         :return: Contributors (List)
         """
-        # TODO:
-        return list()
+
+        branch = self.get_project_branch(r_id, b_id)
+        if branch:
+            return branch.get('contributors')
+        return None
+
+    def _merge_commit_information(self, p_id, commit):
+
+        """ This method combines commit information from two sources: Git and
+        Redis.
+
+        :param p_id: Redis project id
+        :param commit: data from Git
+        :return:
+        """
+
+        # "lines_removed", "short_id", "author", "lines_added",
+        # "created_at", "title", "parent_ids", "committed_date",
+        # "message", "authored_date", "id"
+
+        r_commits = self.redis_instance.get('commits')
+        r_commit = r_commits.hgetall('commit:%s:%s' % (p_id, commit.get('sha')))
+
+        # GitCollector
+        # lines_removed, lines_added, files_changed
+
+        # GitLab
+        # short_id, title, author_email, created_at, message, author_name, id
+
+        author_email = commit.get('email')
+        author = self._get_contributor(author_email)
+
+        if r_commit:
+            new_commit = r_commit.copy()
+            new_commit['lines_removed'] = commit.get('lines_removed')
+            new_commit['lines_added'] = commit.get('lines_added')
+            new_commit['files_changed'] = commit.get('files_changed')
+
+        else:
+            new_commit = commit.copy()
+            new_commit.pop('email')
+            new_commit['id'] = new_commit.pop('sha')
+            new_commit['created_at'] = self._format_date(new_commit.pop('time'))
+            new_commit['message'] = "%s\n" % commit.get('title')
+
+        new_commit['author'] = author
+        new_commit['author_email'] = author_email
+        new_commit['author_name'] = self.get_user(author).get('name')
+
+        return new_commit
+
+    def _filter_commits(self, repository, commits, u_id, t_window):
+
+        """ This method filter commits regarding user id and a time window.
+
+        :param repository: information relative to a repository
+        :param commits: list of commits from Git
+        :param u_id: user id
+        :param t_window: time window within commits have been created.
+        :return: list of commits satisfying filter params
+        """
+
+        # Milliseconds to seconds
+        w_start = t_window['st_time'] / 1000
+        w_end = t_window['en_time'] / 1000
+        co = filter(lambda x: w_start < long(x.get('time')) < w_end,
+                    commits)
+
+        p_id = self._match_repo_with_project(repository).get('id')
+
+        return filter(lambda x: not u_id or u_id == x.get('author'),
+                      (self._merge_commit_information(p_id, commit)
+                       for commit in co))
+
+    def get_project_commits(self, r_id, u_id, t_window):
+
+        """ Get Project's Commits
+        :param r_id: Project Identifier (int)
+        :param u_id: Optional User Identifier (int)
+        :param t_window: (Time Window) filter (Object)
+        :return: Commits (List)
+        """
+        # TODO: Windows search
+        repository = self.git_collectors.get_repository(r_id)
+        commits = None
+        if repository:
+            raw_commits = self.git_collectors.get_commits(repository)
+            commits = self._filter_commits(repository, raw_commits, u_id,
+                                           t_window)
+
+        return commits
 
     def get_project_branch_commits(self, r_id, b_id, u_id, t_window):
 
@@ -286,19 +543,17 @@ class Enhancer:
         :param t_window: (Time Window) filter (Object)
         :return: Commits (List)
         """
-        # TODO:
-        return list()
+        # TODO: add t_windows and user filter
+        commits = None
+        repository = self.git_collectors.get_repository(r_id)
 
-    def get_project_commits(self, r_id, u_id, t_window):
+        if repository:
+            raw_commits = self.git_collectors.get_branches_commits(repository,
+                                                                   b_id)
+            commits = self._filter_commits(repository, raw_commits, u_id,
+                                           t_window)
 
-        """ Get Project's Commits
-        :param r_id: Project Identifier (int)
-        :param u_id: Optional User Identifier (int)
-        :param t_window: (Time Window) filter (Object)
-        :return: Commits (List)
-        """
-        # TODO:
-        return list()
+        return commits
 
     def get_project_commit(self, r_id, c_id):
 
@@ -308,11 +563,43 @@ class Enhancer:
         :return: Commit (Object)
         """
 
-        # "lines_removed", "short_id", "author", "lines_added",
-        # "created_at", "title", "parent_ids", "committed_date",
-        # "message", "authored_date", "id"
+        repository = self.git_collectors.get_repository(r_id)
+
+        if repository:
+
+            p_id = self._match_repo_with_project(repository).get('id')
+            commit = self.git_collectors.get_commit(repository, c_id)
+            if commit:
+                return self._merge_commit_information(p_id, commit)
+
+        return None
+
+    def get_groups(self):
+
+        """ Get Groups
+        :return: Groups (List)
+        """
+        # TODO:
+        return list()
+
+    def get_group(self, g_id):
+
+        """ Get Group
+        :param g_id: Group Identifier (int)
+        :return: Group (Object)
+        """
         # TODO:
         return None
+
+    def get_group_projects(self, g_id, relation):
+
+        """ Get Group's Projects
+        :param g_id: Group Identifier (int)
+        :param relation: Relation between User-Project
+        :return: Projects (List)
+        """
+        # TODO:
+        return list()
 
     def get_project_milestones(self, r_id):
 
@@ -363,38 +650,8 @@ class Enhancer:
         # TODO:
         return list()
 
-    def get_project_contributors(self, r_id):
+    def _format_date(self, timestamp):
 
-        """ Get Project's Contributors
-        :param r_id: Project Identifier (int)
-        :return: Contributors (List)
-        """
-        # TODO:
-        return list()
-
-    def get_groups(self):
-
-        """ Get Groups
-        :return: Groups (List)
-        """
-        # TODO:
-        return list()
-
-    def get_group(self, g_id):
-
-        """ Get Group
-        :param g_id: Group Identifier (int)
-        :return: Group (Object)
-        """
-        # TODO:
-        return None
-
-    def get_group_projects(self, g_id, relation):
-
-        """ Get Group's Projects
-        :param g_id: Group Identifier (int)
-        :param relation: Relation between User-Project
-        :return: Projects (List)
-        """
-        # TODO:
-        return list()
+        # Example: 2012-09-20T09:06:12+03:00
+        return datetime.utcfromtimestamp(float(timestamp))\
+                .strftime('%Y-%m-%dT%H:%M:%S%z')

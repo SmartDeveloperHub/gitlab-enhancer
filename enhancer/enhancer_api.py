@@ -19,9 +19,9 @@
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=#
 """
 import json
+import logging
 from datetime import datetime
 
-import logging
 import validators
 from flask import Flask, jsonify, request, make_response
 from flask_negotiate import produces, consumes
@@ -38,6 +38,42 @@ class EnhancerService:
         self.port = config.GE_LISTEN_PORT
         self.enhancer = enhancer
 
+        @self.app.route('/api/collectors', methods=['GET'])
+        @produces('application/json')
+        def get_collectors():
+
+            return json_response(enhancer.git_collectors.get_collectors())
+
+        @self.app.route('/api/collectors/<string:coll_id>', methods=['GET'])
+        @produces('application/json')
+        def get_collector(coll_id):
+
+            collector = enhancer.git_collectors.get_collector(coll_id)
+
+            if collector:
+                return json_response(collector)
+
+            return make_response('', 404)
+
+        @self.app.route('/api/collectors', methods=['POST'])
+        @consumes('application/json')
+        @produces('application/json')
+        def add_collector():
+
+            coll_id = enhancer.git_collectors.add_collector(request.json)
+
+            if coll_id:
+                return json_response(coll_id)
+
+            return make_response('', 400)
+
+        @self.app.route('/api/collectors/<string:coll_id>', methods=['DELETE'])
+        def remove_collector(coll_id):
+
+            enhancer.git_collectors.remove_collector(coll_id)
+
+            return make_response('', 200)
+
         # Get information about Git Enhancer
         @self.app.route('/api/', methods=['GET'])
         @produces('application/json')
@@ -51,53 +87,54 @@ class EnhancerService:
         @produces('application/json')
         def api_get_projects():
 
-            # r = requests.get('%s/api/repositories' % self.git_url,
-            #                   headers=request.headers)
-            # return make_response(r.text, r.status_code, r.headers.items())
-            return make_response(json.dumps(enhancer.get_projects()))
-            # return redirect('%s/api/repositories' % self.git_url, code=307)
+            return json_response(enhancer.get_projects())
 
         # Get specific gitlab project
-        @self.app.route('/api/projects/<int:pid>/', methods=['GET'])
+        @self.app.route('/api/projects/<string:rid>/', methods=['GET'])
         @produces('application/json')
-        def api_project(pid):
+        def api_project(rid):
 
-            return make_response(json.dumps(
-                enhancer.get_project(pid)
-            ))
+            project = enhancer.get_project(rid)
+            if project:
+                return json_response(project)
+            return make_response('', 404)
 
         # Get owner about specific gitlab project
-        @self.app.route('/api/projects/<int:pid>/owner/', methods=['GET'])
+        @self.app.route('/api/projects/<string:rid>/owner/', methods=['GET'])
         @produces('application/json')
-        def api_project_owner(pid):
+        def api_project_owner(rid):
 
-            return make_response(json.dumps(
-                enhancer.get_project_owner(pid)
-            ))
+            owner = enhancer.get_project_owner(rid)
+            if owner:
+                return json_response(owner)
+            return make_response('', 404)
 
         # Get milestone about specific gitlab project
-        @self.app.route('/api/projects/<int:pid>/milestones/', methods=['GET'])
+        @self.app.route('/api/projects/<string:pid>/milestones/',
+                        methods=['GET'])
         @produces('application/json')
         def api_project_milestones(pid):
 
-            return make_response(json.dumps(
-                enhancer.get_project_milestones(pid)
-            ))
+            milestones = enhancer.get_project_milestones(pid)
+            if milestones:
+                return json_response(milestones)
+            return make_response('', 404)
 
         # Get specific milestone about specific gitlab project
-        @self.app.route('/api/projects/<int:pid>/milestones/<int:mid>/',
+        @self.app.route('/api/projects/<string:pid>/milestones/<int:mid>/',
                         methods=['GET'])
         @produces('application/json')
         def api_project_milestone(pid, mid):
 
-            return make_response(json.dumps(
-                enhancer.get_project_milestone(pid, mid)
-            ))
+            milestone = enhancer.get_project_milestone(pid, mid)
+            if milestone:
+                return json_response(milestone)
+            return make_response('', 404)
 
         # # default = [true|false] for get default branch only
         # Get branches about specific gitlab project
         # It is possible only get the default branch
-        @self.app.route('/api/projects/<int:pid>/branches/', methods=['GET'])
+        @self.app.route('/api/projects/<string:pid>/branches/', methods=['GET'])
         @produces('application/json')
         def api_project_branches(pid):
 
@@ -105,29 +142,36 @@ class EnhancerService:
             if default != 'false' and default != 'true':
                 return make_response("400: default parameter must be true or "
                                      "false", 400)
-            return make_response(json.dumps(
-                enhancer.get_project_branches(pid, default)
-            ))
+
+            return json_response(enhancer.get_project_branches(pid, default))
 
         # Get specific branch about specific gitlab project
-        @self.app.route('/api/projects/<int:pid>/branches/<string:bid>/',
+        @self.app.route('/api/projects/<string:pid>/branches/<string:bid>/',
                         methods=['GET'])
         @produces('application/json')
         def api_project_branch(pid, bid):
 
-            return make_response(json.dumps(
-                enhancer.get_project_branch(pid, bid)
-            ))
+            branch = enhancer.get_project_branch(pid, bid)
+            if branch:
+                return json_response(branch)
+            return make_response('', 404)
 
         # Get contributors of specific branch about specific gitlab project
-        @self.app.route('/api/projects/<int:pid>/branches/<string:bid>/'
+        @self.app.route('/api/projects/<string:pid>/branches/<string:bid>/'
                         'contributors/', methods=['GET'])
         @produces('application/json')
         def api_project_branch_contributors(pid, bid):
 
-            return make_response(json.dumps(
-                enhancer.get_project_branch_contributors(pid, bid)
-            ))
+            users_id = enhancer.get_project_branch_contributors(pid, bid)
+
+            if users_id:
+
+                contributors = list()
+                for user_id in users_id:
+                    contributors.append(enhancer.get_user(user_id))
+                return json_response(contributors)
+
+            return make_response()
 
         # Query Params:
         # # uid = user identifier
@@ -136,7 +180,7 @@ class EnhancerService:
         # Get commits of specific branch about specific gitlab project
         # It is possible filter by user with gitlab uid
         # It is possible filter by range (time)
-        @self.app.route('/api/projects/<int:pid>/branches/<string:bid>/'
+        @self.app.route('/api/projects/<string:pid>/branches/<string:bid>/'
                         'commits/', methods=['GET'])
         @produces('application/json')
         def api_project_branch_commits(pid, bid):
@@ -156,10 +200,12 @@ class EnhancerService:
                 return make_response("400: start_time or end_time is bad "
                                      "format", 400)
 
-            return make_response(json.dumps(
-                enhancer.get_project_branch_commits(pid, bid, user,
-                                                         t_window)
-            ))
+            commits = enhancer.get_project_branch_commits(pid, bid, user,
+                                                          t_window)
+
+            if commits:
+                return json_response(commits)
+            return make_response('', 404)
 
         # Query Params:
         # # uid = user identifier
@@ -168,7 +214,7 @@ class EnhancerService:
         # Get commits about specific gitlab project
         # It is possible filter by user with gitlab uid
         # It is possible filter by range (time)
-        @self.app.route('/api/projects/<int:pid>/commits/', methods=['GET'])
+        @self.app.route('/api/projects/<string:pid>/commits/', methods=['GET'])
         @produces('application/json')
         def api_project_commits(pid):
 
@@ -187,25 +233,27 @@ class EnhancerService:
                 return make_response("400: start_time or end_time is bad "
                                      "format", 400)
 
-            return make_response(json.dumps(
-                enhancer.get_project_commits(pid, user, t_window)
-            ))
+            return json_response(enhancer.get_project_commits(pid, user,
+                                                              t_window))
 
         # Get specific commit about specific gitlab project
-        @self.app.route('/api/projects/<int:pid>/commits/<string:cid>/',
+        @self.app.route('/api/projects/<string:pid>/commits/<string:cid>/',
                         methods=['GET'])
         @produces('application/json')
         def api_project_commit(pid, cid):
 
-            return make_response(json.dumps(
-                enhancer.get_project_commit(pid, cid)
-            ))
+            commit = enhancer.get_project_commit(pid, cid)
+
+            if commit:
+                return json_response(commit)
+
+            return make_response('', 404)
 
         # Query Params:
         # # state = [opened, closed, merged]
         # Get merge requests about specific gitlab project
         # It is possible filter by state
-        @self.app.route('/api/projects/<int:pid>/merge_requests/',
+        @self.app.route('/api/projects/<string:pid>/merge_requests/',
                         methods=['GET'])
         @produces('application/json')
         def api_project_requests(pid):
@@ -221,56 +269,49 @@ class EnhancerService:
                                          "state (opened|closed|merged|all)",
                                          400)
 
-            return make_response(json.dumps(
-                enhancer.get_project_requests(pid, mrstate)
-            ))
+            return json_response(enhancer.get_project_requests(pid, mrstate))
 
         # Get specific merge request about specific gitlab project
-        @self.app.route('/api/projects/<int:pid>/merge_requests/<int:mrid>/',
+        @self.app.route('/api/projects/<string:pid>/merge_requests/<int:mrid>/',
                         methods=['GET'])
         @produces('application/json')
         def api_project_request(pid, mrid):
 
-            return make_response(json.dumps(
-                enhancer.get_project_request(pid, mrid)
-            ))
+            return json_response(enhancer.get_project_request(pid, mrid))
 
         # Get changes of specific merge request about specific gitlab project
-        @self.app.route('/api/projects/<int:pid>/merge_requests/<int:mrid>/'
+        @self.app.route('/api/projects/<string:pid>/merge_requests/<int:mrid>/'
                         'changes/', methods=['GET'])
         @produces('application/json')
         def api_project_request_changes(pid, mrid):
 
-            return make_response(json.dumps(
-                enhancer.get_project_request_changes(pid, mrid)
-            ))
+            return json_response(enhancer.get_project_request_changes(pid,
+                                                                      mrid))
 
         # Get contributors about specific gitlab project
-        @self.app.route('/api/projects/<int:pid>/contributors/', methods=['GET'])
+        @self.app.route('/api/projects/<string:pid>/contributors/',
+                        methods=['GET'])
         @produces('application/json')
         def api_project_contributors(pid):
 
-            return make_response(json.dumps(
-                enhancer.get_project_contributors(pid)
-            ))
+            return json_response(enhancer.get_project_contributors(pid))
 
         # Get gitlab users
         @self.app.route('/api/users/', methods=['GET'])
         @produces('application/json')
         def api_users():
 
-            return make_response(json.dumps(
-                enhancer.get_users()
-            ))
+            return json_response(enhancer.get_users())
 
         # Get specific gitlab user
         @self.app.route('/api/users/<string:uid>/', methods=['GET'])
         @produces('application/json')
         def api_user(uid):
 
-            return make_response(json.dumps(
-                enhancer.get_user(uid)
-            ))
+            user = enhancer.get_user(uid)
+            if user:
+                return json_response(user)
+            return make_response('', 404)
 
         # Query Params:
         # # relation = [contributor only in default branch, owner]
@@ -284,27 +325,22 @@ class EnhancerService:
             if relation != 'contributor' and relation != 'owner':
                 return make_response("400: relation parameter is not a valid"
                                      "relation (contributor|owner)", 400)
-            return make_response(json.dumps(
-                enhancer.get_user_projects(uid, relation)
-            ))
+
+            return json_response(enhancer.get_user_projects(uid, relation))
 
         # Get Gitlab groups
         @self.app.route('/api/groups/', methods=['GET'])
         @produces('application/json')
         def api_groups():
 
-            return make_response(json.dumps(
-                enhancer.get_groups()
-            ))
+            return json_response(enhancer.get_groups())
 
         # Get specific gitlab groups
         @self.app.route('/api/groups/<int:gid>/', methods=['GET'])
         @produces('application/json')
         def api_group(gid):
 
-            return make_response(json.dumps(
-                enhancer.get_group(gid)
-            ))
+            return json_response(enhancer.get_group(gid))
 
         # Query Params:
         # # relation = [contributor only in default branch, owner]
@@ -320,9 +356,7 @@ class EnhancerService:
                 return make_response("400: relation parameter is not a valid "
                                      "relation (contributor|owner)", 400)
 
-            return make_response(json.dumps(
-                enhancer.get_group_projects(gid, relation)
-            ))
+            return json_response(enhancer.get_group_projects(gid, relation))
 
     def start(self):
 
