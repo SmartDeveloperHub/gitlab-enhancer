@@ -38,13 +38,13 @@ class EnhancerService:
         self.port = config.GE_LISTEN_PORT
         self.enhancer = enhancer
 
-        @self.app.route('/api/collectors', methods=['GET'])
+        @self.app.route('/api/collectors/', methods=['GET'])
         @produces('application/json')
         def get_collectors():
 
             return json_response(enhancer.git_collectors.get_collectors())
 
-        @self.app.route('/api/collectors/<string:coll_id>', methods=['GET'])
+        @self.app.route('/api/collectors/<string:coll_id>/', methods=['GET'])
         @produces('application/json')
         def get_collector(coll_id):
 
@@ -55,7 +55,7 @@ class EnhancerService:
 
             return make_response('', 404)
 
-        @self.app.route('/api/collectors', methods=['POST'])
+        @self.app.route('/api/collectors/', methods=['POST'])
         @consumes('application/json')
         @produces('application/json')
         def add_collector():
@@ -67,7 +67,7 @@ class EnhancerService:
 
             return make_response('', 400)
 
-        @self.app.route('/api/collectors/<string:coll_id>', methods=['DELETE'])
+        @self.app.route('/api/collectors/<string:coll_id>/', methods=['DELETE'])
         def remove_collector(coll_id):
 
             enhancer.git_collectors.remove_collector(coll_id)
@@ -233,8 +233,10 @@ class EnhancerService:
                 return make_response("400: start_time or end_time is bad "
                                      "format", 400)
 
-            return json_response(enhancer.get_project_commits(pid, user,
-                                                              t_window))
+            commits = enhancer.get_project_commits(pid, user,t_window)
+            if commits:
+                return json_response(commits)
+            return make_response('', 404)
 
         # Get specific commit about specific gitlab project
         @self.app.route('/api/projects/<string:pid>/commits/<string:cid>/',
@@ -317,7 +319,7 @@ class EnhancerService:
         # # relation = [contributor only in default branch, owner]
         # Get projects about specific gitlab user
         # It is possible filter by relation between user and project
-        @self.app.route('/api/users/<string:uid>/projects/', methods=['GET'])
+        @self.app.route('/api/users/<int:uid>/projects/', methods=['GET'])
         @produces('application/json')
         def api_user_projects(uid):
 

@@ -151,15 +151,13 @@ class GitCollectorsManager(object):
         :param repository: information relative to a repository
         :return: list of the repository commits
         """
-        # TODO:
 
         path = '/api/repositories/%s/commits' % repository.get('id')
         collector_id = repository.get('collector')
 
-        commits = list()
-        for commit_id in self._request_to_collector(path, collector_id):
-
-            commits.append(self.get_commit(repository, commit_id))
+        commits = [self.get_commit(repository, commit_id)
+                   for commit_id in self._request_to_collector(path,
+                                                               collector_id)]
 
         return commits
 
@@ -174,7 +172,12 @@ class GitCollectorsManager(object):
 
         path = '/api/repositories/%s/commits/%s' % (repository.get('id'), cid)
 
-        return self._request_to_collector(path, repository.get('collector'))
+        commit = self._request_to_collector(path, repository.get('collector'))
+        commit['lines_removed'] = int(commit.pop('lines_removed'))
+        commit['lines_added'] = int(commit.pop('lines_added'))
+        commit['files_changed'] = int(commit.pop('files_changed'))
+
+        return commit
 
     def get_commiters(self, repository):
 
@@ -186,10 +189,11 @@ class GitCollectorsManager(object):
         """
 
         path = '/api/repositories/%s/contributors' % repository.get('id')
-        commiters = list()
 
-        for id in self._request_to_collector(path, repository.get('collector')):
-            commiters.append(self._get_commiter(repository, id))
+        commiters = [self._get_commiter(repository, commiter_id)
+                     for commiter_id in
+                     self._request_to_collector(path,
+                                                repository.get('collector'))]
 
         return commiters
 
@@ -204,15 +208,33 @@ class GitCollectorsManager(object):
 
         path = '/api/contributors/%s' % commiter_id
 
-        return self._request_to_collector(path, repository.get('collector'))
+        commiter = self._request_to_collector(path, repository.get('collector'))
+        commiter['commits'] = int(commiter.pop('commits'))
+        commiter['first_commit_at'] = long(commiter.pop('first_commit_at'))
+        commiter['last_commit_at'] =  long(commiter.pop('last_commit_at'))
+
+        return commiter
 
     def get_commiter(self, email):
         """
         Returns commiter information regardless its repository
-        :param commiter_id:
+        :param email:
         :return: commiter information
         """
-        pass
+        # TODO:
+        path = '/api/contributors'
+
+        for repository in self.get_repositories():
+
+            collector_id = repository.get('collector')
+            contributors = self._request_to_collector(path, collector_id)
+            for contributor_id in contributors:
+                contributor = self._get_commiter(repository, contributor_id)
+                if contributor.get('email') == email:
+                    return contributor
+
+        return None
+
 
     def get_branches(self, repository):
 
@@ -221,7 +243,7 @@ class GitCollectorsManager(object):
         :param repository:  information relative to a repository
         :return: branches list of a repository
         """
-        # TODO:
+
         path = '/api/repositories/%s/branches' % repository.get('id')
         collector_id = repository.get('collector')
         branches = list()

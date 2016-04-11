@@ -222,7 +222,7 @@ class Enhancer:
         :param email: email used by the user.
         :return: user information from redis
         """
-        # TODO: Returns user, email or user id?
+
         r_users = self.redis_instance.get('users')
 
         users_id = filter(
@@ -247,10 +247,9 @@ class Enhancer:
             project = self._match_repo_with_project(repository)
 
         if project:
-
             owner = project.get('owner')
-
             return self.get_user(owner['id'])
+
         return None
 
     def get_project_contributors(self, r_id):
@@ -276,10 +275,9 @@ class Enhancer:
         """
 
         r_users = self.redis_instance.get('users')
-        users = list()
 
-        for user_id in r_users.keys('user:*'):
-            users.append(self.get_user(user_id.split(':')[1]))
+        users = [self.get_user(user_id.split(':')[1])
+                 for user_id in r_users.keys('user:*')]
 
         return users
 
@@ -305,8 +303,11 @@ class Enhancer:
                 last_commit = last if last_commit < last else last_commit
 
         if last_commit:
-            new_user['first_commit_at'] = first_commit
-            new_user['last_commit_at'] = last_commit
+            new_user['first_commit_at'] = self._format_date(first_commit)
+            new_user['last_commit_at'] = self._format_date(last_commit)
+        new_user['id'] = int(user.get('id'))
+        if user.get('identities'):
+            new_user['identities'] = eval(user['identities'])
 
         return new_user
 
@@ -349,15 +350,12 @@ class Enhancer:
         :return: Projects (List)
         """
 
-        projects = list()
-
-        if relation is 'owner':
-            projects.extend(
-                filter(lambda x: x.get('owner').get('id') == u_id,
-                       self.get_projects()))
+        if relation == 'owner':
+            projects = filter(lambda x: x.get('owner').get('id') == u_id,
+                              self.get_projects())
         else:
-            # TODO: Add behaviour when relation is other than owner
-            len(projects)
+            projects = filter(lambda x: u_id in x.get('contributors'),
+                              self.get_projects())
 
         return projects
 
@@ -369,7 +367,7 @@ class Enhancer:
         :param branch: branch information from Git protocol
         :return: branch enhanced branch information
         """
-        # TODO: Add contributors
+
         r_branches = self.redis_instance.get('branches')
         merged_branch = r_branches.hgetall('branch:%s:%s' % (p_id,
                                                              branch.get('name'))
@@ -524,7 +522,7 @@ class Enhancer:
         :param t_window: (Time Window) filter (Object)
         :return: Commits (List)
         """
-        # TODO: Windows search
+
         repository = self.git_collectors.get_repository(r_id)
         commits = None
         if repository:
@@ -543,7 +541,7 @@ class Enhancer:
         :param t_window: (Time Window) filter (Object)
         :return: Commits (List)
         """
-        # TODO: add t_windows and user filter
+
         commits = None
         repository = self.git_collectors.get_repository(r_id)
 
@@ -579,8 +577,13 @@ class Enhancer:
         """ Get Groups
         :return: Groups (List)
         """
-        # TODO:
-        return list()
+
+        r_groups = self.redis_instance.get('groups')
+
+        groups = [self.get_group(group_id.split(':')[1])
+                  for group_id in r_groups.keys('group:*')]
+
+        return groups
 
     def get_group(self, g_id):
 
@@ -588,18 +591,29 @@ class Enhancer:
         :param g_id: Group Identifier (int)
         :return: Group (Object)
         """
-        # TODO:
-        return None
+
+        r_groups = self.redis_instance.get('groups')
+
+        group = r_groups.hgetall('group:%s' % g_id)
+        group['id'] = int(group.pop('id'))
+
+        return group
 
     def get_group_projects(self, g_id, relation):
 
         """ Get Group's Projects
         :param g_id: Group Identifier (int)
-        :param relation: Relation between User-Project
+        :param relation: Relation between Group-Project
         :return: Projects (List)
         """
-        # TODO:
-        return list()
+
+        projects = list()
+        r_groups = self.redis_instance.get('groups')
+
+        for member in r_groups.smembers('members:%s' % g_id):
+            projects.extend(self.get_user_projects(int(member), relation))
+
+        return projects
 
     def get_project_milestones(self, r_id):
 

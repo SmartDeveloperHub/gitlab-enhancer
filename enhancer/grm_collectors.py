@@ -145,7 +145,11 @@ class GitLabCollector(GRMCollector):
 
         for group in self.api.get_groups():
             if group.get('id'):
-                current_groups[str(group.get('id'))] = group
+                current_groups[str(group['id'])] = group
+                members = [member.get('id')
+                           for member in
+                           self.api.get_groups_members_byId(id=group.get('id'))]
+                r_groups.sadd('members:%s' % group['id'], *members)
 
         delete_list = set(old_groups).difference(set(current_groups))
 
@@ -153,6 +157,7 @@ class GitLabCollector(GRMCollector):
         self._add_to_redis(r_groups, 'group', current_groups)
         # Delete removed group from redis
         self._remove_from_redis(r_groups, 'group', delete_list)
+        self._remove_from_redis(r_groups, 'members', delete_list)
 
     def update_branches(self):
 
