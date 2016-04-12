@@ -393,17 +393,32 @@ class Enhancer:
         :param default: Filter by type (bool)
         :return: Branches (List)
         """
-        # TODO: use default param
+
         branches = list()
         repository = self.git_collectors.get_repository(r_id)
 
         if repository:
 
-            p_id =  self._match_repo_with_project(repository).get('id')
-            for b in self.git_collectors.get_branches(repository):
-                branch = self._merge_branch_information(p_id, b)
-                if branch:
-                    branches.append(branch)
+            p_id = self._match_repo_with_project(repository).get('id')
+            if default:
+
+                r_project = self.redis_instance.get('projects')
+                project = r_project.hgetall('project:%s' % p_id)
+                b_name = project.get('default_branch')
+                if b_name:
+                    branches = filter(lambda x:
+                                      x.get('name') == b_name,
+                                      (self._merge_branch_information(p_id,
+                                                                      branch)
+                                       for branch in
+                                       self.git_collectors.get_branches(
+                                           repository)))
+            else:
+
+                for b in self.git_collectors.get_branches(repository):
+                    branch = self._merge_branch_information(p_id, b)
+                    if branch:
+                        branches.append(branch)
 
         return branches
 
@@ -505,7 +520,7 @@ class Enhancer:
         # Milliseconds to seconds
         w_start = t_window['st_time'] / 1000
         w_end = t_window['en_time'] / 1000
-        co = filter(lambda x: w_start < long(x.get('time')) < w_end,
+        co = filter(lambda commit: w_start < long(commit.get('time')) < w_end,
                     commits)
 
         p_id = self._match_repo_with_project(repository).get('id')

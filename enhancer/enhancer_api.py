@@ -142,6 +142,7 @@ class EnhancerService:
             if default != 'false' and default != 'true':
                 return make_response("400: default parameter must be true or "
                                      "false", 400)
+            default = json.loads(default)
 
             return json_response(enhancer.get_project_branches(pid, default))
 
@@ -233,7 +234,7 @@ class EnhancerService:
                 return make_response("400: start_time or end_time is bad "
                                      "format", 400)
 
-            commits = enhancer.get_project_commits(pid, user,t_window)
+            commits = enhancer.get_project_commits(pid, user, t_window)
             if commits:
                 return json_response(commits)
             return make_response('', 404)

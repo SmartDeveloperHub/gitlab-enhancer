@@ -139,7 +139,7 @@ class GitCollectorsManager(object):
         :return: repository information.
         """
 
-        repositories = filter(lambda x: x.get('id') == r_id,
+        repositories = filter(lambda repository: repository.get('id') == r_id,
                               self.get_repositories())
 
         return repositories[0] if repositories else None
@@ -181,8 +181,7 @@ class GitCollectorsManager(object):
 
     def get_commiters(self, repository):
 
-        """
-        Returns a commiters list of a repository.
+        """ Returns a commiters list of a repository.
 
         :param repository: information relative to a repository
         :return: commiters list of a repository.
@@ -199,8 +198,8 @@ class GitCollectorsManager(object):
 
     def _get_commiter(self, repository, commiter_id):
 
-        """
-        Returns commiter information
+        """ Returns commiter information
+
         :param repository: information relative to repository
         :param commiter_id:
         :return: commiter information
@@ -211,17 +210,18 @@ class GitCollectorsManager(object):
         commiter = self._request_to_collector(path, repository.get('collector'))
         commiter['commits'] = int(commiter.pop('commits'))
         commiter['first_commit_at'] = long(commiter.pop('first_commit_at'))
-        commiter['last_commit_at'] =  long(commiter.pop('last_commit_at'))
+        commiter['last_commit_at'] = long(commiter.pop('last_commit_at'))
 
         return commiter
 
     def get_commiter(self, email):
-        """
-        Returns commiter information regardless its repository
+
+        """ Returns commiter information regardless its repository
+
         :param email:
         :return: commiter information
         """
-        # TODO:
+
         path = '/api/contributors'
 
         for repository in self.get_repositories():
@@ -235,11 +235,10 @@ class GitCollectorsManager(object):
 
         return None
 
-
     def get_branches(self, repository):
 
-        """
-        Returns a branches list of a repository
+        """ Returns a branches list of a repository
+
         :param repository:  information relative to a repository
         :return: branches list of a repository
         """
@@ -247,9 +246,9 @@ class GitCollectorsManager(object):
         path = '/api/repositories/%s/branches' % repository.get('id')
         collector_id = repository.get('collector')
         branches = list()
-        for id in self._request_to_collector(path, collector_id):
+        for identifier in self._request_to_collector(path, collector_id):
 
-            branch = self.get_branch(repository, id)
+            branch = self.get_branch(repository, identifier)
             if branch:
                 branches.append(branch)
 
@@ -257,8 +256,8 @@ class GitCollectorsManager(object):
 
     def get_branch(self, repository, b_id):
 
-        """
-        Returns branch information
+        """ Returns branch information
+
         :param repository: information relative to repository
         :param b_id: branch identifier
         :return: branch information from repository
@@ -282,9 +281,14 @@ class GitCollectorsManager(object):
             return branch
         return None
 
-
     def get_branches_commits(self, repository, b_id):
 
+        """ Returns commit list of an specific branch
+
+        :param repository: information relative to repository
+        :param b_id: branch identifier
+        :return: commits list from a branch
+        """
         path = '/api/repositories/%s/branches/%s/commits' % (
             repository.get('id'), b_id)
         collector_id = repository.get('collector')
@@ -297,8 +301,14 @@ class GitCollectorsManager(object):
 
     def _request_to_collector(self, path, collector_id):
 
-        collector = self.r_server.hgetall('collector:%s' %
-                                          collector_id)
+        """ Makes a request to the API of a collector using an specific path
+
+        :param path: path of the API request
+        :param collector_id: collector identifier
+        :return: request response
+        """
+
+        collector = self.r_server.hgetall('collector:%s' % collector_id)
 
         if collector:
             headers = dict()

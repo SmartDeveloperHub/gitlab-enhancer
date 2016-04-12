@@ -123,7 +123,8 @@ class GitLabCollector(GRMCollector):
 
                 emails = set()
                 emails.add(user.get('email'))
-                for email in self.api.get_users_emails_byUid(uid=user.get('id')):
+                for email in self.api.get_users_emails_byUid(
+                        uid=user.get('id')):
                     emails.add(email.get('email'))
                 r_users.sadd('emails:%s' % user['id'], *emails)
 
@@ -198,9 +199,8 @@ class GitLabCollector(GRMCollector):
                         .get_projects_repository_commits_byId(id=project_id):
 
                     if commits.get('id'):
-                        current_commits['%s:%s' %
-                                         (project_id,
-                                          commits.get('id'))] = commits
+                        current_commits['%s:%s' % (project_id,
+                                                   commits.get('id'))] = commits
 
         delete_list = set(old_commits).difference(set(current_commits))
 
@@ -228,19 +228,19 @@ class GitLabCollector(GRMCollector):
 
     def _add_to_redis(self, r_server, key, list):
 
-        for id in list:
-            r_server.hmset('%s:%s' % (key, id), list.get(id))
+        for identifier in list:
+            r_server.hmset('%s:%s' % (key, identifier), list.get(identifier))
 
     def _remove_from_redis(self, r_server, key, list):
 
-        for id in list:
-            r_server.delete('%s:%s' % (key, id))
+        for identifier in list:
+            r_server.delete('%s:%s' % (key, identifier))
 
     def _get_ids_list_from_redis(self, r_server, key):
 
         old_requests = set(
             map(
-                lambda id: id.split(':')[1],
+                lambda identifier: identifier.split(':')[1],
                 r_server.keys('%s:*' % key)
             )
         )
