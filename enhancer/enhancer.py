@@ -210,7 +210,11 @@ class Enhancer:
         contributors = list()
 
         for commiter in commiter_list:
-            contributors.append(self._get_contributor(commiter.get('email')))
+            author = self._get_contributor(commiter.get('email'))
+            if author:
+                contributors.append(author)
+            else:
+                contributors.append(commiter.get('email'))
 
         return contributors
 
@@ -337,7 +341,12 @@ class Enhancer:
 
         else:  # if user does not exist in Gitlab
             user = self.git_collectors.get_commiter(u_id)
-            # TODO: external
+            if user:
+                user['last_commit_at'] = self._format_date(
+                                                    user.pop('last_commit_at'))
+                user['first_commit_at'] = self._format_date(
+                                                    user.pop('first_commit_at'))
+                user['external'] = True
 
         return user
 
@@ -378,8 +387,12 @@ class Enhancer:
             # Change name of key
             merged_branch['last_commit'] = eval(merged_branch.pop('commit'))
             contributors = list()
-            for contributor in branch.get('contributors'):
-                contributors.append(self._get_contributor(contributor))
+            for email in branch.get('contributors'):
+                contributor = self._get_contributor(email)
+                if contributor:
+                    contributors.append(contributor)
+                else:
+                    contributors.append(email)
 
             merged_branch['contributors'] = contributors
             merged_branch['id'] = branch.get('id')
@@ -500,9 +513,10 @@ class Enhancer:
             new_commit['created_at'] = self._format_date(new_commit.pop('time'))
             new_commit['message'] = "%s\n" % commit.get('title')
 
-        new_commit['author'] = author
+        if author:
+            new_commit['author'] = author
+            new_commit['author_name'] = self.get_user(author).get('name')
         new_commit['author_email'] = author_email
-        new_commit['author_name'] = self.get_user(author).get('name')
 
         return new_commit
 
