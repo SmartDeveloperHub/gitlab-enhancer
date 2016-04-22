@@ -245,12 +245,11 @@ class GitCollectorsManager(object):
 
         path = '/api/repositories/%s/branches' % repository.get('id')
         collector_id = repository.get('collector')
-        branches = list()
-        for identifier in self._request_to_collector(path, collector_id):
 
-            branch = self.get_branch(repository, identifier)
-            if branch:
-                branches.append(branch)
+        branches = filter(lambda branch: branch is not None,
+                          (self.get_branch(repository, identifier)
+                           for identifier in
+                           self._request_to_collector(path, collector_id)))
 
         return branches
 
@@ -281,6 +280,15 @@ class GitCollectorsManager(object):
             return branch
         return None
 
+    def get_branch_commiters(self, repository, b_id):
+
+        r_id = repository.get('id')
+        collector_id = repository.get('collector')
+        path = '/api/repositories/%s/branches/%s/contributors' % (r_id,
+                                                                  b_id)
+
+        return self._request_to_collector(path, collector_id)
+
     def get_branches_commits(self, repository, b_id):
 
         """ Returns commit list of an specific branch
@@ -293,9 +301,9 @@ class GitCollectorsManager(object):
             repository.get('id'), b_id)
         collector_id = repository.get('collector')
 
-        commits = list()
-        for commit_id in self._request_to_collector(path, collector_id):
-            commits.append(self.get_commit(repository, commit_id))
+        commits = [self.get_commit(repository, commit_id)
+                   for commit_id in self._request_to_collector(path,
+                                                               collector_id)]
 
         return commits
 

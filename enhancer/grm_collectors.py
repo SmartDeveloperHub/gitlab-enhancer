@@ -20,7 +20,7 @@
 """
 
 from glapi import GlAPI
-
+from datetime import datetime
 __author__ = 'Ignacio Molina Cuquerella'
 
 
@@ -80,8 +80,7 @@ class GitLabCollector(GRMCollector):
 
         self.update_projects()
         self.update_users()
-        self.update_branches()
-        self.update_commits()
+        self.update_branches()  # TODO: Only for branch permissions (protected)
         self.update_groups()
 
         # TODO: Methods not implemented on API
@@ -93,20 +92,67 @@ class GitLabCollector(GRMCollector):
 
         r_projects = self.r_servers.get('projects')
 
-        # Get redis projects list
         old_projects = self._get_ids_list_from_redis(r_projects, 'project')
         current_projects = dict()
 
-        for project in self.api.get_projects():
-            if project.get('id'):
-                current_projects[str(project.get('id'))] = project
+        for p in self.api.get_projects():
+            project = dict()
+            project['http_url_to_repo'] = p.get('http_url_to_repo')
+            project['name'] = p.get('name')
+            project['default_branch'] = p.get('default_branch')
 
-        delete_list = old_projects.difference(set(current_projects))
+            # Gets ownership
+            owner = dict()
+            if p.get('owner'):
+                owner['id'] = p.get('owner').get('id')
+                owner['type'] = 'user'
+            elif p.get('namespace'):
+                owner['id'] = p.get('namespace').get('id')
+                owner['type'] = 'group'
+            project['owner'] = owner
+            tags = self.api.get_projects_repository_tags_byId(id=p.get('id'))
+            project['tag_list'] = map(lambda tag: tag.get('name'),
+                                      tags)
+            project['avatar_url'] = p.get('avatar_url')
+            project['public'] = p.get('public')
+            date_format = "%Y-%m-%dT%H:%M:%S.%fZ"
+            # TODO: Review dates
+            project['created_at'] = int(datetime.strptime(
+                p.get('created_at'), date_format).strftime('%s')) * 1000
+            project['last_activity_at'] = int(datetime.strptime(
+                p.get('last_activity_at'), date_format).strftime('%s')) * 1000
+            current_projects[str(p.get('id'))] = project
 
-        # Update current projects (current_projects_list -> redis)
+        delete_list = set(old_projects).difference(set(current_projects))
+
+        # Update current groups (current_projects_list -> redis)
         self._add_to_redis(r_projects, 'project', current_projects)
-        # Delete removed projects from redis
         self._remove_from_redis(r_projects, 'project', delete_list)
+
+    def update_branches(self):
+
+        r_branches = self.r_servers.get('branches')
+
+        old_branches = self._get_ids_list_from_redis(r_branches, 'branch')
+        current_branches = dict()
+
+        for project in self.api.get_projects():
+            project_id = project.get('id')
+            if project_id:
+                for b in self.api.get_projects_repository_branches_byId(
+                        id=project_id):
+
+                    branch = dict()
+                    branch['name'] = b.get('name')
+                    branch['protected'] = b.get('protected')
+                    current_branches['%s:%s' % (project_id,
+                                                b.get('name'))] = branch
+
+        delete_list = set(old_branches).difference(set(current_branches))
+
+        # Update current groups (current_projects_list -> redis)
+        self._add_to_redis(r_branches, 'branch', current_branches)
+        self._remove_from_redis(r_branches, 'branch', delete_list)
 
     def update_users(self):
 
@@ -159,72 +205,6 @@ class GitLabCollector(GRMCollector):
         # Delete removed group from redis
         self._remove_from_redis(r_groups, 'group', delete_list)
         self._remove_from_redis(r_groups, 'members', delete_list)
-
-    def update_branches(self):
-
-        r_branches = self.r_servers.get('branches')
-
-        # Get redis projects list
-        old_branches = self._get_ids_list_from_redis(r_branches, 'branch')
-        current_branches = dict()
-
-        for project in self.api.get_projects():
-            project_id = project.get('id')
-            if project_id:
-                for branch in self.api\
-                        .get_projects_repository_branches_byId(id=project_id):
-
-                    if branch.get('name'):
-                        current_branches['%s:%s' %
-                                         (project_id,
-                                          branch.get('name'))] = branch
-
-        delete_list = set(old_branches).difference(set(current_branches))
-
-        self._add_to_redis(r_branches, 'branch', current_branches)
-        self._remove_from_redis(r_branches, 'branch', delete_list)
-
-    def update_commits(self):
-
-        r_commits = self.r_servers.get('commits')
-
-        # Get redis projects list
-        old_commits = self._get_ids_list_from_redis(r_commits, 'commit')
-        current_commits = dict()
-
-        for project in self.api.get_projects():
-            project_id = project.get('id')
-            if project_id:
-                for commits in self.api\
-                        .get_projects_repository_commits_byId(id=project_id):
-
-                    if commits.get('id'):
-                        current_commits['%s:%s' % (project_id,
-                                                   commits.get('id'))] = commits
-
-        delete_list = set(old_commits).difference(set(current_commits))
-
-        self._add_to_redis(r_commits, 'commit', current_commits)
-        self._remove_from_redis(r_commits, 'commit', delete_list)
-
-    def update_requests(self):
-
-        r_requests = self.r_servers.get('merge_requests')
-
-        # Get redis requests list
-        old_requests = self._get_ids_list_from_redis(r_requests, 'request')
-        current_requests = dict()
-
-        for request in self.api.get_projects_merge_requests_byId():
-            if request.get('id'):
-                current_requests[str(request.get('id'))] = request
-
-        delete_list = set(old_requests).difference(set(current_requests))
-
-        # Update current requests (current_requests_list -> redis)
-        self._add_to_redis(r_requests, 'request', current_requests)
-        # Delete removed requests from redis
-        self._remove_from_redis(r_requests, 'request', delete_list)
 
     def _add_to_redis(self, r_server, key, list):
 

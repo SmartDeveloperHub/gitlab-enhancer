@@ -20,7 +20,6 @@
 """
 
 import logging
-from datetime import datetime
 from threading import Timer
 
 import redis
@@ -118,15 +117,9 @@ class Enhancer:
             :return: Projects (List)
         """
 
-        projects = list()
+        projects = self.git_collectors.get_repositories()
 
-        for repository in self.git_collectors.get_repositories():
-
-            project = self._get_project_from_repo(repository)
-            if project:
-                projects.append(project)
-
-        return projects
+        return [project.get('id') for project in projects]
 
     def get_project(self, r_id):
 
@@ -142,36 +135,44 @@ class Enhancer:
         # "public", "avatar_url"
 
         repository = self.git_collectors.get_repository(r_id)
-
-        return self._get_project_from_repo(repository) if repository else None
-
-    def _get_project_from_repo(self, repository):
-
-        """ This method will search and find a project with the specified URL
-
-        :param repository: repository information of the project sought
-        :return: project information
-        """
-
-        project = self._match_repo_with_project(repository)
-
-        if project:
+        if repository:
+            p_id = self._get_project_id_from_repo(repository)
+            project = dict()
+            project['id'] = r_id
+            project['http_url_to_repo'] = repository.get('url')
+            project['web_url'] = repository.get('url').replace('.git', '')
+            project['state'] = repository.get('state')
 
             commits = self.git_collectors.get_commits(repository)
             if commits:
-                project['first_commit_at'] = \
-                    self._format_date(commits[0].get('time'))
-                project['last_commit_at'] = \
-                    self._format_date(commits[-1].get('time'))
+                commits_dict = {commit.get('time'): commit
+                                for commit in commits}
 
-            project['contributors'] = self._get_contributors(repository)
-            project['id'] = repository.get('id')
+                commits_dates = sorted(commits_dict)
+                project['created_at'] = commits_dates[0]
+                project['first_commit_at'] = commits_dates[0]
+                project['last_commit_at'] = commits_dates[-1]
+                project['contributors'] = self.get_project_contributors(r_id)
+
+            if p_id:
+                r_projects = self.redis_instance.get('projects')
+                project.update(r_projects.hgetall('project:%s' % p_id))
+
+                default_branch = project.pop('default_branch')
+                branch = map(lambda b: b.get('id'),
+                             filter(lambda b: b.get('name') == default_branch,
+                                    self.git_collectors.get_branches(repository)
+                                    )
+                             )
+                project['default_branch'] = branch[0] if branch else None
+                # deserialize inner structs
+                project['tags'] = eval(project.pop('tag_list'))
+                project['owner'] = eval(project.pop('owner'))
 
             return project
-
         return None
 
-    def _match_repo_with_project(self, repository):
+    def _get_project_id_from_repo(self, repository):
 
         """ Method that combine information from two sources: Git and Redis
 
@@ -181,21 +182,13 @@ class Enhancer:
 
         r_projects = self.redis_instance.get('projects')
 
-        projects = filter(lambda x:
-                          x.get('http_url_to_repo') == repository.get('url'),
-                          [r_projects.hgetall(p_id)
-                           for p_id in r_projects.keys('project:*')])
+        projects_id = filter(lambda p_id:
+                             r_projects.hget(
+                                 p_id,
+                                 'http_url_to_repo') == repository.get('url'),
+                             r_projects.keys('project:*'))
 
-        if projects:
-
-            project = projects[0]
-            # deserialize inner structs
-            project['owner'] = eval(project.get('owner'))
-            project['namespace'] = eval(project.get('namespace'))
-
-            return project
-
-        return None
+        return projects_id[0].split(':')[1] if projects_id else None
 
     def _get_contributors(self, repository):
 
@@ -245,15 +238,15 @@ class Enhancer:
         """
 
         repository = self.git_collectors.get_repository(r_id)
-        project = None
 
         if repository:
-            project = self._match_repo_with_project(repository)
+            p_id = self._get_project_id_from_repo(repository)
 
-        if project:
-            owner = project.get('owner')
-            return self.get_user(owner['id'])
+            if p_id:
+                r_projects = self.redis_instance.get('projects')
+                owner = r_projects.hget('project:%s' % p_id, 'owner')
 
+                return self.get_user(owner['id'])
         return None
 
     def get_project_contributors(self, r_id):
@@ -264,11 +257,10 @@ class Enhancer:
         :return: Contributors (List)
         """
 
-        project = self.get_project(r_id)
+        repository = self.git_collectors.get_repository(r_id)
 
-        if project:
-            return project.get('contributors')
-
+        if repository:
+            return self._get_contributors(repository)
         return None
 
     def get_users(self):
@@ -307,11 +299,12 @@ class Enhancer:
                 last_commit = last if last_commit < last else last_commit
 
         if last_commit:
-            new_user['first_commit_at'] = self._format_date(first_commit)
-            new_user['last_commit_at'] = self._format_date(last_commit)
+            new_user['first_commit_at'] = first_commit
+            new_user['last_commit_at'] = last_commit
         new_user['id'] = int(user.get('id'))
         if user.get('identities'):
             new_user['identities'] = eval(user['identities'])
+        new_user['external'] = user.get('external', False)
 
         return new_user
 
@@ -342,10 +335,6 @@ class Enhancer:
         else:  # if user does not exist in Gitlab
             user = self.git_collectors.get_commiter(u_id)
             if user:
-                user['last_commit_at'] = self._format_date(
-                                                    user.pop('last_commit_at'))
-                user['first_commit_at'] = self._format_date(
-                                                    user.pop('first_commit_at'))
                 user['external'] = True
 
         return user
@@ -361,42 +350,14 @@ class Enhancer:
 
         if relation == 'owner':
             projects = filter(lambda x: x.get('owner').get('id') == u_id,
-                              self.get_projects())
+                              (self.get_project(r_id)
+                               for r_id in self.get_projects()))
         else:
             projects = filter(lambda x: u_id in x.get('contributors'),
-                              self.get_projects())
+                              (self.get_project(r_id)
+                               for r_id in self.get_projects()))
 
         return projects
-
-    def _merge_branch_information(self, p_id, branch):
-
-        """ Returns the branch information with additional fields
-
-        :param p_id: Redis project id
-        :param branch: branch information from Git protocol
-        :return: branch enhanced branch information
-        """
-
-        r_branches = self.redis_instance.get('branches')
-        merged_branch = r_branches.hgetall('branch:%s:%s' % (p_id,
-                                                             branch.get('name'))
-                                           )
-
-        if merged_branch:
-
-            # Change name of key
-            merged_branch['last_commit'] = eval(merged_branch.pop('commit'))
-            contributors = list()
-            for email in branch.get('contributors'):
-                contributor = self._get_contributor(email)
-                if contributor:
-                    contributors.append(contributor)
-                else:
-                    contributors.append(email)
-
-            merged_branch['contributors'] = contributors
-            merged_branch['id'] = branch.get('id')
-            return merged_branch
 
     def get_project_branches(self, r_id, default):
 
@@ -407,33 +368,23 @@ class Enhancer:
         :return: Branches (List)
         """
 
-        branches = list()
         repository = self.git_collectors.get_repository(r_id)
 
         if repository:
 
-            p_id = self._match_repo_with_project(repository).get('id')
-            if default:
+            p_id = self._get_project_id_from_repo(repository)
 
-                r_project = self.redis_instance.get('projects')
-                project = r_project.hgetall('project:%s' % p_id)
-                b_name = project.get('default_branch')
-                if b_name:
-                    branches = filter(lambda x:
-                                      x.get('name') == b_name,
-                                      (self._merge_branch_information(p_id,
-                                                                      branch)
-                                       for branch in
-                                       self.git_collectors.get_branches(
-                                           repository)))
-            else:
+            r_projects = self.redis_instance.get('projects')
+            default_branch = r_projects.hget('project:%s' % p_id,
+                                             'default_branch')
+            branches = filter(lambda b:
+                              not default or
+                              default and b.get('name') == default_branch,
+                              self.git_collectors.get_branches(repository))
 
-                for b in self.git_collectors.get_branches(repository):
-                    branch = self._merge_branch_information(p_id, b)
-                    if branch:
-                        branches.append(branch)
+            return [branch.get('id') for branch in branches]
 
-        return branches
+        return None
 
     def get_project_branch(self, r_id, b_id):
 
@@ -448,17 +399,35 @@ class Enhancer:
         # "name", "created_at", "protected", "contributors",
         # "last_commit"
 
-        branch = None
         repository = self.git_collectors.get_repository(r_id)
 
         if repository:
-            b = self.git_collectors.get_branch(repository, b_id)
-            p_id = self._match_repo_with_project(repository).get('id')
+            branch = self.git_collectors.get_branch(repository, b_id)
 
-            if b:
-                branch = self._merge_branch_information(p_id, b)
+            if branch:
+                p_id = self._get_project_id_from_repo(repository)
 
-        return branch
+                if p_id:
+                    r_branches = self.redis_instance.get('branches')
+                    protected = r_branches.hget(
+                        'branch:%s:%s' % (p_id, branch.get('name')),
+                        'protected')
+                    branch['protected'] = eval(protected)
+
+                commits = self.git_collectors.get_branches_commits(repository,
+                                                                   b_id)
+                if commits:
+                    commits_dict = {commit.get('time'): commit
+                                    for commit in commits}
+                    commits_dates = sorted(commits_dict)
+                    branch['created_at'] = commits_dates[0]
+                    branch['last_commit_at'] = commits_dates[-1]
+                    contributors = self.get_project_branch_contributors(r_id,
+                                                                        b_id)
+                    branch['contributors'] = contributors
+
+                return branch
+        return None
 
     def get_project_branch_contributors(self, r_id, b_id):
 
@@ -469,17 +438,15 @@ class Enhancer:
         :return: Contributors (List)
         """
 
-        branch = self.get_project_branch(r_id, b_id)
-        if branch:
-            return branch.get('contributors')
-        return None
+        repository = self.git_collectors.get_repository(r_id)
 
-    def _merge_commit_information(self, p_id, commit):
+        return self.git_collectors.get_branch_commiters(repository, b_id)
+
+    def _enhance_commit_information(self, commit):
 
         """ This method combines commit information from two sources: Git and
         Redis.
 
-        :param p_id: Redis project id
         :param commit: data from Git
         :return:
         """
@@ -487,9 +454,6 @@ class Enhancer:
         # "lines_removed", "short_id", "author", "lines_added",
         # "created_at", "title", "parent_ids", "committed_date",
         # "message", "authored_date", "id"
-
-        r_commits = self.redis_instance.get('commits')
-        r_commit = r_commits.hgetall('commit:%s:%s' % (p_id, commit.get('sha')))
 
         # GitCollector
         # lines_removed, lines_added, files_changed
@@ -500,18 +464,11 @@ class Enhancer:
         author_email = commit.get('email')
         author = self._get_contributor(author_email)
 
-        if r_commit:
-            new_commit = r_commit.copy()
-            new_commit['lines_removed'] = commit.get('lines_removed')
-            new_commit['lines_added'] = commit.get('lines_added')
-            new_commit['files_changed'] = commit.get('files_changed')
-
-        else:
-            new_commit = commit.copy()
-            new_commit.pop('email')
-            new_commit['id'] = new_commit.pop('sha')
-            new_commit['created_at'] = self._format_date(new_commit.pop('time'))
-            new_commit['message'] = "%s\n" % commit.get('title')
+        new_commit = commit.copy()
+        new_commit.pop('email')
+        new_commit['id'] = new_commit.pop('sha')
+        new_commit['created_at'] = new_commit.pop('time')
+        new_commit['message'] = "%s\n" % commit.get('title')
 
         if author:
             new_commit['author'] = author
@@ -520,28 +477,18 @@ class Enhancer:
 
         return new_commit
 
-    def _filter_commits(self, repository, commits, u_id, t_window):
+    @staticmethod
+    def _filter_commits(commits, u_id, t_window):
 
-        """ This method filter commits regarding user id and a time window.
-
-        :param repository: information relative to a repository
-        :param commits: list of commits from Git
-        :param u_id: user id
-        :param t_window: time window within commits have been created.
-        :return: list of commits satisfying filter params
-        """
-
-        # Milliseconds to seconds
         w_start = t_window['st_time'] / 1000
         w_end = t_window['en_time'] / 1000
-        co = filter(lambda commit: w_start < long(commit.get('time')) < w_end,
-                    commits)
 
-        p_id = self._match_repo_with_project(repository).get('id')
+        filtered_date = filter(lambda commit:
+                               w_start < long(commit.get('created_at')) < w_end,
+                               commits)
 
         return filter(lambda x: not u_id or u_id == x.get('author'),
-                      (self._merge_commit_information(p_id, commit)
-                       for commit in co))
+                      filtered_date)
 
     def get_project_commits(self, r_id, u_id, t_window):
 
@@ -551,15 +498,18 @@ class Enhancer:
         :param t_window: (Time Window) filter (Object)
         :return: Commits (List)
         """
+        # TODO: What we do with 'short_id' and 'message'?
 
         repository = self.git_collectors.get_repository(r_id)
-        commits = None
+        filtered_commits = None
         if repository:
-            raw_commits = self.git_collectors.get_commits(repository)
-            commits = self._filter_commits(repository, raw_commits, u_id,
-                                           t_window)
+            commits = [self._enhance_commit_information(commit)
+                       for commit in
+                       self.git_collectors.get_commits(repository)]
 
-        return commits
+            filtered_commits = self._filter_commits(commits, u_id, t_window)
+
+        return [commit.get('id') for commit in filtered_commits]
 
     def get_project_branch_commits(self, r_id, b_id, u_id, t_window):
 
@@ -571,16 +521,17 @@ class Enhancer:
         :return: Commits (List)
         """
 
-        commits = None
+        filtered_commits = None
         repository = self.git_collectors.get_repository(r_id)
 
         if repository:
-            raw_commits = self.git_collectors.get_branches_commits(repository,
-                                                                   b_id)
-            commits = self._filter_commits(repository, raw_commits, u_id,
-                                           t_window)
+            commits = [self._enhance_commit_information(commit)
+                       for commit in
+                       self.git_collectors.get_branches_commits(repository,
+                                                                b_id)]
+            filtered_commits = self._filter_commits(commits, u_id, t_window)
 
-        return commits
+        return [commit.get('id') for commit in filtered_commits]
 
     def get_project_commit(self, r_id, c_id):
 
@@ -594,10 +545,9 @@ class Enhancer:
 
         if repository:
 
-            p_id = self._match_repo_with_project(repository).get('id')
             commit = self.git_collectors.get_commit(repository, c_id)
             if commit:
-                return self._merge_commit_information(p_id, commit)
+                return self._enhance_commit_information(commit)
 
         return None
 
@@ -692,9 +642,3 @@ class Enhancer:
         """
         # TODO:
         return list()
-
-    def _format_date(self, timestamp):
-
-        # Example: 2012-09-20T09:06:12+03:00
-        return datetime.utcfromtimestamp(float(timestamp))\
-                .strftime('%Y-%m-%dT%H:%M:%S%z')
