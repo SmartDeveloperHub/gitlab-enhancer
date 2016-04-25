@@ -169,6 +169,14 @@ class GitLabCollector(GRMCollector):
         for user in self.api.get_users():
 
             if user.get('id'):
+
+                user['current_sign_in_at'] = long(parser.parse(
+                    user.pop('current_sign_in_at'))
+                                                  .astimezone(pytz.utc)
+                                                  .strftime('%s')) * 1000
+                user['created_at'] = long(parser.parse(user.pop('created_at'))
+                                          .astimezone(pytz.utc)
+                                          .strftime('%s')) * 1000
                 current_users[str(user.get('id'))] = user
 
                 emails = set()

@@ -223,7 +223,7 @@ class Enhancer:
             [user_emails_id.split(':')[1]
              for user_emails_id in r_users.keys('emails:*')])
 
-        return int(users_id[0]) if users_id else None
+        return users_id[0] if users_id else None
 
     def get_project_owner(self, r_id):
 
@@ -295,9 +295,9 @@ class Enhancer:
                 last_commit = last if last_commit < last else last_commit
 
         if last_commit:
-            new_user['first_commit_at'] = first_commit
-            new_user['last_commit_at'] = last_commit
-        new_user['id'] = int(user.get('id'))
+            new_user['first_commit_at'] = long(first_commit) * 1000
+            new_user['last_commit_at'] = long(last_commit) * 1000
+        new_user['id'] = user.get('id')
         if user.get('identities'):
             new_user['identities'] = eval(user['identities'])
         new_user['external'] = user.get('external', False)
