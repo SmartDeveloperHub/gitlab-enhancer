@@ -555,7 +555,7 @@ class Enhancer:
 
         r_groups = self.redis_instance.get('groups')
 
-        groups = [self.get_group(group_id.split(':')[1])
+        groups = [group_id.split(':')[1]
                   for group_id in r_groups.keys('group:*')]
 
         return groups
@@ -570,7 +570,8 @@ class Enhancer:
         r_groups = self.redis_instance.get('groups')
 
         group = r_groups.hgetall('group:%s' % g_id)
-        group['id'] = int(group.pop('id'))
+        group['members'] = list(r_groups.smembers('members:%s' % g_id))
+        group['id'] = group.pop('id')
 
         return group
 

@@ -204,6 +204,7 @@ class GitLabCollector(GRMCollector):
 
         for group in self.api.get_groups():
             if group.get('id'):
+                group['state'] = 'active'
                 current_groups[str(group['id'])] = group
                 members = [member.get('id')
                            for member in
