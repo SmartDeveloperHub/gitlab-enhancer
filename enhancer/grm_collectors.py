@@ -19,8 +19,11 @@
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=#
 """
 
+from dateutil import parser
+import pytz
+
 from glapi import GlAPI
-from datetime import datetime
+
 __author__ = 'Ignacio Molina Cuquerella'
 
 
@@ -115,12 +118,13 @@ class GitLabCollector(GRMCollector):
                                       tags)
             project['avatar_url'] = p.get('avatar_url')
             project['public'] = p.get('public')
-            date_format = "%Y-%m-%dT%H:%M:%S.%fZ"
-            # TODO: Review dates
-            project['created_at'] = int(datetime.strptime(
-                p.get('created_at'), date_format).strftime('%s')) * 1000
-            project['last_activity_at'] = int(datetime.strptime(
-                p.get('last_activity_at'), date_format).strftime('%s')) * 1000
+
+            project['created_at'] = long(parser.parse(p.get('created_at'))
+                                         .astimezone(pytz.utc)
+                                         .strftime('%s')) * 1000
+            project['last_activity_at'] = long(parser.parse(
+                p.get('last_activity_at')).astimezone(pytz.utc)
+                                               .strftime('%s')) * 1000
             current_projects[str(p.get('id'))] = project
 
         delete_list = set(old_projects).difference(set(current_projects))
@@ -206,17 +210,21 @@ class GitLabCollector(GRMCollector):
         self._remove_from_redis(r_groups, 'group', delete_list)
         self._remove_from_redis(r_groups, 'members', delete_list)
 
-    def _add_to_redis(self, r_server, key, list):
+    @staticmethod
+    def _add_to_redis(r_server, key, to_add_list):
 
-        for identifier in list:
-            r_server.hmset('%s:%s' % (key, identifier), list.get(identifier))
+        for identifier in to_add_list:
+            r_server.hmset('%s:%s' % (key, identifier),
+                           to_add_list.get(identifier))
 
-    def _remove_from_redis(self, r_server, key, list):
+    @staticmethod
+    def _remove_from_redis(r_server, key, to_remove_list):
 
-        for identifier in list:
+        for identifier in to_remove_list:
             r_server.delete('%s:%s' % (key, identifier))
 
-    def _get_ids_list_from_redis(self, r_server, key):
+    @staticmethod
+    def _get_ids_list_from_redis(r_server, key):
 
         old_requests = set(
             map(

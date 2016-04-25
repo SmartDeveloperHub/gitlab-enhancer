@@ -61,10 +61,6 @@ class Enhancer:
             self._redis_create_pool(config.REDIS_DB_GROUP)
         self.redis_instance['branches'] = \
             self._redis_create_pool(config.REDIS_DB_BRANCH)
-        self.redis_instance['commits'] = \
-            self._redis_create_pool(config.REDIS_DB_COMMIT)
-        self.redis_instance['merge_requests'] = \
-            self._redis_create_pool(config.REDIS_DB_MERGE)
 
         # GitLab Collector instance
         collector_url = '%s://%s' % (config.GITLAB_PROT, config.GITLAB_IP)

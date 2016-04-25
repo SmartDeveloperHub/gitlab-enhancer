@@ -270,7 +270,7 @@ class GitCollectorsManager(object):
         if branch and not branch.get('Error'):
 
             contributors = list()
-            for contributor in eval(branch.pop('contributors')):
+            for contributor in branch.pop('contributors'):
 
                 commiter = self._get_commiter(repository, contributor)
                 contributors.append(commiter.get('email'))
