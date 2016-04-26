@@ -287,7 +287,7 @@ class GitCollectorsManager(object):
             try:
                 return requests.get('%s%s' % (collector.get('url'), path),
                                     headers=headers).json()
-            except Exception as e:
+            except Exception:
                 logging.error('Error: when trying to request to GitCollector '
                               '(%s)' % collector.get('url'))
                 return dict()

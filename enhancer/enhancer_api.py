@@ -24,7 +24,7 @@ from datetime import datetime
 
 import validators
 from flask import Flask, jsonify, request, make_response
-from flask_negotiate import produces, consumes
+from flask_negotiate import produces
 
 __author__ = 'Ignacio Molina Cuquerella'
 
