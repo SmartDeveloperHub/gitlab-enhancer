@@ -70,7 +70,7 @@ class Enhancer:
                                          ssl=config.GITLAB_VER_SSL)
         self.git_collectors = GitCollectorsManager(self.redis_instance['git'])
 
-        file = open(config.GIT_COLLECTORS_FILE, 'r')
+        file = open(config.GC_FILE, 'r')
         if not file:
             raise EnvironmentError('- GitCollectors list file not found.')
 
