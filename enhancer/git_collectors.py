@@ -19,6 +19,7 @@
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=#
 """
 import base64
+import logging
 import requests
 
 
@@ -260,9 +261,8 @@ class GitCollectorsManager(object):
             repository.get('id'), b_id)
         collector_id = repository.get('collector')
 
-        commits = [self.get_commit(repository, commit_id)
-                   for commit_id in self._request_to_collector(path,
-                                                               collector_id)]
+        commits = map(lambda commit_id: self.get_commit(repository, commit_id),
+                      self._request_to_collector(path, collector_id))
 
         return commits
 
@@ -272,7 +272,7 @@ class GitCollectorsManager(object):
 
         :param path: path of the API request
         :param collector_id: collector identifier
-        :return: request response
+        :return: request response or an empty dict if request fails
         """
 
         collector = self.collectors.get(collector_id)
@@ -280,11 +280,15 @@ class GitCollectorsManager(object):
         if collector:
             headers = dict()
             headers['Accept'] = 'application/json'
-            headers['Content-Type'] = 'application/json'
 
             if collector.get('security'):
                 headers['X-GC-PWD'] = '%s' % collector.get('password')
 
-            return requests.get('%s%s' % (collector.get('url'), path),
-                                headers=headers).json()
-        return None
+            try:
+                return requests.get('%s%s' % (collector.get('url'), path),
+                                    headers=headers).json()
+            except Exception as e:
+                logging.error('Error: when trying to request to GitCollector '
+                              '(%s)' % collector.get('url'))
+                return dict()
+        return dict()

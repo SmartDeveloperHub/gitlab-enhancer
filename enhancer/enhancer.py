@@ -478,7 +478,9 @@ class Enhancer:
 
         new_commit = commit.copy()
         new_commit.pop('email')
-        new_commit['id'] = new_commit.pop('sha')
+        sha_code = new_commit.pop('sha')
+        new_commit['id'] = sha_code
+        new_commit['short_id'] = sha_code[:8]
         new_commit['created_at'] = new_commit.pop('time')
         new_commit['message'] = "%s\n" % commit.get('title')
 
@@ -489,17 +491,18 @@ class Enhancer:
 
         return new_commit
 
-    @staticmethod
-    def _filter_commits(commits, u_id, t_window):
+    def _filter_commits(self, commits, u_id, t_window):
 
         w_start = t_window['st_time'] / 1000
         w_end = t_window['en_time'] / 1000
 
         filtered_date = filter(lambda commit:
-                               w_start < long(commit.get('created_at')) < w_end,
+                               w_start < long(commit.get('time')) < w_end,
                                commits)
 
-        return filter(lambda x: not u_id or u_id == x.get('author'),
+        return filter(lambda commit:
+                      not u_id or
+                      u_id == self._get_contributor(commit.get('email')),
                       filtered_date)
 
     def get_project_commits(self, r_id, u_id, t_window):
@@ -508,20 +511,16 @@ class Enhancer:
         :param r_id: Project Identifier (int)
         :param u_id: Optional User Identifier (int)
         :param t_window: (Time Window) filter (Object)
-        :return: Commits (List)
+        :return: Commits ids (List)
         """
-        # TODO: What we do with 'short_id' and 'message'?
 
         repository = self.git_collectors.get_repository(r_id)
         filtered_commits = None
         if repository:
-            commits = [self._enhance_commit_information(commit)
-                       for commit in
-                       self.git_collectors.get_commits(repository)]
+            filtered_commits = self._filter_commits(
+                self.git_collectors.get_commits(repository), u_id, t_window)
 
-            filtered_commits = self._filter_commits(commits, u_id, t_window)
-
-        return [commit.get('id') for commit in filtered_commits]
+        return map(lambda commit: commit.get('sha'), filtered_commits)
 
     def get_project_branch_commits(self, r_id, b_id, u_id, t_window):
 
@@ -530,20 +529,18 @@ class Enhancer:
         :param b_id: Branch Identifier (string)
         :param u_id: Optional User Identifier (int)
         :param t_window: (Time Window) filter (Object)
-        :return: Commits (List)
+        :return: Commits ids (List)
         """
 
         filtered_commits = None
         repository = self.git_collectors.get_repository(r_id)
 
         if repository:
-            commits = [self._enhance_commit_information(commit)
-                       for commit in
-                       self.git_collectors.get_branches_commits(repository,
-                                                                b_id)]
-            filtered_commits = self._filter_commits(commits, u_id, t_window)
+            filtered_commits = self._filter_commits(
+                self.git_collectors.get_branches_commits(repository, b_id),
+                u_id, t_window)
 
-        return [commit.get('id') for commit in filtered_commits]
+        return map(lambda commit: commit.get('sha'), filtered_commits)
 
     def get_project_commit(self, r_id, c_id):
 

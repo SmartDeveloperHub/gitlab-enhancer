@@ -152,13 +152,6 @@ class EnhancerService:
 
             user = request.args.get('uid', None)
 
-            if user is not None:
-                try:
-                    user = int(user)
-                except ValueError:
-                    return make_response("400: uid parameter is not an integer "
-                                         "(user identifier)", 400)
-
             t_window = check_time_window(request.args)
 
             if t_window['st_time'] == 'Error' or t_window['en_time'] == 'Error':
@@ -184,13 +177,6 @@ class EnhancerService:
         def api_project_commits(pid):
 
             user = request.args.get('uid', None)
-
-            if user is not None:
-                try:
-                    user = int(user)
-                except ValueError:
-                    return make_response("400: uid parameter is not an integer "
-                                         "(user identifier)", 400)
 
             t_window = check_time_window(request.args)
 
