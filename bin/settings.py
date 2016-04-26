@@ -36,6 +36,9 @@ GE_LISTEN_PROT = os.environ.get("ENH_LISTEN_PROT", "http")
 GE_LISTEN_PORT = int(os.environ.get("ENH_LISTEN_PORT", 5000))
 GE_LISTEN_IP = os.environ.get("ENH_LISTEN_IP", "0.0.0.0")
 
+# GitCollectors config file
+GC_FILE = os.environ.get("GIT_COLL_FILE", "../git_collectors.json")
+
 # Gitlab Configuration to get data
 GITLAB_PROT = os.environ.get("COLL_GITLAB_PROT", "http")
 GITLAB_IP = os.environ.get("COLL_GITLAB_IP", "127.0.0.1")

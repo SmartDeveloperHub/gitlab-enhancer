@@ -38,42 +38,6 @@ class EnhancerService:
         self.port = config.GE_LISTEN_PORT
         self.enhancer = enhancer
 
-        @self.app.route('/api/collectors/', methods=['GET'])
-        @produces('application/json')
-        def get_collectors():
-
-            return json_response(enhancer.git_collectors.get_collectors())
-
-        @self.app.route('/api/collectors/<string:coll_id>/', methods=['GET'])
-        @produces('application/json')
-        def get_collector(coll_id):
-
-            collector = enhancer.git_collectors.get_collector(coll_id)
-
-            if collector:
-                return json_response(collector)
-
-            return make_response('', 404)
-
-        @self.app.route('/api/collectors/', methods=['POST'])
-        @consumes('application/json')
-        @produces('application/json')
-        def add_collector():
-
-            coll_id = enhancer.git_collectors.add_collector(request.json)
-
-            if coll_id:
-                return json_response(coll_id)
-
-            return make_response('', 400)
-
-        @self.app.route('/api/collectors/<string:coll_id>/', methods=['DELETE'])
-        def remove_collector(coll_id):
-
-            enhancer.git_collectors.remove_collector(coll_id)
-
-            return make_response('', 200)
-
         # Get information about Git Enhancer
         @self.app.route('/api/', methods=['GET'])
         @produces('application/json')
@@ -320,7 +284,7 @@ class EnhancerService:
         # # relation = [contributor only in default branch, owner]
         # Get projects about specific gitlab user
         # It is possible filter by relation between user and project
-        @self.app.route('/api/users/<int:uid>/projects/', methods=['GET'])
+        @self.app.route('/api/users/<string:uid>/projects/', methods=['GET'])
         @produces('application/json')
         def api_user_projects(uid):
 
@@ -339,7 +303,7 @@ class EnhancerService:
             return json_response(enhancer.get_groups())
 
         # Get specific gitlab groups
-        @self.app.route('/api/groups/<int:gid>/', methods=['GET'])
+        @self.app.route('/api/groups/<string:gid>/', methods=['GET'])
         @produces('application/json')
         def api_group(gid):
 
@@ -349,7 +313,7 @@ class EnhancerService:
         # # relation = [contributor only in default branch, owner]
         # Get projects about specific gitlab group
         # It is possible filter by relation between user and project
-        @self.app.route('/api/groups/<int:gid>/projects/', methods=['GET'])
+        @self.app.route('/api/groups/<string:gid>/projects/', methods=['GET'])
         @produces('application/json')
         def api_group_projects(gid):
 

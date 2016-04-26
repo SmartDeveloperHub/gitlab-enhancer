@@ -36,38 +36,7 @@ class GitCollectorsManager(object):
     def __init__(self, r_server):
 
         self.r_server = r_server
-
-    def get_collector(self, c_id):
-
-        """ This methods returns the settings of a collector with id.
-
-        :param c_id: GitCollector id
-        :return: information relative to the GitCollector.
-        """
-
-        collector = self.r_server.hgetall('collector:%s' % c_id)
-        if collector:
-            collector['id'] = c_id
-
-        return collector
-
-    def get_collectors(self):
-
-        """ This method returns a list of the GitCollectors that are been
-        used by service.
-
-        :return: List of GitCollectors
-        """
-
-        collector_list = list()
-
-        for key in self.r_server.keys('collector:*'):
-
-            collector = self.r_server.hgetall(key)
-            collector['id'] = key.split(':')[1]
-            collector_list.append(collector)
-
-        return collector_list
+        self.collectors = dict()
 
     def add_collector(self, params):
 
@@ -89,25 +58,16 @@ class GitCollectorsManager(object):
                 password = params.get('password')
 
             c_id = base64.b16encode(url)
-            self.r_server.hset('collector:%s' % c_id, 'url', url)
-            self.r_server.hset('collector:%s' % c_id, 'security', security)
-            self.r_server.hset('collector:%s' % c_id, 'password', password)
+            collector = dict()
+            collector['id'] = c_id
+            collector['url'] = url
+            collector['security'] = security
+            collector['password'] = password
+            self.collectors[c_id] = collector
 
             return c_id
 
         return None
-
-    def remove_collector(self, c_id):
-
-        """ This method remove the specified GitCollector from the services.
-
-        :param c_id: GitCollector id.
-        """
-
-        if self.r_server.delete('collector:%s' % c_id):
-            return True
-
-        return False
 
     def get_repositories(self):
 
@@ -119,9 +79,8 @@ class GitCollectorsManager(object):
 
         repositories = list()
 
-        for key in self.r_server.keys('collector:*'):
+        for collector_id in self.collectors:
 
-            collector_id = key.split(':')[1]
             for repository in self._request_to_collector('/api/repositories',
                                                          collector_id):
 
@@ -316,7 +275,7 @@ class GitCollectorsManager(object):
         :return: request response
         """
 
-        collector = self.r_server.hgetall('collector:%s' % collector_id)
+        collector = self.collectors.get(collector_id)
 
         if collector:
             headers = dict()

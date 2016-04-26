@@ -18,7 +18,7 @@
   limitations under the License.
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=#
 """
-
+import json
 import logging
 from threading import Timer
 
@@ -70,6 +70,23 @@ class Enhancer:
                                          ssl=config.GITLAB_VER_SSL)
         self.git_collectors = GitCollectorsManager(self.redis_instance['git'])
 
+        file = open(config.GIT_COLLECTORS_FILE, 'r')
+        if not file:
+            raise EnvironmentError('- GitCollectors list file not found.')
+
+        file_content = file.read()
+        if not file_content:
+            raise EnvironmentError('- GitCollectors list is empty.')
+
+        try:
+            for collector in json.loads(file_content):
+                if not self.git_collectors.add_collector(collector):
+                    raise EnvironmentError('- Wrong GitCollector format: %s' %
+                                           collector)
+
+        except:
+            raise EnvironmentError('- GitCollectors list is not a valid json.')
+
     def _redis_create_pool(self, database):
 
         """
@@ -100,7 +117,6 @@ class Enhancer:
         """ Starts Collector and set a scheduler for next activations of the
         collector.
         """
-
         logging.info('Started GitLab Collector')
         self.collector.collect()
         logging.info('Finish GitLab Collector')
