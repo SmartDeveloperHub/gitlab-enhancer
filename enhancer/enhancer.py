@@ -178,6 +178,8 @@ class Enhancer:
                              )
                 project['default_branch'] = branch[0] if branch else None
                 # deserialize inner structs
+                project['last_activity_at'] = long(project.pop('last_activity_at'))
+                project['created_at'] = long(project.pop('created_at'))
                 project['tags'] = eval(project.pop('tag_list'))
                 project['owner'] = eval(project.pop('owner'))
 
@@ -311,8 +313,8 @@ class Enhancer:
                 last_commit = last if last_commit < last else last_commit
 
         if last_commit:
-            new_user['first_commit_at'] = long(first_commit) * 1000
-            new_user['last_commit_at'] = long(last_commit) * 1000
+            new_user['first_commit_at'] = first_commit
+            new_user['last_commit_at'] = last_commit
         new_user['id'] = user.get('id')
         if user.get('identities'):
             new_user['identities'] = eval(user['identities'])

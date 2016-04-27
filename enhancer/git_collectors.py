@@ -133,6 +133,7 @@ class GitCollectorsManager(object):
         path = '/api/repositories/%s/commits/%s' % (repository.get('id'), cid)
 
         commit = self._request_to_collector(path, repository.get('collector'))
+        commit['time'] = long(commit.pop('time')) * 1000
         commit['lines_removed'] = int(commit.pop('lines_removed'))
         commit['lines_added'] = int(commit.pop('lines_added'))
         commit['files_changed'] = int(commit.pop('files_changed'))
@@ -169,8 +170,8 @@ class GitCollectorsManager(object):
 
         commiter = self._request_to_collector(path, repository.get('collector'))
         commiter['commits'] = int(commiter.pop('commits'))
-        commiter['first_commit_at'] = long(commiter.pop('first_commit_at'))
-        commiter['last_commit_at'] = long(commiter.pop('last_commit_at'))
+        commiter['first_commit_at'] = long(commiter.pop('first_commit_at')) * 1000
+        commiter['last_commit_at'] = long(commiter.pop('last_commit_at')) * 1000
 
         return commiter
 
