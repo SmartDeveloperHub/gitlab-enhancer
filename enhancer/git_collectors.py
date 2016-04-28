@@ -115,9 +115,8 @@ class GitCollectorsManager(object):
         path = '/api/repositories/%s/commits' % repository.get('id')
         collector_id = repository.get('collector')
 
-        commits = [self.get_commit(repository, commit_id)
-                   for commit_id in self._request_to_collector(path,
-                                                               collector_id)]
+        commits = map(lambda commit_id: self.get_commit(repository, commit_id),
+                      self._request_to_collector(path, collector_id))
 
         return commits
 
@@ -243,12 +242,21 @@ class GitCollectorsManager(object):
 
     def get_branch_commiters(self, repository, b_id):
 
+        """ This method returns a list of commiters email.
+
+        :param repository: information relative to repository
+        :param b_id: branch identifier
+        :return: list of commiters email
+        """
+
         r_id = repository.get('id')
         collector_id = repository.get('collector')
         path = '/api/repositories/%s/branches/%s/contributors' % (r_id,
                                                                   b_id)
 
-        return self._request_to_collector(path, collector_id)
+        return map(lambda c_id:
+                   self._get_commiter(repository, c_id).get('email'),
+                   self._request_to_collector(path, collector_id))
 
     def get_branches_commits(self, repository, b_id):
 
@@ -262,10 +270,8 @@ class GitCollectorsManager(object):
             repository.get('id'), b_id)
         collector_id = repository.get('collector')
 
-        commits = map(lambda commit_id: self.get_commit(repository, commit_id),
-                      self._request_to_collector(path, collector_id))
-
-        return commits
+        return map(lambda commit_id: self.get_commit(repository, commit_id),
+                   self._request_to_collector(path, collector_id))
 
     def _request_to_collector(self, path, collector_id):
 
@@ -289,7 +295,7 @@ class GitCollectorsManager(object):
                 return requests.get('%s%s' % (collector.get('url'), path),
                                     headers=headers).json()
             except Exception:
-                logging.error('Error: when trying to request to GitCollector '
-                              '(%s)' % collector.get('url'))
+                logging.error('Error: when trying request to GitCollector '
+                              '(%s%s)' % (collector.get('url'), path))
                 return dict()
         return dict()

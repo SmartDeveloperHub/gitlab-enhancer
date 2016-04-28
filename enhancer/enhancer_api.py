@@ -130,13 +130,9 @@ class EnhancerService:
             users_id = enhancer.get_project_branch_contributors(pid, bid)
 
             if users_id:
+                return json_response(users_id)
 
-                contributors = list()
-                for user_id in users_id:
-                    contributors.append(enhancer.get_user(user_id))
-                return json_response(contributors)
-
-            return make_response()
+            return make_response('', 404)
 
         # Query Params:
         # # uid = user identifier

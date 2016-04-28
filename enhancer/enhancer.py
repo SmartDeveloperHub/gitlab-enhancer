@@ -178,7 +178,8 @@ class Enhancer:
                              )
                 project['default_branch'] = branch[0] if branch else None
                 # deserialize inner structs
-                project['last_activity_at'] = long(project.pop('last_activity_at'))
+                project['last_activity_at'] = long(
+                    project.pop('last_activity_at'))
                 project['created_at'] = long(project.pop('created_at'))
                 project['tags'] = eval(project.pop('tag_list'))
                 project['owner'] = eval(project.pop('owner'))
@@ -204,7 +205,7 @@ class Enhancer:
 
         return projects_id[0].split(':')[1] if projects_id else None
 
-    def _get_contributors(self, repository):
+    def _get_contributors_from_repo(self, repository):
 
         """ This method will return a list of the repository contributors from
         GitCollector enriched with redis information
@@ -216,13 +217,7 @@ class Enhancer:
         commiter_list = self.git_collectors.get_commiters(repository)
         contributors = list()
 
-        for commiter in commiter_list:
-            author = self._get_contributor(commiter.get('email'))
-            if author:
-                contributors.append(author)
-            else:
-                contributors.append(commiter.get('email'))
-
+        self._get_contributors(commiter_list)
         return contributors
 
     def _get_contributor(self, email):
@@ -242,6 +237,23 @@ class Enhancer:
              for user_emails_id in r_users.keys('emails:*')])
 
         return users_id[0] if users_id else None
+
+    def _get_contributors(self, emails):
+        """ This method returns a list of users id according to the given
+        emails or the same email if user id can't be found.
+
+        :param emails: emails list of contributors.
+        :return: list of users id if any or email when user can't be found
+        """
+        contributors = set()  # set to avoid replicates
+
+        for email in emails:
+            user = self._get_contributor(email)
+            if user:
+                contributors.add(user)
+            else:
+                contributors.add(email)
+        return list(contributors)
 
     def get_project_owner(self, r_id):
 
@@ -274,7 +286,7 @@ class Enhancer:
         repository = self.git_collectors.get_repository(r_id)
 
         if repository:
-            return self._get_contributors(repository)
+            return self._get_contributors_from_repo(repository)
         return None
 
     def get_users(self):
@@ -421,6 +433,10 @@ class Enhancer:
             if branch:
                 p_id = self._get_project_id_from_repo(repository)
 
+                emails = branch.pop('contributors')
+                if emails:
+                    branch['contributors'] = self._get_contributors(emails)
+
                 if p_id:
                     r_branches = self.redis_instance.get('branches')
                     protected = r_branches.hget(
@@ -436,9 +452,6 @@ class Enhancer:
                     commits_dates = sorted(commits_dict)
                     branch['created_at'] = commits_dates[0]
                     branch['last_commit_at'] = commits_dates[-1]
-                    contributors = self.get_project_branch_contributors(r_id,
-                                                                        b_id)
-                    branch['contributors'] = contributors
 
                 return branch
         return None
@@ -454,7 +467,11 @@ class Enhancer:
 
         repository = self.git_collectors.get_repository(r_id)
 
-        return self.git_collectors.get_branch_commiters(repository, b_id)
+        if repository:
+            emails = self.git_collectors.get_branch_commiters(repository, b_id)
+
+            return self._get_contributors(emails)
+        return None
 
     def _enhance_commit_information(self, commit):
 
@@ -495,8 +512,8 @@ class Enhancer:
 
     def _filter_commits(self, commits, u_id, t_window):
 
-        w_start = t_window['st_time'] / 1000
-        w_end = t_window['en_time'] / 1000
+        w_start = t_window['st_time']
+        w_end = t_window['en_time']
 
         filtered_date = filter(lambda commit:
                                w_start < long(commit.get('time')) < w_end,
