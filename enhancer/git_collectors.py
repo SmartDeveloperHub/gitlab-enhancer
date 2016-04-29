@@ -148,13 +148,11 @@ class GitCollectorsManager(object):
         """
 
         path = '/api/repositories/%s/contributors' % repository.get('id')
-
-        commiters = [self._get_commiter(repository, commiter_id)
-                     for commiter_id in
-                     self._request_to_collector(path,
-                                                repository.get('collector'))]
-
-        return commiters
+        # TODO: Change method to return only emails
+        return map(lambda commiter_id:
+                   self._get_commiter(repository, commiter_id).get('email'),
+                   self._request_to_collector(path,
+                                              repository.get('collector')))
 
     def _get_commiter(self, repository, commiter_id):
 
@@ -169,8 +167,10 @@ class GitCollectorsManager(object):
 
         commiter = self._request_to_collector(path, repository.get('collector'))
         commiter['commits'] = int(commiter.pop('commits'))
-        commiter['first_commit_at'] = long(commiter.pop('first_commit_at')) * 1000
-        commiter['last_commit_at'] = long(commiter.pop('last_commit_at')) * 1000
+        commiter['first_commit_at'] = long(commiter.pop('first_commit_at'))
+        commiter['first_commit_at'] *= 1000
+        commiter['last_commit_at'] = long(commiter.pop('last_commit_at'))
+        commiter['last_commit_at'] *= 1000
 
         return commiter
 
@@ -181,9 +181,11 @@ class GitCollectorsManager(object):
         :param email:
         :return: commiter information
         """
-
+        # TODO: Don't stop after first ocurrency, aggragate information
         path = '/api/contributors'
 
+        commiter = dict()
+        commiter['commits'] = 0L
         for repository in self.get_repositories():
 
             collector_id = repository.get('collector')
@@ -191,9 +193,18 @@ class GitCollectorsManager(object):
             for contributor_id in contributors:
                 contributor = self._get_commiter(repository, contributor_id)
                 if contributor.get('email') == email:
-                    return contributor
+                    commiter['email'] = contributor.get('email')
+                    commiter['commits'] += contributor.get('commits')
+                    commiter['last_commit_at'] = max(
+                        contributor['last_commit_at'],
+                        commiter.get('last_commit_at',
+                                     contributor['last_commit_at']))
+                    commiter['first_commit_at'] = min(
+                        contributor['first_commit_at'],
+                        commiter.get('first_commit_at',
+                                     contributor['first_commit_at']))
 
-        return None
+        return commiter if commiter.get('email') else None
 
     def get_branches(self, repository):
 

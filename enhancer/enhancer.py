@@ -208,7 +208,7 @@ class Enhancer:
     def _get_contributors_from_repo(self, repository):
 
         """ This method will return a list of the repository contributors from
-        GitCollector enriched with redis information
+        GitCollector enhanced with users id
 
         :param repository: repository information
         :return:
@@ -298,10 +298,8 @@ class Enhancer:
 
         r_users = self.redis_instance.get('users')
 
-        users = [self.get_user(user_id.split(':')[1])
-                 for user_id in r_users.keys('user:*')]
-
-        return users
+        return map(lambda user_id: user_id.split(':')[1],
+                   r_users.keys('user:*'))
 
     def _merge_user_information(self, user):
 
@@ -312,21 +310,20 @@ class Enhancer:
         """
 
         new_user = user.copy()
-        first_commit = float('inf')
-        last_commit = 0
 
         for email in user.get('emails'):
 
             commiter = self.git_collectors.get_commiter(email)
             if commiter:
-                first = commiter.get('first_commit_at')
-                last = commiter.get('last_commit_at')
-                first_commit = first if first_commit > first else first_commit
-                last_commit = last if last_commit < last else last_commit
+                new_user['first_commit_at'] = min(
+                    commiter.get('first_commit_at'),
+                    new_user.get('first_commit_at',
+                                 commiter.get('first_commit_at')))
+                new_user['last_commit_at'] = max(
+                    commiter.get('last_commit_at'),
+                    new_user.get('last_commit_at',
+                                 commiter.get('last_commit_at')))
 
-        if last_commit:
-            new_user['first_commit_at'] = first_commit
-            new_user['last_commit_at'] = last_commit
         new_user['id'] = user.get('id')
         if user.get('identities'):
             new_user['identities'] = eval(user['identities'])
