@@ -355,10 +355,15 @@ class Enhancer:
             user['emails'] = list(r_users.smembers('emails:%s' % u_id))
             user = self._merge_user_information(user)
 
-        else:  # if user does not exist in Gitlab
-            user = self.git_collectors.get_commiter(u_id)
-            if user:
-                user['external'] = True
+        else:  # if user does not exist in Gitlab maybe is a commiter id
+            commiter = self.git_collectors.get_commiter_by_id(u_id)
+            if commiter:
+                user_id = self._get_contributor(commiter.get('email'))
+                if user_id:
+                    user = self.get_user(user_id)
+                if not user:
+                    user = commiter.copy()
+                    user['external'] = True
 
         return user
 

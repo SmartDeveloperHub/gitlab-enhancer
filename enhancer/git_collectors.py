@@ -144,11 +144,11 @@ class GitCollectorsManager(object):
         """ Returns a commiters list of a repository.
 
         :param repository: information relative to a repository
-        :return: commiters list of a repository.
+        :return: commiter emails list of a repository.
         """
 
         path = '/api/repositories/%s/contributors' % repository.get('id')
-        # TODO: Change method to return only emails
+
         return map(lambda commiter_id:
                    self._get_commiter(repository, commiter_id).get('email'),
                    self._request_to_collector(path,
@@ -166,11 +166,24 @@ class GitCollectorsManager(object):
         path = '/api/contributors/%s' % commiter_id
 
         commiter = self._request_to_collector(path, repository.get('collector'))
+
         commiter['commits'] = int(commiter.pop('commits'))
         commiter['first_commit_at'] = long(commiter.pop('first_commit_at'))
         commiter['first_commit_at'] *= 1000
         commiter['last_commit_at'] = long(commiter.pop('last_commit_at'))
         commiter['last_commit_at'] *= 1000
+
+        return commiter
+
+    def get_commiter_by_id(self, commiter_id):
+
+        commiter = None
+        for repository in self.get_repositories():
+            try:
+                commiter = self._get_commiter(repository, commiter_id)
+                break
+            except StandardError:
+                pass
 
         return commiter
 
@@ -181,7 +194,7 @@ class GitCollectorsManager(object):
         :param email:
         :return: commiter information
         """
-        # TODO: Don't stop after first ocurrency, aggragate information
+
         path = '/api/contributors'
 
         commiter = dict()
@@ -305,7 +318,7 @@ class GitCollectorsManager(object):
             try:
                 return requests.get('%s%s' % (collector.get('url'), path),
                                     headers=headers).json()
-            except Exception:
+            except IOError:
                 logging.error('Error: when trying request to GitCollector '
                               '(%s%s)' % (collector.get('url'), path))
                 return dict()
