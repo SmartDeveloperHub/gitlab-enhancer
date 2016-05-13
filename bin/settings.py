@@ -25,7 +25,7 @@ __author__ = 'Ignacio Molina Cuquerella'
 
 # Enhancer Package Configuration
 GE_NAME = "git-enhancer"
-GE_VERSION = "1.0.0"
+GE_VERSION = "2.0.0"
 GE_LONGNAME = "Git Enhancer"
 
 # Enhancer execution Configuration
