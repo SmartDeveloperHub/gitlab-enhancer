@@ -170,10 +170,11 @@ class GitLabCollector(GRMCollector):
 
             if user.get('id'):
 
-                user['current_sign_in_at'] = long(parser.parse(
-                    user.pop('current_sign_in_at'))
-                                                  .astimezone(pytz.utc)
-                                                  .strftime('%s')) * 1000
+                if user.get('current_sign_in_at'):
+                    user['current_sign_in_at'] = long(parser.parse(
+                        user.pop('current_sign_in_at'))
+                                                      .astimezone(pytz.utc)
+                                                      .strftime('%s')) * 1000
                 user['created_at'] = long(parser.parse(user.pop('created_at'))
                                           .astimezone(pytz.utc)
                                           .strftime('%s')) * 1000

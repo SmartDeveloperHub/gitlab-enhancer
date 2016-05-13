@@ -239,6 +239,7 @@ class Enhancer:
         return users_id[0] if users_id else None
 
     def _get_contributors(self, emails):
+
         """ This method returns a list of users id according to the given
         emails or the same email if user id can't be found.
 
@@ -352,6 +353,10 @@ class Enhancer:
         user = r_users.hgetall('user:%s' % u_id)
 
         if user:
+            user['created_at'] = long(user.pop('created_at'))
+            if user.get('current_sign_in_at'):
+                user['current_sign_in_at'] = long(
+                    user.pop('current_sign_in_at'))
             user['emails'] = list(r_users.smembers('emails:%s' % u_id))
             user = self._merge_user_information(user)
 
