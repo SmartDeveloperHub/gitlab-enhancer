@@ -271,7 +271,7 @@ class Enhancer:
 
             if p_id:
                 r_projects = self.redis_instance.get('projects')
-                owner = r_projects.hget('project:%s' % p_id, 'owner')
+                owner = eval(r_projects.hget('project:%s' % p_id, 'owner'))
 
                 return self.get_user(owner['id'])
         return None
