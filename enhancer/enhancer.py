@@ -39,7 +39,7 @@ class Enhancer:
         and the GitLab collector to enrich the Git Protocol information.
 
         Args:
-            config (setting.py): configuration from settings.py
+            config (setting.py): configuration from bin/settings.py
     """
 
     def __init__(self, config):
@@ -121,6 +121,10 @@ class Enhancer:
         self.collector.collect()
         logging.info('Finish GitLab Collector')
         Timer(self.schedule, self.start).start()
+
+    def get_notification_config(self):
+
+        return self.git_collectors.get_notifications_config()
 
     def get_projects(self):
 
@@ -217,7 +221,7 @@ class Enhancer:
         commiter_list = self.git_collectors.get_commiters(repository)
         contributors = list()
 
-        self._get_contributors(commiter_list)
+        contributors += self._get_contributors(commiter_list)
         return contributors
 
     def _get_contributor(self, email):
@@ -355,8 +359,9 @@ class Enhancer:
         if user:
             user['created_at'] = long(user.pop('created_at'))
             if user.get('current_sign_in_at'):
-                user['current_sign_in_at'] = long(
-                    user.pop('current_sign_in_at'))
+                current_sign_at = user.pop('current_sign_in_at')
+                if current_sign_at and current_sign_at != 'None':
+                    user['current_sign_in_at'] = long(current_sign_at)
             user['emails'] = list(r_users.smembers('emails:%s' % u_id))
             user = self._merge_user_information(user)
 

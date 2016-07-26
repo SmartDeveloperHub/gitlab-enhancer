@@ -42,9 +42,13 @@ class EnhancerService:
         @self.app.route('/api/', methods=['GET'])
         @produces('application/json')
         def api():
+
+            notifications = enhancer.get_notification_config()
+
             return jsonify(Name=config.GE_LONGNAME,
                            Version=config.GE_VERSION,
-                           Status='OK')
+                           Status='OK',
+                           Collectors=notifications)
 
         # Get Git projects
         @self.app.route('/api/projects/', methods=['GET'])

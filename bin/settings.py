@@ -24,7 +24,7 @@ import os
 __author__ = 'Ignacio Molina Cuquerella'
 
 # Enhancer Package Configuration
-GE_NAME = "git-enhancer"
+GE_NAME = "gitlab-enhancer"
 GE_VERSION = "2.0.0"
 GE_LONGNAME = "Git Enhancer"
 
@@ -36,14 +36,14 @@ GE_LISTEN_PROT = os.environ.get("ENH_LISTEN_PROT", "http")
 GE_LISTEN_PORT = int(os.environ.get("ENH_LISTEN_PORT", 5000))
 GE_LISTEN_IP = os.environ.get("ENH_LISTEN_IP", "0.0.0.0")
 
-# GitCollectors config file
-GC_FILE = os.environ.get("GIT_COLL_FILE", "../git_collectors.json")
-
 # Gitlab Configuration to get data
 GITLAB_PROT = os.environ.get("COLL_GITLAB_PROT", "http")
 GITLAB_IP = os.environ.get("COLL_GITLAB_IP", "127.0.0.1")
+GITLAB_PORT = int(os.environ.get("COLL_GITLAB_PORT", 80))
 GITLAB_TOKEN = os.environ.get("COLL_GITLAB_TOKEN", "")
+
 GITLAB_VER_SSL = bool(os.environ.get("COLL_GITLAB_VERIFY_SSL", False))
+GC_FILE = os.environ.get("GIT_COLL_FILE", "../git_collectors.json")
 
 # Redis Configuration to set data
 REDIS_IP = os.environ.get("GE_REDIS_IP", "127.0.0.1")

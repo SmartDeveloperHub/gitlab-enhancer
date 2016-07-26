@@ -70,6 +70,19 @@ class GitCollectorsManager(object):
 
         return None
 
+    def get_notifications_config(self):
+
+        notifications = list()
+
+        for collector_id in self.collectors:
+            api = self._request_to_collector('', collector_id)
+            collector = api.get('Notifications')
+            if collector:
+                collector['instance'] = self.collectors[collector_id].get('url')
+                notifications.append(collector)
+
+        return notifications
+
     def get_repositories(self):
 
         """ This method return a list of repositories from all the
@@ -82,7 +95,7 @@ class GitCollectorsManager(object):
 
         for collector_id in self.collectors:
 
-            for repository in self._request_to_collector('/api/repositories',
+            for repository in self._request_to_collector('/repositories',
                                                          collector_id):
 
                 repository['collector'] = collector_id
@@ -112,7 +125,7 @@ class GitCollectorsManager(object):
         :return: list of the repository commits
         """
 
-        path = '/api/repositories/%s/commits' % repository.get('id')
+        path = '/repositories/%s/commits' % repository.get('id')
         collector_id = repository.get('collector')
 
         commits = map(lambda commit_id: self.get_commit(repository, commit_id),
@@ -129,7 +142,7 @@ class GitCollectorsManager(object):
         :return: commit information from a repository
         """
 
-        path = '/api/repositories/%s/commits/%s' % (repository.get('id'), cid)
+        path = '/repositories/%s/commits/%s' % (repository.get('id'), cid)
 
         commit = self._request_to_collector(path, repository.get('collector'))
         commit['time'] = long(commit.pop('time')) * 1000
@@ -147,7 +160,7 @@ class GitCollectorsManager(object):
         :return: commiter emails list of a repository.
         """
 
-        path = '/api/repositories/%s/contributors' % repository.get('id')
+        path = '/repositories/%s/contributors' % repository.get('id')
 
         return map(lambda commiter_id:
                    self._get_commiter(repository, commiter_id).get('email'),
@@ -163,7 +176,7 @@ class GitCollectorsManager(object):
         :return: commiter information
         """
 
-        path = '/api/contributors/%s' % commiter_id
+        path = '/contributors/%s' % commiter_id
 
         commiter = self._request_to_collector(path, repository.get('collector'))
 
@@ -195,7 +208,7 @@ class GitCollectorsManager(object):
         :return: commiter information
         """
 
-        path = '/api/contributors'
+        path = '/contributors'
 
         commiter = dict()
         commiter['commits'] = 0L
@@ -227,7 +240,7 @@ class GitCollectorsManager(object):
         :return: branches list of a repository
         """
 
-        path = '/api/repositories/%s/branches' % repository.get('id')
+        path = '/repositories/%s/branches' % repository.get('id')
         collector_id = repository.get('collector')
 
         branches = filter(lambda branch: branch is not None,
@@ -246,7 +259,7 @@ class GitCollectorsManager(object):
         :return: branch information from repository
         """
         # "Name", "contributors" = []
-        path = '/api/repositories/%s/branches/%s' % (repository.get('id'), b_id)
+        path = '/repositories/%s/branches/%s' % (repository.get('id'), b_id)
         collector_id = repository.get('collector')
 
         branch = self._request_to_collector(path, collector_id)
@@ -275,7 +288,7 @@ class GitCollectorsManager(object):
 
         r_id = repository.get('id')
         collector_id = repository.get('collector')
-        path = '/api/repositories/%s/branches/%s/contributors' % (r_id,
+        path = '/repositories/%s/branches/%s/contributors' % (r_id,
                                                                   b_id)
 
         return map(lambda c_id:
@@ -290,7 +303,7 @@ class GitCollectorsManager(object):
         :param b_id: branch identifier
         :return: commits list from a branch
         """
-        path = '/api/repositories/%s/branches/%s/commits' % (
+        path = '/repositories/%s/branches/%s/commits' % (
             repository.get('id'), b_id)
         collector_id = repository.get('collector')
 

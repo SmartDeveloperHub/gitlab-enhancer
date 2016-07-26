@@ -22,7 +22,7 @@
 from dateutil import parser
 import pytz
 
-from glapi import GlAPI
+from glapi.glapi import GlAPI
 
 __author__ = 'Ignacio Molina Cuquerella'
 
