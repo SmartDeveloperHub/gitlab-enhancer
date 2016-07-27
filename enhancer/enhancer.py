@@ -368,12 +368,16 @@ class Enhancer:
         else:  # if user does not exist in Gitlab maybe is a commiter id
             commiter = self.git_collectors.get_commiter_by_id(u_id)
             if commiter:
-                user_id = self._get_contributor(commiter.get('email'))
-                if user_id:
-                    user = self.get_user(user_id)
-                if not user:
-                    user = commiter.copy()
-                    user['external'] = True
+                email = commiter.get('email')
+            else:
+                email = u_id # in case u_id it were an email already
+
+            user_id = self._get_contributor(email)
+            if user_id:
+                user = self.get_user(user_id)
+            if not user and commiter:
+                user = commiter.copy()
+                user['external'] = True
 
         return user
 

@@ -43,8 +43,11 @@ if __name__ == '__main__':
     logging.info("* %s (%s) Started - %s" % (config.GE_LONGNAME,
                                              config.GE_VERSION, st))
 
-    enhancer = Enhancer(config)
-    service = EnhancerService(config, enhancer).start()
+    try:
+        enhancer = Enhancer(config)
+        service = EnhancerService(config, enhancer).start()
+    except StandardError as e:
+        logging.error(e)
 
     st = datetime.datetime.fromtimestamp(time.time())\
         .strftime('%Y-%m-%d %H:%M:%S')
